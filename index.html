@@ -507,7 +507,7 @@
         left: 10px;
         z-index: 46;
         display: none;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        align-items: center;
         gap: 6px;
         padding: 8px;
         border: 1px solid var(--line);
@@ -518,12 +518,13 @@
       }
 
       .bottom-nav button {
+        flex: 0 0 76px;
         min-height: 46px;
         border: 1px solid transparent;
         border-radius: 8px;
         color: var(--green-dark);
         background: transparent;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 800;
       }
 
@@ -1101,15 +1102,64 @@
         .app {
           width: min(100% - 18px, 1180px);
           padding-top: 9px;
-          padding-bottom: 98px;
+          padding-bottom: 78px;
+        }
+
+        .app-topbar {
+          display: grid;
+          grid-template-columns: auto minmax(0, 1fr);
+          align-items: center;
+          gap: 10px;
+          padding: 10px;
+        }
+
+        .menu-toggle {
+          min-width: 74px;
+          min-height: 42px;
+          padding: 8px 9px;
+          white-space: nowrap;
+        }
+
+        .topbar-brand {
+          min-width: 0;
+        }
+
+        .topbar-brand strong {
+          font-size: 20px;
+          line-height: 1.1;
+        }
+
+        .toolbar {
+          grid-column: 1 / -1;
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 8px;
+          width: 100%;
+        }
+
+        .toolbar .secondary,
+        .toolbar .due-badge {
+          min-height: 40px;
+          padding: 8px 6px;
+          font-size: 14px;
+        }
+
+        h1 {
+          font-size: 34px;
+          line-height: 1.08;
         }
 
         .hero-copy {
           width: 100%;
-          min-height: 420px;
-          padding: 22px;
+          min-height: 390px;
+          padding: 18px;
           background:
             linear-gradient(180deg, rgba(15, 23, 19, 0.9), rgba(15, 23, 19, 0.68));
+        }
+
+        .hero p {
+          font-size: 16px;
+          line-height: 1.55;
         }
 
         .hero-stats,
@@ -1128,17 +1178,29 @@
 
         .poster,
         .poster img {
-          min-height: 420px;
+          min-height: 390px;
         }
 
         .floating-add {
           display: grid;
           place-items: center;
-          bottom: 84px;
+          bottom: 72px;
         }
 
         .bottom-nav {
-          display: grid;
+          display: flex;
+          overflow-x: auto;
+          scrollbar-width: none;
+          padding: 6px;
+        }
+
+        .bottom-nav::-webkit-scrollbar {
+          display: none;
+        }
+
+        .bottom-nav button {
+          flex-basis: 72px;
+          min-height: 44px;
         }
 
         .progress-top,
