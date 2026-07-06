@@ -1,0 +1,2599 @@
+﻿<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Umrah Savings Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #f5f0e4;
+        --surface: #fffaf0;
+        --surface-2: #ede5d2;
+        --ink: #16211b;
+        --muted: #6f7467;
+        --line: #d9cfb9;
+        --green: #425334;
+        --green-dark: #17271f;
+        --gold: #d9a72f;
+        --good: #19744c;
+        --bad: #b34b3f;
+        --shadow: 0 22px 60px rgba(33, 39, 28, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        background:
+          linear-gradient(135deg, rgba(255, 250, 240, 0.92), rgba(236, 226, 205, 0.86)),
+          var(--bg);
+        font-family: "Hind Siliguri", system-ui, sans-serif;
+        letter-spacing: 0;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .app {
+        width: min(1180px, calc(100% - 28px));
+        margin: 0 auto;
+        padding: 20px 0 34px;
+      }
+
+      .hero {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr;
+        min-height: 500px;
+        overflow: hidden;
+        border: 1px solid rgba(66, 83, 52, 0.2);
+        border-radius: 8px;
+        background: var(--green-dark);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-copy {
+        display: grid;
+        align-content: center;
+        gap: 16px;
+        width: min(760px, 68%);
+        min-height: 500px;
+        padding: clamp(24px, 5vw, 52px);
+        color: #fffdf2;
+        background:
+          linear-gradient(90deg, rgba(16, 27, 21, 0.94), rgba(34, 49, 35, 0.78), rgba(34, 49, 35, 0));
+        z-index: 2;
+      }
+
+      .kicker {
+        width: fit-content;
+        padding: 7px 11px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 999px;
+        color: #f5c84d;
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 720px;
+        margin-bottom: 0;
+        font-size: clamp(42px, 7vw, 82px);
+        line-height: 1.02;
+      }
+
+      .hero p {
+        max-width: 660px;
+        margin-bottom: 0;
+        color: rgba(255, 253, 242, 0.78);
+        font-size: 18px;
+      }
+
+      .hero-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 8px;
+      }
+
+      .hero-stats div,
+      .card,
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .hero-stats div {
+        border-color: rgba(255, 255, 255, 0.16);
+        padding: 13px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      small {
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .hero-stats small {
+        color: rgba(255, 253, 242, 0.7);
+      }
+
+      .hero-stats strong {
+        display: block;
+        margin-top: 5px;
+        color: #f7ce44;
+        font-size: clamp(22px, 3vw, 34px);
+        line-height: 1.08;
+      }
+
+      .poster {
+        position: absolute;
+        inset: 0;
+        min-height: 100%;
+        overflow: hidden;
+        background: #f5f0e4;
+      }
+
+      .poster img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 500px;
+        object-fit: cover;
+        object-position: center bottom;
+        filter: saturate(1.08) contrast(1.06);
+        transform: scale(1.02);
+      }
+
+      .poster::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(90deg, rgba(15, 23, 19, 0.64), rgba(15, 23, 19, 0.14) 55%, rgba(15, 23, 19, 0.04)),
+          linear-gradient(180deg, rgba(15, 23, 19, 0.06), rgba(15, 23, 19, 0.22));
+        pointer-events: none;
+      }
+
+      .quick-grid,
+      .metrics,
+      .main-grid {
+        display: grid;
+        gap: 16px;
+        margin-top: 16px;
+      }
+
+      .quick-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .metrics {
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(62px, 1fr);
+        overflow-x: auto;
+      }
+
+      .main-grid {
+        grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.85fr);
+      }
+
+      .panel,
+      .card {
+        padding: 18px;
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 16px;
+      }
+
+      .panel-head h2 {
+        margin-bottom: 2px;
+        font-size: 22px;
+      }
+
+      .panel-head p {
+        margin-bottom: 0;
+        color: var(--muted);
+      }
+
+      .field-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      label {
+        display: grid;
+        gap: 7px;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        min-height: 46px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px 12px;
+        color: var(--ink);
+        background: #fff;
+        outline: none;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px rgba(66, 83, 52, 0.15);
+      }
+
+      form {
+        display: grid;
+        gap: 12px;
+      }
+
+      .primary,
+      .secondary,
+      .danger {
+        min-height: 44px;
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-weight: 800;
+      }
+
+      .primary {
+        color: #fff;
+        background: var(--green-dark);
+      }
+
+      .secondary {
+        color: var(--green-dark);
+        background: #eadfc6;
+      }
+
+      .danger {
+        color: #fff;
+        background: var(--bad);
+      }
+
+      .card {
+        display: grid;
+        gap: 8px;
+        transition: transform 160ms ease, box-shadow 160ms ease;
+      }
+
+      .card:hover,
+      .panel:hover {
+        transform: translateY(-2px);
+      }
+
+      .card-icon {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border-radius: 8px;
+        color: #fff;
+        background: var(--green-dark);
+        font-weight: 800;
+      }
+
+      .card strong {
+        font-size: clamp(28px, 4vw, 40px);
+        line-height: 1.08;
+      }
+
+      .card p {
+        margin-bottom: 0;
+        color: var(--muted);
+      }
+
+      .good {
+        color: var(--good);
+      }
+
+      .bad {
+        color: var(--bad);
+      }
+
+      .progress-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: baseline;
+      }
+
+      .progress-top strong {
+        color: var(--green-dark);
+        font-size: clamp(38px, 5vw, 62px);
+        line-height: 1;
+      }
+
+      .progress-track {
+        height: 18px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #e5dcc7;
+      }
+
+      .progress-track span {
+        display: block;
+        width: 0;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--good), var(--gold));
+        transition: width 220ms ease;
+      }
+
+      .summary-row {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .summary-row div {
+        padding: 13px;
+        border-radius: 8px;
+        background: var(--surface-2);
+      }
+
+      .summary-row strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 22px;
+      }
+
+      .ledger {
+        display: grid;
+        gap: 10px;
+        max-height: 510px;
+        overflow: auto;
+      }
+
+      .ledger-item {
+        display: grid;
+        gap: 8px;
+        padding: 13px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fffdf7;
+      }
+
+      .item-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .type-pill {
+        padding: 4px 9px;
+        border-radius: 999px;
+        color: var(--green-dark);
+        background: #e4ddc8;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .empty {
+        padding: 18px;
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .menu-toggle,
+      .menu-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-width: 44px;
+        min-height: 44px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px 12px;
+        color: var(--green-dark);
+        background: #eadfc6;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      .menu-close {
+        width: 44px;
+        padding: 0;
+        font-size: 24px;
+      }
+
+      .topbar-brand {
+        flex: 1;
+        min-width: 160px;
+      }
+
+      .app-topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 14px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 250, 240, 0.92);
+        box-shadow: 0 12px 34px rgba(33, 39, 28, 0.1);
+        backdrop-filter: blur(12px);
+      }
+
+      .section-nav {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .section-nav button {
+        flex: 0 0 auto;
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 14px;
+        color: var(--green-dark);
+        background: rgba(255, 250, 240, 0.9);
+        font-weight: 800;
+      }
+
+      .section-nav button:hover {
+        border-color: var(--gold);
+        background: #f6ebcf;
+      }
+
+      .section-nav button.is-active,
+      .side-menu-nav button.is-active,
+      .bottom-nav button.is-active {
+        border-color: var(--gold);
+        color: #fffdf2;
+        background: var(--green-dark);
+        box-shadow: 0 10px 24px rgba(33, 39, 28, 0.16);
+      }
+
+      .bottom-nav {
+        position: fixed;
+        right: 10px;
+        bottom: 10px;
+        left: 10px;
+        z-index: 46;
+        display: none;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        padding: 8px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 250, 240, 0.94);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+      }
+
+      .bottom-nav button {
+        min-height: 46px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        color: var(--green-dark);
+        background: transparent;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .side-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        background: rgba(7, 12, 9, 0.5);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 180ms ease;
+      }
+
+      .side-menu {
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 70;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        width: min(320px, calc(100vw - 42px));
+        padding: 18px;
+        border-right: 1px solid var(--line);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        transform: translateX(-104%);
+        transition: transform 200ms ease;
+      }
+
+      body.menu-open {
+        overflow: hidden;
+      }
+
+      body.menu-open .side-overlay {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      body.menu-open .side-menu {
+        transform: translateX(0);
+      }
+
+      .side-menu-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .side-menu-head strong,
+      .side-menu-head small {
+        display: block;
+      }
+
+      .side-menu-nav {
+        display: grid;
+        align-content: start;
+        gap: 10px;
+        padding: 18px 0;
+      }
+
+      .side-menu-nav button {
+        min-height: 48px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px 12px;
+        color: var(--green-dark);
+        background: #f3ead4;
+        font-weight: 800;
+        text-align: left;
+      }
+
+      .side-menu-nav button:hover {
+        border-color: var(--gold);
+        background: #f6ebcf;
+      }
+
+      .side-menu-foot {
+        display: grid;
+        gap: 8px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
+
+      .side-menu-foot small {
+        color: var(--muted);
+        font-weight: 800;
+      }
+
+      .side-status {
+        display: grid;
+        gap: 8px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface-2);
+      }
+
+      .side-status div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .side-status strong {
+        color: var(--green-dark);
+      }
+
+      .due-badge {
+        display: inline-grid;
+        min-height: 44px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px 12px;
+        color: var(--green-dark);
+        background: #fff4d2;
+        font-weight: 800;
+      }
+
+      .due-badge.bad {
+        border-color: rgba(179, 75, 63, 0.52);
+        color: var(--bad);
+        background: #fff0ed;
+      }
+
+      .floating-add {
+        position: fixed;
+        right: 16px;
+        bottom: 72px;
+        z-index: 45;
+        display: none;
+        min-width: 56px;
+        min-height: 56px;
+        border: 0;
+        border-radius: 999px;
+        color: #fff;
+        background: var(--green-dark);
+        box-shadow: var(--shadow);
+        font-size: 26px;
+        font-weight: 800;
+      }
+
+      .app-topbar strong,
+      .app-topbar small {
+        display: block;
+      }
+
+      .save-status {
+        color: var(--muted);
+        font-weight: 800;
+      }
+
+      .ledger-filter {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 160px;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .toast {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 50;
+        padding: 10px 14px;
+        border-radius: 8px;
+        color: #fff;
+        background: var(--green-dark);
+        box-shadow: var(--shadow);
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 160ms ease, transform 160ms ease;
+        pointer-events: none;
+      }
+
+      .toast.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      body[data-theme="night"] {
+        --bg: #0f1713;
+        --surface: #17231d;
+        --surface-2: #213129;
+        --ink: #f7f1df;
+        --muted: #b7b09e;
+        --line: #334239;
+        --green: #607044;
+        --green-dark: #0d1712;
+        --shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+        background:
+          linear-gradient(135deg, rgba(15, 23, 19, 0.96), rgba(34, 43, 32, 0.94)),
+          var(--bg);
+      }
+
+      body[data-theme="night"] .app-topbar,
+      body[data-theme="night"] .side-menu,
+      body[data-theme="night"] .section-nav button,
+      body[data-theme="night"] .ledger-item,
+      body[data-theme="night"] .chart-wrap,
+      body[data-theme="night"] .info-pill,
+      body[data-theme="night"] .visit-card,
+      body[data-theme="night"] .milestone,
+      body[data-theme="night"] .week-card {
+        background: #17231d;
+      }
+
+      body[data-theme="night"] .secondary,
+      body[data-theme="night"] .menu-toggle,
+      body[data-theme="night"] .menu-close,
+      body[data-theme="night"] .side-menu-nav button,
+      body[data-theme="night"] .quick-buttons button,
+      body[data-theme="night"] .section-nav button {
+        border-color: #516257;
+        color: #f7f1df;
+        background: #24342c;
+      }
+
+      body[data-theme="night"] .section-nav button:hover,
+      body[data-theme="night"] .side-menu-nav button:hover,
+      body[data-theme="night"] .quick-buttons button:hover,
+      body[data-theme="night"] .menu-toggle:hover,
+      body[data-theme="night"] .menu-close:hover,
+      body[data-theme="night"] .secondary:hover {
+        border-color: var(--gold);
+        color: #fff8df;
+        background: #314436;
+      }
+
+      body[data-theme="night"] .section-nav button.is-active,
+      body[data-theme="night"] .side-menu-nav button.is-active,
+      body[data-theme="night"] .bottom-nav button.is-active {
+        border-color: var(--gold);
+        color: #101a15;
+        background: #f5c84d;
+      }
+
+      body[data-theme="night"] .bottom-nav {
+        background: rgba(23, 35, 29, 0.94);
+      }
+
+      body[data-theme="night"] .bottom-nav button {
+        color: var(--ink);
+      }
+
+      body[data-theme="night"] .side-status,
+      body[data-theme="night"] .due-badge {
+        color: var(--ink);
+        background: #213129;
+      }
+
+      body[data-theme="night"] .side-status strong {
+        color: #f5c84d;
+      }
+
+      body[data-theme="night"] .visit-tag {
+        color: #101a15;
+        background: #f5c84d;
+      }
+
+      body[data-theme="night"] .visit-card.done {
+        background: #1c3329;
+      }
+
+      body[data-theme="night"] .map-link {
+        color: #101a15;
+        background: #f5c84d;
+      }
+
+      body[data-theme="night"] .fee-note {
+        color: var(--ink);
+        background: #24342c;
+      }
+
+      body[data-theme="night"] .due-badge.bad {
+        border-color: rgba(255, 132, 112, 0.55);
+        color: #ffb7aa;
+        background: #3a201d;
+      }
+
+      body[data-theme="night"] input,
+      body[data-theme="night"] select,
+      body[data-theme="night"] textarea {
+        color: var(--ink);
+        background: #101a15;
+      }
+
+      body[data-theme="night"] .ledger-item.installment-paid {
+        background: #1c3329;
+      }
+
+      body[data-theme="night"] .ledger-item.installment-due {
+        background: #3a321b;
+      }
+
+      body[data-theme="night"] .ledger-item.installment-overdue {
+        background: #3a201d;
+      }
+
+      .quick-buttons {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .quick-buttons button {
+        min-height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--green-dark);
+        background: #f3ead4;
+        font-weight: 800;
+      }
+
+      .chart-wrap {
+        margin-top: 18px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fffdf7;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 230px;
+      }
+
+      .mini-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .mini-grid div {
+        padding: 12px;
+        border-radius: 8px;
+        background: var(--surface-2);
+      }
+
+      .mini-grid strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 20px;
+      }
+
+      .ledger-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+
+      .ledger-actions .secondary,
+      .ledger-actions .danger {
+        min-height: 36px;
+        padding: 7px 10px;
+        font-size: 13px;
+      }
+
+      .edit-banner {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px;
+        border: 1px solid rgba(217, 167, 47, 0.5);
+        border-radius: 8px;
+        background: #fff4d2;
+        color: var(--green-dark);
+        font-weight: 800;
+      }
+
+      .edit-banner.active {
+        display: flex;
+      }
+
+      .advanced-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 16px;
+      }
+
+      .full-row {
+        grid-column: 1 / -1;
+      }
+
+      .pill-grid,
+      .category-grid,
+      .visit-grid,
+      .milestone-row,
+      .checklist {
+        display: grid;
+        gap: 10px;
+      }
+
+      .pill-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .category-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .visit-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .milestone-row {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .info-pill,
+      .visit-card,
+      .milestone,
+      .week-card {
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fffdf7;
+      }
+
+      .info-pill strong,
+      .visit-card strong,
+      .milestone strong,
+      .week-card strong {
+        display: block;
+        margin-top: 4px;
+      }
+
+      .visit-card {
+        align-content: start;
+        min-height: 156px;
+      }
+
+      .visit-card p {
+        margin: 8px 0 0;
+        color: var(--muted);
+      }
+
+      .visit-card.done {
+        border-color: rgba(25, 116, 76, 0.48);
+        background: #e8f4ec;
+      }
+
+      .visit-check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .visit-check input {
+        width: 18px;
+        min-height: 18px;
+        accent-color: var(--good);
+      }
+
+      .visit-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .map-link,
+      .fee-note {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        border-radius: 8px;
+        padding: 6px 9px;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .map-link {
+        color: #fffdf2;
+        background: var(--green-dark);
+        text-decoration: none;
+      }
+
+      .fee-note {
+        color: var(--green-dark);
+        background: #eadfc6;
+      }
+
+      .visit-tag {
+        display: inline-block;
+        width: fit-content;
+        padding: 4px 8px;
+        border-radius: 999px;
+        color: var(--green-dark);
+        background: #eadfc6;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .milestone.done {
+        border-color: rgba(25, 116, 76, 0.45);
+        background: #e8f4ec;
+      }
+
+      .week-card.done {
+        border-color: rgba(25, 116, 76, 0.45);
+      }
+
+      .week-card.short {
+        border-color: rgba(179, 75, 63, 0.4);
+      }
+
+      .ledger-item.installment-paid {
+        border-color: rgba(25, 116, 76, 0.45);
+        background: #e8f4ec;
+      }
+
+      .ledger-item.installment-due {
+        border-color: rgba(217, 167, 47, 0.72);
+        background: #fff4d2;
+      }
+
+      .ledger-item.installment-overdue {
+        border-color: rgba(179, 75, 63, 0.6);
+        background: #fff0ed;
+      }
+
+      .receipt-link {
+        color: var(--green-dark);
+        font-weight: 800;
+      }
+
+      @media print {
+        .quick-grid,
+        .toolbar,
+        .danger,
+        .secondary,
+        #transactionForm,
+        #installmentForm {
+          display: none !important;
+        }
+
+        body {
+          background: #fff;
+        }
+
+        .app {
+          width: 100%;
+          padding: 0;
+        }
+      }
+
+      @media (max-width: 980px) {
+        .hero,
+        .quick-grid,
+        .main-grid,
+        .advanced-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .metrics,
+        .summary-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 640px) {
+        .app {
+          width: min(100% - 18px, 1180px);
+          padding-top: 9px;
+          padding-bottom: 98px;
+        }
+
+        .hero-copy {
+          width: 100%;
+          min-height: 420px;
+          padding: 22px;
+          background:
+            linear-gradient(180deg, rgba(15, 23, 19, 0.9), rgba(15, 23, 19, 0.68));
+        }
+
+        .hero-stats,
+        .metrics,
+        .summary-row,
+        .mini-grid,
+        .pill-grid,
+        .category-grid,
+        .visit-grid,
+        .milestone-row,
+        .quick-buttons,
+        .ledger-filter,
+        .field-row {
+          grid-template-columns: 1fr;
+        }
+
+        .poster,
+        .poster img {
+          min-height: 420px;
+        }
+
+        .floating-add {
+          display: grid;
+          place-items: center;
+          bottom: 84px;
+        }
+
+        .bottom-nav {
+          display: grid;
+        }
+
+        .progress-top,
+        .item-line {
+          display: grid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="side-menu" id="sideMenu" aria-label="Tracker menu" aria-hidden="true">
+      <div class="side-menu-head">
+        <div>
+          <strong>Umrah Tracker</strong>
+          <small>Menu</small>
+        </div>
+        <button class="menu-close" id="menuCloseBtn" type="button" aria-label="Close menu">�</button>
+      </div>
+      <nav class="side-menu-nav">
+        <button data-jump="#overview" type="button">Overview</button>
+        <button data-jump="#addEntry" type="button">Add Entry</button>
+        <button data-jump="#analysis" type="button">Analysis</button>
+        <button data-jump="#ledgerPanel" type="button">Ledger</button>
+        <button data-jump="#visitGuide" type="button">Visit Guide</button>
+        <button data-jump="#freeGuide" type="button">Free Guide</button>
+        <button data-jump="#transportGuide" type="button">Transport</button>
+        <button data-jump="#mobileUse" type="button">Mobile Use</button>
+        <button data-jump="#installments" type="button">Installments</button>
+      </nav>
+      <div class="side-status">
+        <div><small>Saved</small><strong id="sideSaved">৳0</strong></div>
+        <div><small>Remaining</small><strong id="sideRemaining">৳0</strong></div>
+        <div><small>Next due</small><strong id="sideNextDue">None</strong></div>
+      </div>
+      <div class="side-menu-foot">
+        <button class="secondary" id="sideThemeBtn" type="button">Night</button>
+        <button class="secondary" id="sideLedgerBtn" type="button">Ledger</button>
+      </div>
+    </aside>
+    <div class="side-overlay" id="sideOverlay"></div>
+    <main class="app">
+      <header class="app-topbar">
+        <button class="menu-toggle" id="menuToggleBtn" type="button" aria-label="Open menu">☰</button>
+        <div>
+          <strong>Umrah Tracker</strong>
+          <small id="saveStatus">Ready</small>
+        </div>
+        <div class="toolbar">
+          <span class="due-badge" id="dueBadge">0 due</span>
+          <button class="secondary" id="themeBtn" type="button">Night</button>
+          <button class="secondary" id="scrollLedgerBtn" type="button">Ledger</button>
+        </div>
+      </header>
+
+      <nav class="section-nav" aria-label="Tracker sections">
+        <button data-jump="#overview" type="button">Overview</button>
+        <button data-jump="#addEntry" type="button">Add Entry</button>
+        <button data-jump="#analysis" type="button">Analysis</button>
+        <button data-jump="#ledgerPanel" type="button">Ledger</button>
+        <button data-jump="#visitGuide" type="button">Visit Guide</button>
+        <button data-jump="#freeGuide" type="button">Free Guide</button>
+        <button data-jump="#transportGuide" type="button">Transport</button>
+        <button data-jump="#mobileUse" type="button">Mobile Use</button>
+        <button data-jump="#installments" type="button">Installments</button>
+      </nav>
+
+      <section class="hero" id="overview">
+        <div class="hero-copy">
+          <span class="kicker">Umrah Savings</span>
+          <h1>উমরাহ ফান্ড ট্র্যাকার</h1>
+          <p>জমানো টাকা, সাপ্তাহিক টার্গেট, প্যাকেজ খরচ এবং সফরে গিয়ে ব্যক্তিগত খরচ এক জায়গায় হিসাব করুন।</p>
+          <div class="hero-stats">
+            <div><small>মোট জমা</small><strong id="heroSaved">৳0</strong></div>
+            <div><small>টার্গেট বাকি</small><strong id="heroRemaining">৳0</strong></div>
+            <div><small>এই সপ্তাহে বাকি</small><strong id="heroWeekly">৳0</strong></div>
+          </div>
+        </div>
+        <div class="poster">
+          <img src="assets/umrah-madinah-hero.png" alt="Madinah green dome and minaret" />
+        </div>
+      </section>
+
+      <div class="quick-grid">
+        <form class="panel" id="planForm">
+          <div class="panel-head">
+            <div>
+              <h2>প্ল্যান সেট করুন</h2>
+              <p>টার্গেট, সাপ্তাহিক জমা এবং সফরের তারিখ।</p>
+            </div>
+          </div>
+          <div class="field-row">
+            <label>মোট টার্গেট <input id="target" type="number" min="0" step="1" required /></label>
+            <label>সাপ্তাহিক টার্গেট <input id="weeklyTarget" type="number" min="0" step="1" required /></label>
+          </div>
+          <div class="field-row">
+            <label>সফরের তারিখ <input id="travelDate" type="date" /></label>
+            <label>ব্যক্তিগত খরচ বাজেট <input id="personalBudget" type="number" min="0" step="1" /></label>
+          </div>
+          <div class="field-row">
+            <label>SAR রেট <input id="sarRate" type="number" min="1" step="0.01" /></label>
+            <label>দৈনিক সফর বাজেট <input id="dailyBudget" type="number" min="0" step="1" /></label>
+          </div>
+          <button class="primary" type="submit">প্ল্যান সেভ করুন</button>
+        </form>
+
+        <form class="panel" id="transactionForm">
+          <span id="addEntry"></span>
+          <div class="panel-head">
+            <div>
+              <h2>এন্ট্রি যোগ করুন</h2>
+              <p>জমা, উমরাহ খরচ অথবা ব্যক্তিগত খরচ।</p>
+            </div>
+          </div>
+          <div class="edit-banner" id="editBanner">
+            <span>এন্ট্রি এডিট করছেন</span>
+            <button class="secondary" id="cancelEditBtn" type="button">ক্যানসেল</button>
+          </div>
+          <div class="field-row">
+            <label>ধরন
+              <select id="type">
+                <option value="saving">জমা</option>
+                <option value="package">উমরাহ খরচ</option>
+                <option value="personal">ব্যক্তিগত খরচ</option>
+              </select>
+            </label>
+            <label>পরিমাণ <input id="amount" type="number" min="0" step="0.01" required /></label>
+          </div>
+          <div class="field-row">
+            <label>কারেন্সি
+              <select id="currency">
+                <option value="BDT">BDT ৳</option>
+                <option value="SAR">SAR ﷼</option>
+              </select>
+            </label>
+            <label>ক্যাটাগরি
+              <select id="category"></select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>তারিখ <input id="date" type="date" required /></label>
+            <label>ফান্ড
+              <select id="envelope">
+                <option value="packageFund">Package Fund</option>
+                <option value="personalFund">Personal Fund</option>
+                <option value="emergencyFund">Emergency Fund</option>
+                <option value="shoppingFund">Gift/Shopping Fund</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>নোট <input id="note" type="text" placeholder="যেমন: এজেন্সি অগ্রিম, খাবার, হোটেল" /></label>
+            <label>Receipt ছবি <input id="receipt" type="file" accept="image/*" /></label>
+          </div>
+          <small id="conversionHint">BDT হিসেবে হিসাব হবে</small>
+          <div class="quick-buttons">
+            <button data-quick="1000" type="button">৳১,০০০</button>
+            <button data-quick="5000" type="button">৳৫,০০০</button>
+            <button data-quick="10000" type="button">৳১০,০০০</button>
+            <button data-quick="25000" type="button">৳২৫,০০০</button>
+            <button data-expense-preset="Food" data-amount="1500" data-type-preset="personal" type="button">Food</button>
+            <button data-expense-preset="Transport" data-amount="2500" data-type-preset="personal" type="button">Transport</button>
+            <button data-expense-preset="Shopping" data-amount="5000" data-type-preset="personal" type="button">Shopping</button>
+            <button data-expense-preset="Emergency" data-amount="10000" data-type-preset="personal" type="button">Emergency</button>
+          </div>
+          <button class="primary" id="saveTransactionBtn" type="submit">এন্ট্রি যোগ করুন</button>
+        </form>
+      </div>
+
+      <section class="metrics">
+        <article class="card">
+          <span class="card-icon">৳</span>
+          <small>মোট জমা</small>
+          <strong id="savedTotal">৳0</strong>
+          <p id="progressHint">টার্গেটের 0%</p>
+        </article>
+        <article class="card">
+          <span class="card-icon">W</span>
+          <small>এই সপ্তাহে জমা</small>
+          <strong id="weeklySaved">৳0</strong>
+          <p id="weeklyHint">সাপ্তাহিক টার্গেট সেট করুন</p>
+        </article>
+        <article class="card">
+          <span class="card-icon">P</span>
+          <small>উমরাহ খরচ</small>
+          <strong id="packageSpent">৳0</strong>
+          <p>প্যাকেজ, ভিসা, টিকেট, হোটেল</p>
+        </article>
+        <article class="card">
+          <span class="card-icon">M</span>
+          <small>ব্যক্তিগত খরচ</small>
+          <strong id="personalSpent">৳0</strong>
+          <p id="personalHint">বাজেট সেট করুন</p>
+        </article>
+      </section>
+
+      <div class="main-grid" id="analysis">
+        <section class="panel" id="ledgerPanel">
+          <div class="panel-head">
+            <div>
+              <h2>সেভিংস অগ্রগতি</h2>
+              <p id="daysHint">সফরের তারিখ সেট করুন</p>
+            </div>
+            <div class="toolbar">
+              <button class="secondary" id="exportBtn" type="button">ব্যাকআপ কপি</button>
+              <button class="secondary" id="importBtn" type="button">ব্যাকআপ আনুন</button>
+              <button class="secondary" id="printBtn" type="button">রিপোর্ট</button>
+              <button class="danger" id="resetBtn" type="button">রিসেট</button>
+              <input id="importFile" type="file" accept="application/json" hidden />
+            </div>
+          </div>
+          <div class="progress-top">
+            <strong id="progressPercent">0%</strong>
+            <span id="progressMoney">৳0 / ৳0</span>
+          </div>
+          <div class="progress-track"><span id="progressBar"></span></div>
+          <div class="summary-row">
+            <div><small>মোট টার্গেট</small><strong id="targetSummary">৳0</strong></div>
+            <div><small>টার্গেট বাকি</small><strong id="remainingSummary">৳0</strong></div>
+            <div><small>সাপ্তাহিক বাকি</small><strong id="weeklyRemaining">৳0</strong></div>
+            <div><small>নেট ফান্ড</small><strong id="netFund">৳0</strong></div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="savingChart" width="900" height="230" aria-label="Savings chart"></canvas>
+          </div>
+          <div class="milestone-row" id="milestones"></div>
+          <div class="mini-grid" id="monthlySummary"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>লেনদেন লিস্ট</h2>
+              <p>সব জমা ও খরচের হিসাব।</p>
+            </div>
+          </div>
+          <div class="ledger-filter">
+            <input id="ledgerSearch" type="search" placeholder="নোট, ক্যাটাগরি বা ফান্ড দিয়ে খুঁজুন" />
+            <select id="ledgerTypeFilter">
+              <option value="all">সব</option>
+              <option value="saving">জমা</option>
+              <option value="package">উমরাহ খরচ</option>
+              <option value="personal">ব্যক্তিগত খরচ</option>
+            </select>
+          </div>
+          <div class="ledger" id="ledger"></div>
+        </section>
+      </div>
+
+      <div class="advanced-grid">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>ফান্ড এনভেলপ</h2>
+              <p>Package, Personal, Emergency ও Gift/Shopping fund balance।</p>
+            </div>
+          </div>
+          <div class="pill-grid" id="envelopeSummary"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>ক্যাটাগরি খরচ</h2>
+              <p>Visa, Ticket, Hotel, Transport, Food, Shopping, Emergency.</p>
+            </div>
+          </div>
+          <div class="category-grid" id="categorySummary"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>সাপ্তাহিক চেকলিস্ট</h2>
+              <p>শেষ ৮ সপ্তাহের target status।</p>
+            </div>
+          </div>
+          <div class="checklist" id="weeklyChecklist"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Forecast ও Trip Mode</h2>
+              <p id="forecastHint">জমা শুরু করলে forecast দেখা যাবে।</p>
+            </div>
+          </div>
+          <div class="pill-grid" id="tripSummary"></div>
+        </section>
+
+        <section class="panel full-row" id="visitGuide">
+          <div class="panel-head">
+            <div>
+              <h2>উমরাহ ভিজিট ও যিয়ারাহ গাইড</h2>
+              <p>সময়, অনুমতি ও স্থানীয় নিয়ম দেখে পরিকল্পনা করুন। ইবাদতের জায়গায় আদব ও শান্ত পরিবেশ বজায় রাখুন।</p>
+            </div>
+          </div>
+          <div class="visit-grid">
+            <article class="visit-card" data-visit-id="haram">
+              <label class="visit-check"><input type="checkbox" data-visit-check="haram" />Visited</label>
+              <span class="visit-tag">Makkah</span>
+              <strong>Masjid al-Haram ও Kaaba</strong>
+              <p>কী আছে: কাবা শরিফ, মাতাফ, মাকামে ইবরাহিম, জমজম, হারাম এলাকার নামাজ। কেন যাবেন: উমরাহর মূল ইবাদত এখানেই হয়।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al-Haram+Makkah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: সাধারণত ফ্রি</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="safa-marwah">
+              <label class="visit-check"><input type="checkbox" data-visit-check="safa-marwah" />Visited</label>
+              <span class="visit-tag">Makkah</span>
+              <strong>Safa ও Marwah</strong>
+              <p>কী আছে: সাঈ করার নির্ধারিত পথ। কেন যাবেন: উমরাহর ওয়াজিব অংশ, হজরত হাজেরা (আ.)-এর স্মৃতিবিজড়িত।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Safa+Marwah+Masjid+al-Haram" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: ফ্রি</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="hira">
+              <label class="visit-check"><input type="checkbox" data-visit-check="hira" />Visited</label>
+              <span class="visit-tag">Makkah</span>
+              <strong>Jabal al-Nour ও Cave Hira</strong>
+              <p>কী আছে: হেরা গুহা ও পাহাড়ি পথ। কেন যাবেন: প্রথম ওহির ইতিহাস বোঝার জন্য গুরুত্বপূর্ণ; উঠতে শারীরিক প্রস্তুতি দরকার।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Cave+Hira+Jabal+al+Nour+Makkah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: সাধারণত ফ্রি</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="thawr">
+              <label class="visit-check"><input type="checkbox" data-visit-check="thawr" />Visited</label>
+              <span class="visit-tag">Makkah</span>
+              <strong>Jabal Thawr</strong>
+              <p>কী আছে: পাহাড় ও ঐতিহাসিক গুহার এলাকা। কেন যাবেন: হিজরতের সময়কার ধৈর্য ও তাওয়াক্কুলের ইতিহাস স্মরণ করার জন্য।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Jabal+Thawr+Makkah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: সাধারণত ফ্রি</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="hajj-sites">
+              <label class="visit-check"><input type="checkbox" data-visit-check="hajj-sites" />Visited</label>
+              <span class="visit-tag">Makkah</span>
+              <strong>Mina, Arafat ও Muzdalifah</strong>
+              <p>কী আছে: হজের প্রধান ময়দান ও তাবু এলাকা। কেন যাবেন: হজের রুকন ও সিরাতের বড় অধ্যায় চোখে দেখার জন্য।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Arafat+Mina+Muzdalifah+Makkah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: ফ্রি, access seasonভেদে বদলায়</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="mualla">
+              <label class="visit-check"><input type="checkbox" data-visit-check="mualla" />Visited</label>
+              <span class="visit-tag">Makkah</span>
+              <strong>Jannat al-Mu'alla</strong>
+              <p>কী আছে: মক্কার ঐতিহাসিক কবরস্থান। কেন যাবেন: সালাফ ও মক্কার ইতিহাস স্মরণ করে দোয়া করার জন্য।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Jannat+al+Mualla+Makkah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: সাধারণত ফ্রি</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="nabawi">
+              <label class="visit-check"><input type="checkbox" data-visit-check="nabawi" />Visited</label>
+              <span class="visit-tag">Madinah</span>
+              <strong>Masjid an-Nabawi ও Rawdah</strong>
+              <p>কী আছে: মসজিদে নববী, রওজা শরিফ এলাকা, Rawdah। কেন যাবেন: মদিনা সফরের প্রধান ইবাদত ও যিয়ারাহ স্থান।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Al+Masjid+an+Nabawi+Madinah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: ফ্রি; Rawdah permit দরকার হতে পারে</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="quba">
+              <label class="visit-check"><input type="checkbox" data-visit-check="quba" />Visited</label>
+              <span class="visit-tag">Madinah</span>
+              <strong>Masjid Quba</strong>
+              <p>কী আছে: ইসলামের প্রথম মসজিদ হিসেবে পরিচিত। কেন যাবেন: মদিনার সবচেয়ে গুরুত্বপূর্ণ সুন্নাহ-স্মৃতির জায়গাগুলোর একটি।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+Quba+Madinah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: ফ্রি</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="qiblatain">
+              <label class="visit-check"><input type="checkbox" data-visit-check="qiblatain" />Visited</label>
+              <span class="visit-tag">Madinah</span>
+              <strong>Masjid al-Qiblatain</strong>
+              <p>কী আছে: কিবলা পরিবর্তনের ঘটনার সঙ্গে সম্পর্কিত মসজিদ। কেন যাবেন: ইসলামের ইতিহাসের একটি বড় ঘটনা বুঝতে।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al+Qiblatain+Madinah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: ফ্রি</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="uhud">
+              <label class="visit-check"><input type="checkbox" data-visit-check="uhud" />Visited</label>
+              <span class="visit-tag">Madinah</span>
+              <strong>Mount Uhud ও Shuhada Uhud</strong>
+              <p>কী আছে: উহুদ পাহাড়, শহীদদের এলাকা। কেন যাবেন: উহুদ যুদ্ধের শিক্ষা, ত্যাগ ও ইতিহাস অনুভব করার জন্য।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Mount+Uhud+Madinah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: ফ্রি</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="baqi">
+              <label class="visit-check"><input type="checkbox" data-visit-check="baqi" />Visited</label>
+              <span class="visit-tag">Madinah</span>
+              <strong>Jannat al-Baqi</strong>
+              <p>কী আছে: মসজিদে নববীর পাশে ঐতিহাসিক কবরস্থান। কেন যাবেন: সাহাবা ও আহলে বাইতের স্মৃতিবিজড়িত স্থান হিসেবে।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Jannat+al+Baqi+Madinah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: ফ্রি; সময় নির্ধারিত হতে পারে</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="date-market">
+              <label class="visit-check"><input type="checkbox" data-visit-check="date-market" />Visited</label>
+              <span class="visit-tag">Madinah</span>
+              <strong>মদিনা Date Market</strong>
+              <p>কী আছে: আজওয়া, সাফাওয়ি, খুদরি সহ নানা খেজুর। কেন যাবেন: উপহার ও নিজের জন্য ভালো মানের খেজুর কেনার সুবিধা।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Madinah+Dates+Market" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: ফ্রি; কেনাকাটার খরচ আলাদা</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="jeddah">
+              <label class="visit-check"><input type="checkbox" data-visit-check="jeddah" />Visited</label>
+              <span class="visit-tag">Jeddah</span>
+              <strong>Al-Balad ও Jeddah Corniche</strong>
+              <p>কী আছে: পুরনো জেদ্দার ঐতিহ্যবাহী বাড়ি, বাজার, সমুদ্রপাড়। কেন যাবেন: airport transit বা extra day থাকলে Saudi culture দেখার জন্য।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Al+Balad+Jeddah+Corniche" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: বেশিরভাগ outdoor ফ্রি</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="taif">
+              <label class="visit-check"><input type="checkbox" data-visit-check="taif" />Visited</label>
+              <span class="visit-tag">Taif</span>
+              <strong>Taif Mountains</strong>
+              <p>কী আছে: পাহাড়ি রাস্তা, ঠান্ডা আবহাওয়া, rose products। কেন যাবেন: মক্কা থেকে day trip হিসেবে scenic break নিতে।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Taif+Mountains+Saudi+Arabia" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: শহর ফ্রি; কিছু attraction paid হতে পারে</span></div>
+            </article>
+            <article class="visit-card" data-visit-id="heritage">
+              <label class="visit-check"><input type="checkbox" data-visit-check="heritage" />Visited</label>
+              <span class="visit-tag">Saudi</span>
+              <strong>AlUla / Diriyah / Riyadh</strong>
+              <p>কী আছে: heritage sites, museums, desert landscapes, modern Riyadh। কেন যাবেন: সময় বেশি থাকলে Saudi history ও culture দেখার জন্য।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=AlUla+Diriyah+Riyadh+Saudi+Arabia" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: অনেক জায়গায় paid ticket লাগে</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel full-row" id="freeGuide">
+          <div class="panel-head">
+            <div>
+              <h2>মক্কা-মদিনায় ফ্রি সুবিধা গাইড</h2>
+              <p>ফ্রি সুবিধা সময়, মৌসুম, ভিড় ও কর্তৃপক্ষের নিয়ম অনুযায়ী বদলাতে পারে। সাইনবোর্ড, হারাম/মসজিদ staff, hotel reception বা official app দেখে confirm করুন।</p>
+            </div>
+          </div>
+          <div class="visit-grid">
+            <article class="visit-card">
+              <span class="visit-tag">Makkah</span>
+              <strong>Zamzam পানি</strong>
+              <p>কোথায়: Masjid al-Haram-এর ভেতরে dispenser/কুলার, মাতাফ ও prayer area-র আশেপাশে। কেন দরকার: ইবাদতের মাঝে পানি ও বোতল refill করার সবচেয়ে নির্ভরযোগ্য free সুবিধা।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al-Haram+Makkah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Cost: Free</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Madinah</span>
+              <strong>Zamzam পানি</strong>
+              <p>কোথায়: Masjid an-Nabawi-এর ভেতরে ও courtyard area-তে dispenser থাকে। কেন দরকার: নামাজ/যিয়ারাহর মাঝে পানি refill ও বিশ্রামের জন্য।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Al+Masjid+an+Nabawi+Madinah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Cost: Free</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Ramadan</span>
+              <strong>ইফতার প্যাকেট/খেজুর/পানি</strong>
+              <p>কোথায়: Haram ও Nabawi courtyard/ভেতরে, Ramadan-এ volunteer ও charity distribution বেশি থাকে। কেন দরকার: মাগরিবের আগে সহজে ইফতার করা যায়।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al-Haram+iftar+Makkah" target="_blank" rel="noopener">Makkah Map</a><span class="fee-note">Cost: Free, seasonভেদে</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Makkah/Madinah</span>
+              <strong>মসজিদের Qur'an, নামাজের জায়গা ও বসার সুবিধা</strong>
+              <p>কোথায়: দুই হারামের shelf/প্রার্থনা area। কেন দরকার: নিজের copy না থাকলেও তিলাওয়াত, নামাজ ও বিশ্রামের জন্য ব্যবহার করা যায়। জায়গা ভিড়ভেদে বদলায়।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al-Haram+Quran+shelf" target="_blank" rel="noopener">Makkah Map</a><span class="fee-note">Cost: Free</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Makkah/Madinah</span>
+              <strong>Restroom ও Wudu area</strong>
+              <p>কোথায়: Haram/Nabawi-এর বাইরে basement/courtyard সংলগ্ন restroom complex, mall/transport hub-তেও পাওয়া যায়। কেন দরকার: ওজু, fresh হওয়া, family stop plan করা।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al-Haram+toilets+wudu" target="_blank" rel="noopener">Makkah Map</a><span class="fee-note">Cost: সাধারণত Free</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Assistance</span>
+              <strong>Wheelchair / elderly assistance</strong>
+              <p>কোথায়: Haram ও Nabawi gate/service points-এ limited free wheelchair বা guidance পাওয়া যেতে পারে; electric cart/paid service আলাদা। কেন দরকার: elderly/অসুস্থ traveller-এর জন্য।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al-Haram+wheelchair+service" target="_blank" rel="noopener">Makkah Map</a><span class="fee-note">Cost: Limited Free; paid option আছে</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Transport</span>
+              <strong>Hotel shuttle / Haram shuttle</strong>
+              <p>কোথায়: অনেক hotel নিজস্ব shuttle দেয়; কিছু season/route-এ public shuttle বা bus service থাকে। কেন দরকার: taxi খরচ বাঁচে। hotel reception/stop sign দেখে confirm করুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Makkah+Haram+shuttle+bus+stop" target="_blank" rel="noopener">Bus Stops</a><span class="fee-note">Cost: hotel/routeভেদে Free</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Madinah</span>
+              <strong>Nabawi umbrella shade ও courtyard rest</strong>
+              <p>কোথায়: Masjid an-Nabawi courtyard. কেন দরকার: গরমে shade, নামাজের আগে অপেক্ষা, family meeting point হিসেবে কাজে লাগে।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+an+Nabawi+courtyard+umbrellas" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Cost: Free</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Shopping</span>
+              <strong>Free tasting: খেজুর/আতর/চা</strong>
+              <p>কোথায়: Madinah date market, Makkah/Madinah gift shops-এ অনেক দোকান sample taste করতে দেয়। কেন দরকার: কেনার আগে quality বুঝতে পারবেন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Madinah+Dates+Market" target="_blank" rel="noopener">Date Market</a><span class="fee-note">Cost: Taste Free; buying paid</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Safety</span>
+              <strong>Information desk / lost & found guidance</strong>
+              <p>কোথায়: Haram/Nabawi service desks, security/help points, hotel desk. কেন দরকার: হারিয়ে গেলে, gate খুঁজতে, wheelchair/route/permit info নিতে।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+an+Nabawi+information+desk" target="_blank" rel="noopener">Madinah Map</a><span class="fee-note">Cost: Free guidance</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Connectivity</span>
+              <strong>Free Wi‑Fi / charging spots</strong>
+              <p>কোথায়: airport, hotel lobby, কিছু mall/cafe/service area-তে free Wi-Fi বা charging spot থাকতে পারে। কেন দরকার: maps, WhatsApp, ride/contact-এর জন্য।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Makkah+mall+free+wifi+charging" target="_blank" rel="noopener">Nearby Search</a><span class="fee-note">Cost: locationভেদে Free</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Tip</span>
+              <strong>Free জিনিস নেওয়ার আদব</strong>
+              <p>কোথায়: সব public/charity distribution. কেন দরকার: প্রয়োজনমতো নিন, line maintain করুন, waste করবেন না, staff instruction মানুন। group traveller হলে meeting point ঠিক রাখুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al-Haram+service+center" target="_blank" rel="noopener">Service Search</a><span class="fee-note">Cost: Free advice</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel full-row" id="transportGuide">
+          <div class="panel-head">
+            <div>
+              <h2>Cheapest Transport ও Self-Ride Guide</h2>
+              <p>Saudi-তে transport price city, season, distance ও app surge অনুযায়ী বদলায়। সবচেয়ে কম খরচে চলার জন্য আগে route, walking distance, hotel shuttle এবং app fare compare করুন।</p>
+            </div>
+          </div>
+          <div class="visit-grid">
+            <article class="visit-card">
+              <span class="visit-tag">Self Ride</span>
+              <strong>Careem Bike / Scooter</strong>
+              <p>কোথায়: Madinah-এ Careem Bike/scooter station পাওয়া যেতে পারে; availability Careem app-এ city অনুযায়ী check করতে হবে। কেন ভালো: ছোট distance, solo traveller, traffic এড়াতে low-cost option।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Careem+Bike+Madinah+Saudi+Arabia" target="_blank" rel="noopener">Find Stations</a><span class="fee-note">Cost: app rate; time/packageভেদে</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Best Free</span>
+              <strong>Walking + nearby hotel strategy</strong>
+              <p>কোথায়: Haram/Nabawi-এর ১-২ কিমি radius। কেন ভালো: সবচেয়ে কম খরচ, ভিড়ের সময় taxi এড়ানো যায়। plan: hotel থেকে gate number save করুন, heat/elderly থাকলে বিরতি নিন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Hotels+near+Masjid+al+Haram" target="_blank" rel="noopener">Makkah Hotels</a><span class="fee-note">Cost: Free</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Hotel</span>
+              <strong>Hotel shuttle bus</strong>
+              <p>কোথায়: অনেক Makkah hotel Haram shuttle দেয়; Madinah hotel-ও কখনও shuttle দেয়। কেন ভালো: taxi খরচ বাঁচে। reception থেকে timetable, pickup point, last trip জেনে নিন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Makkah+hotel+shuttle+to+Haram" target="_blank" rel="noopener">Search Stops</a><span class="fee-note">Cost: অনেক hotel-এ Free</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Bus</span>
+              <strong>Makkah bus / public bus</strong>
+              <p>কোথায়: Haram area, main roads, bus stops। কেন ভালো: solo/group traveller-এর জন্য taxi থেকে সস্তা হতে পারে। route live আছে কিনা app/signboard দেখে confirm করুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Makkah+bus+stop+near+Haram" target="_blank" rel="noopener">Bus Stops</a><span class="fee-note">Cost: route/fareভেদে low</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Madinah</span>
+              <strong>Madinah bus / shuttle routes</strong>
+              <p>কোথায়: Nabawi, airport, train station, major roads-এর পাশে stop থাকতে পারে। কেন ভালো: airport/station থেকে taxi-এর alternative; luggage থাকলে route আগে check করুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Madinah+bus+stop+near+Masjid+Nabawi" target="_blank" rel="noopener">Bus Stops</a><span class="fee-note">Cost: low/free route থাকতে পারে</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Ride App</span>
+              <strong>Careem / Uber / Kaiian / Jeeny compare</strong>
+              <p>কোথায়: Makkah, Madinah, Jeddah, airport/station। কেন ভালো: taxi bargaining এড়ানো যায়। এক app না দেখে ২-৩ app compare করুন; surge থাকলে ১০ মিনিট wait করলে fare কমতে পারে।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+Nabawi+ride+hailing+pickup" target="_blank" rel="noopener">Pickup Search</a><span class="fee-note">Cost: medium; surge avoid করুন</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Taxi</span>
+              <strong>Shared taxi / group ride</strong>
+              <p>কোথায়: hotel lobby, station, airport, ziyarah pickup area। কেন ভালো: ৩-৪ জন হলে per-person cost কমে। fare আগে ঠিক করুন, route map চালু রাখুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Makkah+taxi+pickup+Haram" target="_blank" rel="noopener">Pickup Areas</a><span class="fee-note">Cost: negotiate/groupভেদে</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Intercity</span>
+              <strong>Haramain Train</strong>
+              <p>কোথায়: Makkah, Jeddah Airport, Jeddah, KAEC, Madinah station। কেন ভালো: Makkah-Madinah/Jeddah route-এ fast, clean, predictable; early ticket নিলে taxi/private car থেকে ভালো value হতে পারে।</p>
+              <div class="visit-actions"><a class="map-link" href="https://sar.hhr.sa/" target="_blank" rel="noopener">Official Tickets</a><span class="fee-note">Cost: paid; early booking better</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Airport</span>
+              <strong>Airport to hotel lowest-cost plan</strong>
+              <p>কোথায়: Jeddah/Madinah airport। plan: hotel shuttle আছে কিনা আগে জিজ্ঞেস করুন, train/bus option compare করুন, তারপর ride app। রাত/ভিড়ের সময় fare বেশি হতে পারে।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Jeddah+Airport+Haramain+train+station" target="_blank" rel="noopener">Jeddah Airport</a><span class="fee-note">Cost: compare before booking</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Safety</span>
+              <strong>Self-ride safety rules</strong>
+              <p>Careem Bike/scooter নিলে helmet/rules, parking zone, battery, return station, night visibility check করুন। Haram/Nabawi crowded pedestrian zone-এ ride না করাই safe।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=bicycle+lanes+Madinah+Saudi+Arabia" target="_blank" rel="noopener">Bike Lanes</a><span class="fee-note">Cost: safety first</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Cheapest Order</span>
+              <strong>Low-cost priority list</strong>
+              <p>১. Walk, ২. Hotel shuttle, ৩. Public bus, ৪. Careem Bike/scooter if available, ৫. Shared taxi/group ride, ৬. Ride app, ৭. private car/ziyarah package।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al+Haram+transport+station" target="_blank" rel="noopener">Transport Search</a><span class="fee-note">Cost: lowest-first plan</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Tip</span>
+              <strong>কোন option কখন নেবেন?</strong>
+              <p>Solo short distance: bike/walk। Family/elderly: shuttle or ride app। Airport/station: train/bus compare। Ziyarah: group package vs shared taxi compare।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Madinah+transport+station+near+Masjid+Nabawi" target="_blank" rel="noopener">Nearby Options</a><span class="fee-note">Cost: situationভেদে</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel full-row" id="mobileUse">
+          <div class="panel-head">
+            <div>
+              <h2>Mobile Use ও Phone Backup</h2>
+              <p>এই tracker offline/local browser data ব্যবহার করে। তাই phone-এ ব্যবহার করলে backup/import routine রাখলে data safe থাকবে। Desktop-এর file:// link সরাসরি phone-এ কাজ করবে না, file বা hosted link phone-এ খুলতে হবে।</p>
+            </div>
+          </div>
+          <div class="visit-grid">
+            <article class="visit-card">
+              <span class="visit-tag">Step 1</span>
+              <strong>Phone-এ app file নিন</strong>
+              <p>এই HTML file এবং `assets` folder phone-এ পাঠান, অথবা কোনো hosting/GitHub Pages link-এ রাখুন। phone browser-এ file খুললেই tracker ব্যবহার করা যাবে।</p>
+              <div class="visit-actions"><span class="fee-note">Best: hosted HTTPS link</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Step 2</span>
+              <strong>Desktop data phone-এ নিতে backup করুন</strong>
+              <p>Desktop browser-এর হিসাব phone browser-এ auto যাবে না। আগে Backup copy download করুন, তারপর phone-এ সেই JSON import করুন।</p>
+              <div class="visit-actions"><button class="secondary" data-menu-action="export" type="button">Backup copy</button><button class="secondary" data-menu-action="import" type="button">Import backup</button></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Home Screen</span>
+              <strong>Mobile home screen shortcut</strong>
+              <p>Chrome/Android: menu থেকে “Add to Home screen”. iPhone Safari: Share button থেকে “Add to Home Screen”. এতে app-এর মতো open করা সহজ হবে।</p>
+              <div class="visit-actions"><span class="fee-note">No install needed</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Offline</span>
+              <strong>Internet ছাড়া কী চলবে?</strong>
+              <p>হিসাব, checklist, installment, backup import/export localভাবে চলবে। Google Maps links, fonts, hosted image বা external links খুলতে internet লাগবে।</p>
+              <div class="visit-actions"><span class="fee-note">Core tracker: offline usable</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Safety</span>
+              <strong>প্রতিদিন/সপ্তাহে backup রাখুন</strong>
+              <p>Mobile browser data clear করলে localStorage data মুছে যেতে পারে। সফরে গেলে নিয়মিত backup JSON WhatsApp/Drive/email-এ নিজের কাছে রাখুন।</p>
+              <div class="visit-actions"><button class="secondary" data-menu-action="export" type="button">Download backup</button></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Quick Check</span>
+              <strong>Phone-এ test করার নিয়ম</strong>
+              <p>phone-এ file/link খুলে plan save করুন, একটা test entry দিন, page refresh করুন। data থাকলে ঠিক আছে। তারপর backup export/import test করুন।</p>
+              <div class="visit-actions"><a class="map-link" href="#addEntry">Test Entry</a><span class="fee-note">Refresh দিয়ে verify</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel full-row" id="installments">
+          <div class="panel-head">
+            <div>
+              <h2>Installment Tracker</h2>
+              <p>Agency/payment due date, paid/unpaid ও remaining।</p>
+            </div>
+          </div>
+          <form id="installmentForm">
+            <div class="field-row">
+              <label>নাম <input id="installmentName" type="text" placeholder="যেমন: এজেন্সি ২য় কিস্তি" required /></label>
+              <label>পরিমাণ <input id="installmentAmount" type="number" min="0" step="1" required /></label>
+            </div>
+            <div class="field-row">
+              <label>Due date <input id="installmentDue" type="date" required /></label>
+              <label>স্ট্যাটাস
+                <select id="installmentStatus">
+                  <option value="unpaid">Unpaid</option>
+                  <option value="paid">Paid</option>
+                </select>
+              </label>
+            </div>
+            <button class="primary" type="submit">Installment যোগ করুন</button>
+          </form>
+          <div class="ledger" id="installmentList"></div>
+        </section>
+      </div>
+    </main>
+    <button class="floating-add" id="floatingAddBtn" type="button" aria-label="Add entry">+</button>
+    <nav class="bottom-nav" aria-label="Mobile quick navigation">
+      <button data-jump="#overview" type="button">Home</button>
+      <button data-jump="#addEntry" type="button">Add</button>
+      <button data-jump="#ledgerPanel" type="button">Ledger</button>
+      <button data-jump="#visitGuide" type="button">Visit</button>
+      <button data-jump="#freeGuide" type="button">Free</button>
+      <button data-jump="#transportGuide" type="button">Ride</button>
+      <button data-jump="#mobileUse" type="button">Mobile</button>
+      <button data-jump="#installments" type="button">Due</button>
+    </nav>
+    <div class="toast" id="toast">Saved</div>
+
+    <script>
+      const STORAGE_KEY = "standalone-umrah-savings-tracker-v1";
+      const THEME_KEY = "standalone-umrah-theme";
+      const VISIT_KEY = "standalone-umrah-visit-checklist-v1";
+      const bn = new Intl.NumberFormat("bn-BD", { maximumFractionDigits: 0 });
+      const els = {
+        saveStatus: document.querySelector("#saveStatus"),
+        sideMenu: document.querySelector("#sideMenu"),
+        menuToggleBtn: document.querySelector("#menuToggleBtn"),
+        menuCloseBtn: document.querySelector("#menuCloseBtn"),
+        sideOverlay: document.querySelector("#sideOverlay"),
+        sideSaved: document.querySelector("#sideSaved"),
+        sideRemaining: document.querySelector("#sideRemaining"),
+        sideNextDue: document.querySelector("#sideNextDue"),
+        dueBadge: document.querySelector("#dueBadge"),
+        themeBtn: document.querySelector("#themeBtn"),
+        sideThemeBtn: document.querySelector("#sideThemeBtn"),
+        scrollLedgerBtn: document.querySelector("#scrollLedgerBtn"),
+        sideLedgerBtn: document.querySelector("#sideLedgerBtn"),
+        floatingAddBtn: document.querySelector("#floatingAddBtn"),
+        planForm: document.querySelector("#planForm"),
+        transactionForm: document.querySelector("#transactionForm"),
+        target: document.querySelector("#target"),
+        weeklyTarget: document.querySelector("#weeklyTarget"),
+        travelDate: document.querySelector("#travelDate"),
+        personalBudget: document.querySelector("#personalBudget"),
+        sarRate: document.querySelector("#sarRate"),
+        dailyBudget: document.querySelector("#dailyBudget"),
+        type: document.querySelector("#type"),
+        amount: document.querySelector("#amount"),
+        currency: document.querySelector("#currency"),
+        category: document.querySelector("#category"),
+        envelope: document.querySelector("#envelope"),
+        date: document.querySelector("#date"),
+        note: document.querySelector("#note"),
+        receipt: document.querySelector("#receipt"),
+        conversionHint: document.querySelector("#conversionHint"),
+        ledgerSearch: document.querySelector("#ledgerSearch"),
+        ledgerTypeFilter: document.querySelector("#ledgerTypeFilter"),
+        ledger: document.querySelector("#ledger"),
+        editBanner: document.querySelector("#editBanner"),
+        saveTransactionBtn: document.querySelector("#saveTransactionBtn"),
+        monthlySummary: document.querySelector("#monthlySummary"),
+        importFile: document.querySelector("#importFile"),
+        milestones: document.querySelector("#milestones"),
+        envelopeSummary: document.querySelector("#envelopeSummary"),
+        categorySummary: document.querySelector("#categorySummary"),
+        weeklyChecklist: document.querySelector("#weeklyChecklist"),
+        forecastHint: document.querySelector("#forecastHint"),
+        tripSummary: document.querySelector("#tripSummary"),
+        installmentForm: document.querySelector("#installmentForm"),
+        installmentName: document.querySelector("#installmentName"),
+        installmentAmount: document.querySelector("#installmentAmount"),
+        installmentDue: document.querySelector("#installmentDue"),
+        installmentStatus: document.querySelector("#installmentStatus"),
+        installmentList: document.querySelector("#installmentList"),
+        toast: document.querySelector("#toast"),
+      };
+
+      const state = load();
+      let editingId = null;
+
+      function defaultState() {
+        return {
+          target: 450000,
+          weeklyTarget: 10000,
+          travelDate: "",
+          personalBudget: 50000,
+          sarRate: 32,
+          dailyBudget: 12000,
+          transactions: [],
+          installments: [],
+        };
+      }
+
+      function load() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+          return { ...defaultState(), ...saved, transactions: saved.transactions || [], installments: saved.installments || [] };
+        } catch {
+          return defaultState();
+        }
+      }
+
+      function save() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        markSaved();
+      }
+
+      function loadVisitChecklist() {
+        try {
+          return new Set(JSON.parse(localStorage.getItem(VISIT_KEY) || "[]"));
+        } catch {
+          return new Set();
+        }
+      }
+
+      function saveVisitChecklist(done) {
+        localStorage.setItem(VISIT_KEY, JSON.stringify(Array.from(done)));
+      }
+
+      function renderVisitChecklist() {
+        const done = loadVisitChecklist();
+        document.querySelectorAll("[data-visit-check]").forEach((input) => {
+          input.checked = done.has(input.dataset.visitCheck);
+          input.closest(".visit-card")?.classList.toggle("done", input.checked);
+        });
+      }
+
+      function markSaved(message = "Saved just now") {
+        els.saveStatus.textContent = message;
+        els.toast.textContent = message;
+        els.toast.classList.add("active");
+        clearTimeout(markSaved.timer);
+        markSaved.timer = setTimeout(() => els.toast.classList.remove("active"), 1300);
+      }
+
+      function applyTheme(mode = localStorage.getItem(THEME_KEY) || "day") {
+        const next = mode === "night" ? "night" : "day";
+        document.body.dataset.theme = next;
+        els.themeBtn.textContent = next === "night" ? "Day" : "Night";
+        els.sideThemeBtn.textContent = next === "night" ? "Day mode" : "Night mode";
+        localStorage.setItem(THEME_KEY, next);
+      }
+
+      function setMenu(open) {
+        document.body.classList.toggle("menu-open", open);
+        els.sideMenu.setAttribute("aria-hidden", open ? "false" : "true");
+        els.menuToggleBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      }
+
+      function prepareMenuUi() {
+        els.menuToggleBtn.innerHTML = `<span aria-hidden="true">&#9776;</span><span>Menu</span>`;
+        els.menuToggleBtn.setAttribute("aria-expanded", "false");
+        els.menuToggleBtn.nextElementSibling?.classList.add("topbar-brand");
+        els.menuCloseBtn.innerHTML = "&times;";
+        els.sideLedgerBtn.insertAdjacentHTML(
+          "afterend",
+          `
+            <button class="secondary" data-menu-action="export" type="button">Backup copy</button>
+            <button class="secondary" data-menu-action="import" type="button">Import backup</button>
+            <button class="secondary" data-menu-action="print" type="button">Report</button>
+            <button class="danger" data-menu-action="reset" type="button">Reset</button>
+          `,
+        );
+        els.sideThemeBtn.insertAdjacentHTML("beforebegin", `<small>Quick actions</small>`);
+      }
+
+      function setActiveSection(target) {
+        document.querySelectorAll("[data-jump]").forEach((button) => {
+          button.classList.toggle("is-active", button.dataset.jump === target);
+        });
+      }
+
+      function watchActiveSections() {
+        const sections = Array.from(document.querySelectorAll("[data-jump]"))
+          .map((button) => document.querySelector(button.dataset.jump))
+          .filter(Boolean);
+        if (!("IntersectionObserver" in window)) {
+          setActiveSection("#overview");
+          return;
+        }
+        const observer = new IntersectionObserver(
+          (entries) => {
+            const visible = entries
+              .filter((entry) => entry.isIntersecting)
+              .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+            if (visible?.target?.id) setActiveSection(`#${visible.target.id}`);
+          },
+          { rootMargin: "-20% 0px -58% 0px", threshold: [0.12, 0.3, 0.55] },
+        );
+        sections.forEach((section) => observer.observe(section));
+        setActiveSection("#overview");
+      }
+
+      function runMenuAction(action) {
+        const actionMap = {
+          export: "#exportBtn",
+          import: "#importBtn",
+          print: "#printBtn",
+          reset: "#resetBtn",
+        };
+        const target = document.querySelector(actionMap[action]);
+        if (!target) return;
+        setMenu(false);
+        target.click();
+      }
+
+      function today() {
+        const date = new Date();
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      }
+
+      function daysFromToday(dateString) {
+        if (!dateString) return null;
+        const due = new Date(`${dateString}T00:00:00`);
+        const now = new Date(`${today()}T00:00:00`);
+        if (Number.isNaN(due.getTime())) return null;
+        return Math.ceil((due - now) / 86400000);
+      }
+
+      function installmentStatus(item) {
+        if (item.status === "paid") return { className: "installment-paid", label: "Paid" };
+        const days = daysFromToday(item.due);
+        if (days === null) return { className: "", label: "No due date" };
+        if (days < 0) return { className: "installment-overdue", label: `${bn.format(Math.abs(days))} days overdue` };
+        if (days === 0) return { className: "installment-due", label: "Due today" };
+        if (days <= 7) return { className: "installment-due", label: `Due in ${bn.format(days)} days` };
+        return { className: "", label: `Due in ${bn.format(days)} days` };
+      }
+
+      function dueSummary() {
+        const unpaid = state.installments
+          .filter((item) => item.status !== "paid")
+          .map((item) => ({ ...item, days: daysFromToday(item.due) }))
+          .filter((item) => item.days !== null)
+          .sort((a, b) => a.days - b.days);
+        const urgent = unpaid.filter((item) => item.days <= 7).length;
+        const next = unpaid[0];
+        return {
+          urgent,
+          nextLabel: next ? installmentStatus(next).label : "None",
+        };
+      }
+
+      function money(value) {
+        return `৳${bn.format(Math.round(Number(value) || 0))}`;
+      }
+
+      function sar(value) {
+        return `﷼${bn.format(Number(value) || 0)}`;
+      }
+
+      function amountBdt(item) {
+        const amount = Number(item.amount || 0);
+        return item.currency === "SAR" ? amount * Number(state.sarRate || 1) : amount;
+      }
+
+      function setText(id, value) {
+        document.querySelector(`#${id}`).textContent = value;
+      }
+
+      function sum(type) {
+        return state.transactions.filter((item) => item.type === type).reduce((total, item) => total + amountBdt(item), 0);
+      }
+
+      function weekStart(dateString) {
+        const date = new Date(`${dateString}T00:00:00`);
+        const day = date.getDay();
+        date.setDate(date.getDate() - (day === 0 ? 6 : day - 1));
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      }
+
+      function totals() {
+        const start = weekStart(today());
+        const saved = sum("saving");
+        const packageSpent = sum("package");
+        const personalSpent = sum("personal");
+        const weeklySaved = state.transactions
+          .filter((item) => item.type === "saving" && item.date >= start && item.date <= today())
+          .reduce((total, item) => total + amountBdt(item), 0);
+        return {
+          saved,
+          packageSpent,
+          personalSpent,
+          weeklySaved,
+          remaining: Math.max(Number(state.target || 0) - saved, 0),
+          weeklyRemaining: Math.max(Number(state.weeklyTarget || 0) - weeklySaved, 0),
+          netFund: saved - packageSpent - personalSpent,
+          progress: state.target > 0 ? Math.min((saved / state.target) * 100, 100) : 0,
+        };
+      }
+
+      function monthKey(dateString) {
+        return (dateString || "").slice(0, 7);
+      }
+
+      function currentMonthRows() {
+        const current = monthKey(today());
+        const rows = state.transactions.filter((item) => monthKey(item.date) === current);
+        return {
+          saving: rows.filter((item) => item.type === "saving").reduce((total, item) => total + amountBdt(item), 0),
+          package: rows.filter((item) => item.type === "package").reduce((total, item) => total + amountBdt(item), 0),
+          personal: rows.filter((item) => item.type === "personal").reduce((total, item) => total + amountBdt(item), 0),
+        };
+      }
+
+      function chartPoints() {
+        let running = 0;
+        return state.transactions
+          .slice()
+          .sort((a, b) => a.date.localeCompare(b.date) || a.createdAt.localeCompare(b.createdAt))
+          .map((item) => {
+            running += item.type === "saving" ? amountBdt(item) : -amountBdt(item);
+            return { date: item.date, value: Math.max(running, 0) };
+          });
+      }
+
+      function weekEnd(dateString) {
+        const date = new Date(`${dateString}T00:00:00`);
+        date.setDate(date.getDate() + 6);
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      }
+
+      function addDays(dateString, days) {
+        const date = new Date(`${dateString}T00:00:00`);
+        date.setDate(date.getDate() + days);
+        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      }
+
+      function categoryOptions(type) {
+        if (type === "saving") return ["Income", "Bonus", "Gift", "Other"];
+        if (type === "package") return ["Visa", "Ticket", "Hotel", "Transport", "Package", "Other"];
+        return ["Food", "Transport", "Shopping", "Emergency", "Gift", "Other"];
+      }
+
+      function renderCategoryOptions() {
+        const current = els.category.value;
+        const options = categoryOptions(els.type.value);
+        els.category.innerHTML = options.map((item) => `<option value="${item}">${item}</option>`).join("");
+        if (options.includes(current)) els.category.value = current;
+      }
+
+      function updateConversionHint() {
+        const amount = Number(els.amount.value || 0);
+        const converted = els.currency.value === "SAR" ? amount * Number(state.sarRate || 1) : amount;
+        els.conversionHint.textContent = els.currency.value === "SAR" ? `${sar(amount)} = ${money(converted)} হিসেবে হিসাব হবে` : `${money(amount)} হিসেবে হিসাব হবে`;
+      }
+
+      function envelopeTotals() {
+        const labels = {
+          packageFund: "Package Fund",
+          personalFund: "Personal Fund",
+          emergencyFund: "Emergency Fund",
+          shoppingFund: "Gift/Shopping Fund",
+        };
+        return Object.entries(labels).map(([key, label]) => {
+          const rows = state.transactions.filter((item) => (item.envelope || "packageFund") === key);
+          const saved = rows.filter((item) => item.type === "saving").reduce((total, item) => total + amountBdt(item), 0);
+          const spent = rows.filter((item) => item.type !== "saving").reduce((total, item) => total + amountBdt(item), 0);
+          return { key, label, saved, spent, balance: saved - spent };
+        });
+      }
+
+      function categoryTotals() {
+        const map = new Map();
+        state.transactions
+          .filter((item) => item.type !== "saving")
+          .forEach((item) => {
+            const key = item.category || "Other";
+            map.set(key, (map.get(key) || 0) + amountBdt(item));
+          });
+        return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+      }
+
+      function forecastText(data) {
+        const savings = state.transactions.filter((item) => item.type === "saving");
+        if (!savings.length || !data.remaining) return data.remaining ? "জমা শুরু করলে forecast দেখা যাবে।" : "টার্গেট পূর্ণ হয়েছে।";
+        const weeks = new Set(savings.map((item) => weekStart(item.date))).size || 1;
+        const weeklyAverage = data.saved / weeks;
+        if (!weeklyAverage) return "জমা শুরু করলে forecast দেখা যাবে।";
+        const weeksLeft = Math.ceil(data.remaining / weeklyAverage);
+        return `বর্তমান গড়ে ${money(weeklyAverage)} / সপ্তাহ। আনুমানিক ${bn.format(weeksLeft)} সপ্তাহ পরে target পূর্ণ হবে (${addDays(today(), weeksLeft * 7)})।`;
+      }
+
+      function readReceipt(file) {
+        return new Promise((resolve) => {
+          if (!file) return resolve(null);
+          const reader = new FileReader();
+          reader.onload = () => resolve({ name: file.name, data: reader.result });
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function drawChart() {
+        const canvas = document.querySelector("#savingChart");
+        const ctx = canvas.getContext("2d");
+        const width = canvas.width;
+        const height = canvas.height;
+        const points = chartPoints();
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = "#fffdf7";
+        ctx.fillRect(0, 0, width, height);
+        ctx.strokeStyle = "#e0d5bc";
+        ctx.lineWidth = 1;
+        ctx.font = "15px Hind Siliguri";
+        ctx.fillStyle = "#6f7467";
+
+        const pad = { top: 24, right: 22, bottom: 42, left: 70 };
+        const maxValue = Math.max(Number(state.target || 0), 1000, ...points.map((point) => point.value));
+        const plotW = width - pad.left - pad.right;
+        const plotH = height - pad.top - pad.bottom;
+
+        for (let i = 0; i <= 4; i += 1) {
+          const y = pad.top + (plotH / 4) * i;
+          ctx.beginPath();
+          ctx.moveTo(pad.left, y);
+          ctx.lineTo(width - pad.right, y);
+          ctx.stroke();
+          ctx.fillText(money(maxValue - (maxValue / 4) * i), 10, y + 5);
+        }
+
+        if (!points.length) {
+          ctx.fillStyle = "#6f7467";
+          ctx.fillText("এন্ট্রি যোগ করলে সেভিংস চার্ট দেখা যাবে", pad.left, height / 2);
+          return;
+        }
+
+        ctx.beginPath();
+        points.forEach((point, index) => {
+          const x = pad.left + (plotW / Math.max(points.length - 1, 1)) * index;
+          const y = pad.top + plotH - (point.value / maxValue) * plotH;
+          if (index === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = "#19744c";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        ctx.fillStyle = "#16211b";
+        ctx.fillText("নেট ফান্ড অগ্রগতি", pad.left, height - 14);
+      }
+
+      function escapeHtml(value) {
+        return String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
+      }
+
+      function render() {
+        const data = totals();
+        const due = dueSummary();
+        const progress = `${bn.format(Math.round(data.progress))}%`;
+        const personalLeft = Number(state.personalBudget || 0) - data.personalSpent;
+        const daysLeft = state.travelDate ? Math.ceil((new Date(`${state.travelDate}T00:00:00`) - new Date(`${today()}T00:00:00`)) / 86400000) : null;
+
+        els.target.value = state.target || "";
+        els.weeklyTarget.value = state.weeklyTarget || "";
+        els.travelDate.value = state.travelDate || "";
+        els.personalBudget.value = state.personalBudget || "";
+        els.sarRate.value = state.sarRate || "";
+        els.dailyBudget.value = state.dailyBudget || "";
+        els.date.value ||= today();
+        renderCategoryOptions();
+        updateConversionHint();
+
+        setText("heroSaved", money(data.saved));
+        setText("heroRemaining", money(data.remaining));
+        setText("heroWeekly", data.weeklyRemaining === 0 ? "পূর্ণ" : money(data.weeklyRemaining));
+        setText("sideSaved", money(data.saved));
+        setText("sideRemaining", money(data.remaining));
+        setText("sideNextDue", due.nextLabel);
+        setText("dueBadge", due.urgent ? `${bn.format(due.urgent)} due` : "0 due");
+        els.dueBadge.classList.toggle("bad", due.urgent > 0);
+        setText("savedTotal", money(data.saved));
+        setText("progressHint", `টার্গেটের ${progress}`);
+        setText("weeklySaved", money(data.weeklySaved));
+        setText("weeklyHint", data.weeklyRemaining === 0 ? "এই সপ্তাহের টার্গেট পূর্ণ" : `${money(data.weeklyRemaining)} বাকি`);
+        setText("packageSpent", money(data.packageSpent));
+        setText("personalSpent", money(data.personalSpent));
+        setText("personalHint", state.personalBudget ? (personalLeft >= 0 ? `${money(personalLeft)} বাজেট বাকি` : `${money(Math.abs(personalLeft))} বাজেটের বেশি`) : "বাজেট সেট করুন");
+        setText("daysHint", daysLeft === null ? "সফরের তারিখ সেট করুন" : daysLeft >= 0 ? `${bn.format(daysLeft)} দিন বাকি` : `${bn.format(Math.abs(daysLeft))} দিন আগে সফর ছিল`);
+        setText("progressPercent", progress);
+        setText("progressMoney", `${money(data.saved)} / ${money(state.target)}`);
+        setText("targetSummary", money(state.target));
+        setText("remainingSummary", money(data.remaining));
+        setText("weeklyRemaining", money(data.weeklyRemaining));
+        setText("netFund", money(data.netFund));
+        document.querySelector("#progressBar").style.width = `${data.progress}%`;
+        els.editBanner.classList.toggle("active", Boolean(editingId));
+        els.saveTransactionBtn.textContent = editingId ? "পরিবর্তন সেভ করুন" : "এন্ট্রি যোগ করুন";
+
+        const month = currentMonthRows();
+        els.monthlySummary.innerHTML = `
+          <div><small>এই মাসে জমা</small><strong class="good">${money(month.saving)}</strong></div>
+          <div><small>এই মাসে উমরাহ খরচ</small><strong class="bad">${money(month.package)}</strong></div>
+          <div><small>এই মাসে ব্যক্তিগত খরচ</small><strong class="bad">${money(month.personal)}</strong></div>
+        `;
+        els.milestones.innerHTML = [25, 50, 75, 100]
+          .map((mark) => `<div class="milestone ${data.progress >= mark ? "done" : ""}"><small>${mark}% milestone</small><strong>${data.progress >= mark ? "Done" : money((state.target * mark) / 100)}</strong></div>`)
+          .join("");
+        els.envelopeSummary.innerHTML = envelopeTotals()
+          .map((item) => `<div class="info-pill"><small>${item.label}</small><strong class="${item.balance >= 0 ? "good" : "bad"}">${money(item.balance)}</strong><small>জমা ${money(item.saved)} · খরচ ${money(item.spent)}</small></div>`)
+          .join("");
+        const categories = categoryTotals();
+        els.categorySummary.innerHTML = categories.length
+          ? categories.map(([name, total]) => `<div class="info-pill"><small>${escapeHtml(name)}</small><strong class="bad">${money(total)}</strong></div>`).join("")
+          : `<div class="empty full-row">খরচ যোগ করলে category breakdown দেখা যাবে।</div>`;
+        els.forecastHint.textContent = forecastText(data);
+
+        const todaySpent = state.transactions
+          .filter((item) => item.type === "personal" && item.date === today())
+          .reduce((total, item) => total + amountBdt(item), 0);
+        const dailyLeft = Number(state.dailyBudget || 0) - todaySpent;
+        els.tripSummary.innerHTML = `
+          <div class="info-pill"><small>আজ personal খরচ</small><strong class="bad">${money(todaySpent)}</strong></div>
+          <div class="info-pill"><small>Daily budget বাকি</small><strong class="${dailyLeft >= 0 ? "good" : "bad"}">${money(dailyLeft)}</strong></div>
+          <div class="info-pill"><small>SAR রেট</small><strong>${money(state.sarRate)} / ﷼1</strong></div>
+          <div class="info-pill"><small>জমা SAR value</small><strong>${sar(data.saved / Number(state.sarRate || 1))}</strong></div>
+        `;
+
+        const currentWeek = weekStart(today());
+        els.weeklyChecklist.innerHTML = Array.from({ length: 8 }, (_, index) => {
+          const start = addDays(currentWeek, -7 * index);
+          const end = weekEnd(start);
+          const saved = state.transactions
+            .filter((item) => item.type === "saving" && item.date >= start && item.date <= end)
+            .reduce((total, item) => total + amountBdt(item), 0);
+          const done = saved >= Number(state.weeklyTarget || 0);
+          const diff = saved - Number(state.weeklyTarget || 0);
+          return `<div class="week-card ${done ? "done" : "short"}"><small>${start} - ${end}</small><strong>${done ? "Done" : "Short"} · ${money(saved)}</strong><small>${done ? `${money(diff)} extra` : `${money(Math.abs(diff))} বাকি`}</small></div>`;
+        }).join("");
+        drawChart();
+
+        const labels = { saving: "জমা", package: "উমরাহ খরচ", personal: "ব্যক্তিগত খরচ" };
+        const ledgerQuery = (els.ledgerSearch.value || "").trim().toLowerCase();
+        const ledgerType = els.ledgerTypeFilter.value || "all";
+        const visibleRows = state.transactions
+          .slice()
+          .filter((item) => ledgerType === "all" || item.type === ledgerType)
+          .filter((item) => {
+            if (!ledgerQuery) return true;
+            return [item.note, item.category, item.envelope, item.currency, item.date].some((value) => String(value || "").toLowerCase().includes(ledgerQuery));
+          })
+          .sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt));
+        els.ledger.innerHTML = visibleRows
+          .map(
+            (item) => `
+              <article class="ledger-item">
+                <div class="item-line">
+                  <span class="type-pill">${escapeHtml(labels[item.type] || item.type)}</span>
+                  <strong class="${item.type === "saving" ? "good" : "bad"}">${item.type === "saving" ? "+" : "-"}${money(amountBdt(item))}</strong>
+                </div>
+                <div class="item-line">
+                  <small>${escapeHtml(item.date)} · ${escapeHtml(item.category || "Other")} · ${escapeHtml(item.envelope || "packageFund")} · ${escapeHtml(item.note || "নোট নেই")} ${item.receipt?.data ? `· <a class="receipt-link" href="${item.receipt.data}" target="_blank" rel="noopener">Receipt</a>` : ""}</small>
+                  <div class="ledger-actions">
+                    <button class="secondary" data-edit="${item.id}" type="button">এডিট</button>
+                    <button class="danger" data-delete="${item.id}" type="button">ডিলিট</button>
+                  </div>
+                </div>
+              </article>
+            `,
+          )
+          .join("") || `<div class="empty">এই filter-এ কোনো এন্ট্রি নেই।</div>`;
+
+        els.installmentList.innerHTML = state.installments
+          .slice()
+          .sort((a, b) => a.due.localeCompare(b.due))
+          .map((item) => {
+            const due = installmentStatus(item);
+            return `
+              <article class="ledger-item ${due.className}">
+                <div class="item-line">
+                  <strong>${escapeHtml(item.name)}</strong>
+                  <span class="type-pill">${escapeHtml(due.label)}</span>
+                </div>
+                <div class="item-line">
+                  <small>Due: ${escapeHtml(item.due)} · ${item.status === "paid" ? "Paid" : "Unpaid"}</small>
+                  <strong>${money(item.amount)}</strong>
+                </div>
+                <div class="ledger-actions">
+                  <button class="secondary" data-toggle-installment="${item.id}" type="button">${item.status === "paid" ? "Mark unpaid" : "Mark paid"}</button>
+                  <button class="danger" data-delete-installment="${item.id}" type="button">ডিলিট</button>
+                </div>
+              </article>
+            `;
+          })
+          .join("") || `<div class="empty">কোনো installment যোগ করা হয়নি।</div>`;
+      }
+
+      els.planForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        state.target = Number(els.target.value || 0);
+        state.weeklyTarget = Number(els.weeklyTarget.value || 0);
+        state.travelDate = els.travelDate.value;
+        state.personalBudget = Number(els.personalBudget.value || 0);
+        state.sarRate = Number(els.sarRate.value || 1);
+        state.dailyBudget = Number(els.dailyBudget.value || 0);
+        save();
+        render();
+      });
+
+      els.transactionForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const receipt = await readReceipt(els.receipt.files[0]);
+        const payload = {
+          type: els.type.value,
+          amount: Number(els.amount.value || 0),
+          currency: els.currency.value,
+          category: els.category.value,
+          envelope: els.envelope.value,
+          date: els.date.value,
+          note: els.note.value.trim(),
+        };
+        if (receipt) payload.receipt = receipt;
+        if (editingId) {
+          const item = state.transactions.find((entry) => entry.id === editingId);
+          if (item) Object.assign(item, payload, { updatedAt: new Date().toISOString() });
+          editingId = null;
+        } else {
+          state.transactions.push({
+            id: crypto.randomUUID(),
+            ...payload,
+            createdAt: new Date().toISOString(),
+          });
+        }
+        els.transactionForm.reset();
+        els.date.value = today();
+        save();
+        render();
+      });
+
+      document.body.addEventListener("click", (event) => {
+        const quick = event.target.closest("[data-quick]");
+        const edit = event.target.closest("[data-edit]");
+        const del = event.target.closest("[data-delete]");
+
+        if (quick) {
+          els.amount.value = quick.dataset.quick;
+          updateConversionHint();
+          els.amount.focus();
+        }
+
+        const preset = event.target.closest("[data-expense-preset]");
+        if (preset) {
+          els.type.value = preset.dataset.typePreset || "personal";
+          renderCategoryOptions();
+          els.category.value = preset.dataset.expensePreset;
+          els.envelope.value = "personalFund";
+          els.currency.value = "BDT";
+          els.amount.value = preset.dataset.amount || "";
+          els.note.value = preset.dataset.expensePreset;
+          updateConversionHint();
+          els.amount.focus();
+        }
+
+        if (edit) {
+          const item = state.transactions.find((entry) => entry.id === edit.dataset.edit);
+          if (!item) return;
+          editingId = item.id;
+          els.type.value = item.type;
+          renderCategoryOptions();
+          els.amount.value = item.amount;
+          els.currency.value = item.currency || "BDT";
+          els.category.value = item.category || categoryOptions(item.type)[0];
+          els.envelope.value = item.envelope || "packageFund";
+          els.date.value = item.date;
+          els.note.value = item.note || "";
+          els.amount.focus();
+          render();
+        }
+
+        if (del) {
+          if (!confirm("এই এন্ট্রি ডিলিট করবেন?")) return;
+          state.transactions = state.transactions.filter((item) => item.id !== del.dataset.delete);
+          if (editingId === del.dataset.delete) editingId = null;
+          save();
+          render();
+        }
+
+        const toggleInstallment = event.target.closest("[data-toggle-installment]");
+        const deleteInstallment = event.target.closest("[data-delete-installment]");
+        if (toggleInstallment) {
+          const item = state.installments.find((row) => row.id === toggleInstallment.dataset.toggleInstallment);
+          if (item) item.status = item.status === "paid" ? "unpaid" : "paid";
+          save();
+          render();
+        }
+        if (deleteInstallment) {
+          if (!confirm("এই installment ডিলিট করবেন?")) return;
+          state.installments = state.installments.filter((item) => item.id !== deleteInstallment.dataset.deleteInstallment);
+          save();
+          render();
+        }
+      });
+
+      document.querySelector("#cancelEditBtn").addEventListener("click", () => {
+        editingId = null;
+        els.transactionForm.reset();
+        els.date.value = today();
+        render();
+      });
+
+      document.querySelector("#exportBtn").addEventListener("click", async () => {
+        const data = JSON.stringify({ exportedAt: new Date().toISOString(), umrah: state, visitChecklist: Array.from(loadVisitChecklist()) }, null, 2);
+        const blob = new Blob([data], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `umrah-tracker-backup-${today()}.json`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        try {
+          await navigator.clipboard.writeText(data);
+          markSaved("Backup downloaded + copied");
+        } catch {
+          markSaved("Backup downloaded");
+        }
+      });
+
+      document.querySelector("#printBtn").addEventListener("click", () => window.print());
+
+      document.querySelector("#importBtn").addEventListener("click", () => els.importFile.click());
+
+      els.importFile.addEventListener("change", async () => {
+        const file = els.importFile.files[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          const parsed = JSON.parse(text);
+          const imported = parsed.umrah || parsed;
+          if (!Array.isArray(imported.transactions)) throw new Error("Invalid backup");
+          Object.assign(state, defaultState(), imported, { transactions: imported.transactions || [], installments: imported.installments || [] });
+          if (Array.isArray(parsed.visitChecklist)) saveVisitChecklist(new Set(parsed.visitChecklist));
+          save();
+          render();
+          renderVisitChecklist();
+          alert("ব্যাকআপ ইমপোর্ট হয়েছে।");
+        } catch {
+          alert("ব্যাকআপ ফাইল ঠিক নেই।");
+        } finally {
+          els.importFile.value = "";
+        }
+      });
+
+      document.querySelector("#resetBtn").addEventListener("click", () => {
+        if (!confirm("রিসেট করলে সব ডেটা মুছে যাবে। আগে Backup copy নিয়েছেন?")) return;
+        if (!confirm("শেষবার নিশ্চিত করুন: সব উমরাহ ট্র্যাকার ডেটা রিসেট করবেন?")) return;
+        localStorage.removeItem(STORAGE_KEY);
+        Object.assign(state, defaultState());
+        render();
+      });
+
+      els.installmentForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        state.installments.push({
+          id: crypto.randomUUID(),
+          name: els.installmentName.value.trim(),
+          amount: Number(els.installmentAmount.value || 0),
+          due: els.installmentDue.value,
+          status: els.installmentStatus.value,
+          createdAt: new Date().toISOString(),
+        });
+        els.installmentForm.reset();
+        save();
+        render();
+      });
+
+      els.type.addEventListener("change", () => {
+        renderCategoryOptions();
+        if (els.type.value === "personal") els.envelope.value = "personalFund";
+        if (els.type.value === "package") els.envelope.value = "packageFund";
+      });
+      els.amount.addEventListener("input", updateConversionHint);
+      els.currency.addEventListener("change", updateConversionHint);
+      els.ledgerSearch.addEventListener("input", render);
+      els.ledgerTypeFilter.addEventListener("change", render);
+      document.querySelectorAll("[data-visit-check]").forEach((input) => {
+        input.addEventListener("change", () => {
+          const done = loadVisitChecklist();
+          if (input.checked) done.add(input.dataset.visitCheck);
+          else done.delete(input.dataset.visitCheck);
+          saveVisitChecklist(done);
+          renderVisitChecklist();
+          markSaved(input.checked ? "Visit checklist updated" : "Visit unchecked");
+        });
+      });
+      els.themeBtn.addEventListener("click", () => applyTheme(document.body.dataset.theme === "night" ? "day" : "night"));
+      els.sideThemeBtn.addEventListener("click", () => applyTheme(document.body.dataset.theme === "night" ? "day" : "night"));
+      els.scrollLedgerBtn.addEventListener("click", () => els.ledger.scrollIntoView({ behavior: "smooth", block: "start" }));
+      els.sideLedgerBtn.addEventListener("click", () => {
+        setMenu(false);
+        els.ledger.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      els.floatingAddBtn.addEventListener("click", () => els.transactionForm.scrollIntoView({ behavior: "smooth", block: "start" }));
+      els.menuToggleBtn.addEventListener("click", () => setMenu(true));
+      els.menuCloseBtn.addEventListener("click", () => setMenu(false));
+      els.sideOverlay.addEventListener("click", () => setMenu(false));
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") setMenu(false);
+      });
+      document.addEventListener("click", (event) => {
+        const action = event.target.closest("[data-menu-action]");
+        if (action) runMenuAction(action.dataset.menuAction);
+      });
+      document.querySelectorAll("[data-jump]").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelector(button.dataset.jump)?.scrollIntoView({ behavior: "smooth", block: "start" });
+          setActiveSection(button.dataset.jump);
+          setMenu(false);
+        });
+      });
+
+      prepareMenuUi();
+      applyTheme();
+      watchActiveSections();
+      renderVisitChecklist();
+      els.date.value = today();
+      if (els.installmentDue) els.installmentDue.value = today();
+      render();
+    </script>
+  </body>
+</html>
