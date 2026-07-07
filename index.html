@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-07-maps-sim-shopping" />
+    <meta name="app-version" content="2026-07-07-hotel-tripcard-analytics" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -1733,6 +1733,16 @@
         <section class="panel">
           <div class="panel-head">
             <div>
+              <h2>Expense Insights</h2>
+              <p>Per-day trend, biggest expense, food/shopping budget left.</p>
+            </div>
+          </div>
+          <div class="pill-grid" id="expenseInsights"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
               <h2>সাপ্তাহিক চেকলিস্ট</h2>
               <p>শেষ ৮ সপ্তাহের target status।</p>
             </div>
@@ -2140,6 +2150,18 @@
           </div>
           <div class="visit-grid">
             <article class="visit-card">
+              <span class="visit-tag">Room</span>
+              <strong>Hotel room checklist</strong>
+              <p>Check-in এর পর room setup, safety, shuttle timing ও reception info save করুন।</p>
+              <label class="visit-check"><input type="checkbox" data-trip-check="room-checkin" />Check-in complete</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="room-keycard" />Key card / extra key</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="room-qibla" />Qibla direction checked</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="room-safe" />Safe box / passport safe</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="room-laundry" />Laundry option checked</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="room-shuttle" />Shuttle timing saved</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="room-reception" />Reception number saved</label>
+            </article>
+            <article class="visit-card">
               <span class="visit-tag">Official</span>
               <strong>Nusuk official hotel search</strong>
               <p>কেন দরকার: Umrah trip-এর hotel/transport/package option official channel থেকে compare করতে পারবেন। বুকিংয়ের আগে room type, tax, breakfast, cancellation, distance সব verify করুন।</p>
@@ -2522,6 +2544,13 @@
               <div class="visit-actions"><button class="secondary" id="printChecklistBtn" type="button">Print checklist</button><button class="secondary" data-menu-action="export" type="button">Backup</button></div>
             </article>
             <article class="visit-card">
+              <span class="visit-tag">Trip Card</span>
+              <strong>One-page printable trip card</strong>
+              <p>Hotel address, room, group leader, emergency numbers, gate and meeting point এক page-এ রাখুন।</p>
+              <textarea id="tripCardNote" rows="8" placeholder="Hotel address:&#10;Room:&#10;Reception:&#10;Group leader:&#10;Emergency: 911 / 997 / 999&#10;Haram/Nabawi gate:&#10;Meeting point:"></textarea>
+              <div class="visit-actions"><button class="secondary" id="printTripCardBtn" type="button">Print trip card</button><button class="secondary" id="copyTripCardBtn" type="button">Copy trip card</button></div>
+            </article>
+            <article class="visit-card">
               <span class="visit-tag">SIM/eSIM</span>
               <strong>SIM/eSIM compare table</strong>
               <p>STC/Mobily/Zain/eSIM price, data, validity, hotspot ও passport requirement compare করে final choice note করুন।</p>
@@ -2710,6 +2739,9 @@
         simCompareNote: document.querySelector("#simCompareNote"),
         shoppingListNote: document.querySelector("#shoppingListNote"),
         addShoppingExpenseBtn: document.querySelector("#addShoppingExpenseBtn"),
+        tripCardNote: document.querySelector("#tripCardNote"),
+        printTripCardBtn: document.querySelector("#printTripCardBtn"),
+        copyTripCardBtn: document.querySelector("#copyTripCardBtn"),
         printChecklistBtn: document.querySelector("#printChecklistBtn"),
         planForm: document.querySelector("#planForm"),
         transactionForm: document.querySelector("#transactionForm"),
@@ -2738,6 +2770,7 @@
         milestones: document.querySelector("#milestones"),
         envelopeSummary: document.querySelector("#envelopeSummary"),
         categorySummary: document.querySelector("#categorySummary"),
+        expenseInsights: document.querySelector("#expenseInsights"),
         weeklyChecklist: document.querySelector("#weeklyChecklist"),
         forecastHint: document.querySelector("#forecastHint"),
         tripSummary: document.querySelector("#tripSummary"),
@@ -2815,6 +2848,7 @@
           tripTimelineNote: "",
           simCompareNote: "",
           shoppingListNote: "",
+          tripCardNote: "",
           sarRate: 32,
           bag: { limit: "", current: "", gifts: "" },
           split: { total: "", people: "" },
@@ -2966,6 +3000,7 @@
         if (els.tripTimelineNote) els.tripTimelineNote.value = data.tripTimelineNote || "";
         if (els.simCompareNote) els.simCompareNote.value = data.simCompareNote || "";
         if (els.shoppingListNote) els.shoppingListNote.value = data.shoppingListNote || "";
+        if (els.tripCardNote) els.tripCardNote.value = data.tripCardNote || "";
         if (els.bagLimit && !els.bagLimit.value) els.bagLimit.value = data.bag?.limit || "";
         if (els.bagCurrent && !els.bagCurrent.value) els.bagCurrent.value = data.bag?.current || "";
         if (els.bagGifts && !els.bagGifts.value) els.bagGifts.value = data.bag?.gifts || "";
@@ -3089,6 +3124,9 @@
           "Shopping list:",
           tools.shoppingListNote || "Not set",
           "",
+          "Trip card:",
+          tools.tripCardNote || "Not set",
+          "",
           "Members:",
           tools.groupMemberNote || "Not set",
           "",
@@ -3123,6 +3161,37 @@
           }
         }
         await copyTripSummary();
+      }
+
+      async function copyTripCard() {
+        const text = els.tripCardNote?.value || loadTripTools().tripCardNote || "Trip card not filled yet";
+        try {
+          await navigator.clipboard.writeText(text);
+          markSaved("Trip card copied");
+        } catch {
+          alert(text);
+        }
+      }
+
+      function renderExpenseInsights() {
+        if (!els.expenseInsights) return;
+        const expenseRows = state.transactions.filter((item) => item.type !== "saving");
+        const personalRows = state.transactions.filter((item) => item.type === "personal");
+        const uniqueDays = new Set(personalRows.map((item) => item.date)).size || 1;
+        const personalTotal = personalRows.reduce((total, item) => total + amountBdt(item), 0);
+        const perDay = personalTotal / uniqueDays;
+        const biggest = expenseRows.slice().sort((a, b) => amountBdt(b) - amountBdt(a))[0];
+        const foodSpent = personalRows.filter((item) => (item.category || "").toLowerCase() === "food").reduce((total, item) => total + amountBdt(item), 0);
+        const shoppingSpent = personalRows.filter((item) => ["shopping", "gift"].includes((item.category || "").toLowerCase())).reduce((total, item) => total + amountBdt(item), 0);
+        const personalBudget = Number(state.personalBudget || 0);
+        const foodCap = personalBudget ? personalBudget * 0.4 : 0;
+        const shoppingCap = personalBudget ? personalBudget * 0.3 : 0;
+        els.expenseInsights.innerHTML = `
+          <div class="info-pill"><small>Personal/day avg</small><strong>${money(perDay)}</strong></div>
+          <div class="info-pill"><small>Biggest expense</small><strong class="bad">${biggest ? `${money(amountBdt(biggest))} · ${escapeHtml(biggest.category || "Other")}` : "None"}</strong></div>
+          <div class="info-pill"><small>Food budget left</small><strong class="${foodCap - foodSpent >= 0 ? "good" : "bad"}">${personalBudget ? money(foodCap - foodSpent) : "Set budget"}</strong></div>
+          <div class="info-pill"><small>Shopping budget left</small><strong class="${shoppingCap - shoppingSpent >= 0 ? "good" : "bad"}">${personalBudget ? money(shoppingCap - shoppingSpent) : "Set budget"}</strong></div>
+        `;
       }
 
       function calculateCurrency(direction) {
@@ -3605,6 +3674,7 @@
           })
           .join("") || `<div class="empty">কোনো installment যোগ করা হয়নি।</div>`;
         renderProgressDashboard();
+        renderExpenseInsights();
         runGlobalSearch();
       }
 
@@ -3831,6 +3901,7 @@
       els.tripTimelineNote?.addEventListener("input", () => saveTripTools({ tripTimelineNote: els.tripTimelineNote.value }));
       els.simCompareNote?.addEventListener("input", () => saveTripTools({ simCompareNote: els.simCompareNote.value }));
       els.shoppingListNote?.addEventListener("input", () => saveTripTools({ shoppingListNote: els.shoppingListNote.value }));
+      els.tripCardNote?.addEventListener("input", () => saveTripTools({ tripCardNote: els.tripCardNote.value }));
       [els.bagLimit, els.bagCurrent, els.bagGifts].forEach((input) => input?.addEventListener("input", () => {
         saveTripTools({ bag: { limit: els.bagLimit?.value || "", current: els.bagCurrent?.value || "", gifts: els.bagGifts?.value || "" } });
       }));
@@ -3865,6 +3936,8 @@
       els.shareTripSummary?.addEventListener("click", shareTripSummary);
       els.printTripSummary?.addEventListener("click", () => window.print());
       els.printChecklistBtn?.addEventListener("click", () => window.print());
+      els.printTripCardBtn?.addEventListener("click", () => window.print());
+      els.copyTripCardBtn?.addEventListener("click", copyTripCard);
       els.globalSearch?.addEventListener("input", runGlobalSearch);
       els.clearSearchBtn?.addEventListener("click", () => {
         els.globalSearch.value = "";
@@ -3931,6 +4004,7 @@
       renderTripTools();
       renderFavorites();
       renderProgressDashboard();
+      renderExpenseInsights();
       runGlobalSearch();
       els.date.value = today();
       if (els.installmentDue) els.installmentDue.value = today();
