@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-07-trip-companion" />
+    <meta name="app-version" content="2026-07-07-all-extras" />
     <title>Umrah Savings Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1011,6 +1011,26 @@
         font-weight: 900;
       }
 
+      .compact-table {
+        width: 100%;
+        margin-top: 10px;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      .compact-table th,
+      .compact-table td {
+        padding: 8px;
+        border: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .compact-table th {
+        color: var(--green-dark);
+        background: rgba(241, 232, 211, 0.72);
+      }
+
       .visit-card.done {
         border-color: rgba(25, 116, 76, 0.48);
         background: #e8f4ec;
@@ -1274,6 +1294,7 @@
         <button data-jump="#docsGuide" type="button">Docs</button>
         <button data-jump="#travelTools" type="button">Tools</button>
         <button data-jump="#smartTools" type="button">Smart Tools</button>
+        <button data-jump="#tripExtras" type="button">Trip Extras</button>
         <button data-jump="#mobileUse" type="button">Mobile Use</button>
         <button data-jump="#installments" type="button">Installments</button>
       </nav>
@@ -1316,6 +1337,7 @@
         <button data-jump="#docsGuide" type="button">Docs</button>
         <button data-jump="#travelTools" type="button">Tools</button>
         <button data-jump="#smartTools" type="button">Smart Tools</button>
+        <button data-jump="#tripExtras" type="button">Trip Extras</button>
         <button data-jump="#mobileUse" type="button">Mobile Use</button>
         <button data-jump="#installments" type="button">Installments</button>
       </nav>
@@ -2079,6 +2101,94 @@
           </div>
         </section>
 
+        <section class="panel full-row" id="tripExtras">
+          <div class="panel-head">
+            <div>
+              <h2>Trip Extras: Hotel, Route, Group, Food, Safety</h2>
+              <p>Umrah trip-এর practical decision, note, phrasebook, printable checklist ও safety reminder।</p>
+            </div>
+          </div>
+          <div class="visit-grid">
+            <article class="visit-card">
+              <span class="visit-tag">Hotel</span>
+              <strong>Hotel compare table</strong>
+              <p>Shortlist করার সময় real cost দেখুন: room price + transport + walking + family comfort।</p>
+              <table class="compact-table">
+                <thead><tr><th>Check</th><th>Why</th></tr></thead>
+                <tbody>
+                  <tr><td>Distance/gate</td><td>Haram/Nabawi gate number save, elderly থাকলে walking time দেখুন।</td></tr>
+                  <tr><td>Shuttle</td><td>Free shuttle, timetable, last trip, pickup point confirm।</td></tr>
+                  <tr><td>Breakfast</td><td>Daily food cost কমাতে পারে।</td></tr>
+                  <tr><td>Cancel policy</td><td>Date change হলে penalty কত হবে বুঝে নিন।</td></tr>
+                </tbody>
+              </table>
+              <textarea id="hotelCompareNote" rows="4" placeholder="Hotel A: price, distance, shuttle, breakfast&#10;Hotel B: ..."></textarea>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Ziyarah</span>
+              <strong>Day-wise ziyarah route plan</strong>
+              <p>সকাল/বিকাল split করলে heat ও crowd manage করা সহজ হয়। Elderly থাকলে half-day plan ভালো।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Makkah+ziyarah+places" target="_blank" rel="noopener">Makkah route</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Madinah+ziyarah+places" target="_blank" rel="noopener">Madinah route</a></div>
+              <textarea id="ziyarahPlanNote" rows="4" placeholder="Day 1 Makkah: Jabal al-Noor, Jabal Thawr...&#10;Day 2 Madinah: Uhud, Quba, Qiblatain..."></textarea>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Reminder</span>
+              <strong>Prayer / Rawdah reminder planner</strong>
+              <p>Rawdah permit/time slot, gate, wake-up time, meeting point save করুন। Rules/time slot official app বা authority থেকে confirm করুন।</p>
+              <textarea id="rawdahPrayerNote" rows="5" placeholder="Rawdah slot:&#10;Gate:&#10;Wake-up:&#10;Meeting point:&#10;Prayer plan:"></textarea>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Group</span>
+              <strong>Family/group member tracker</strong>
+              <p>Room, phone, passport checked, medicine/allergy note, wheelchair need লিখে রাখুন।</p>
+              <textarea id="groupMemberNote" rows="5" placeholder="Name / room / phone / medicine / note&#10;1.&#10;2."></textarea>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Food</span>
+              <strong>Food budget planner</strong>
+              <p>Breakfast included কিনা, daily meal cap, group meal split, cheap food area note করুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=supermarket+near+Masjid+al-Haram" target="_blank" rel="noopener">Makkah market</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=cheap+restaurant+near+Masjid+Nabawi" target="_blank" rel="noopener">Madinah food</a></div>
+              <textarea id="foodBudgetNote" rows="4" placeholder="Daily food budget:&#10;Breakfast: hotel / outside&#10;Cheap food spots:"></textarea>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Phrasebook</span>
+              <strong>Saudi quick phrasebook</strong>
+              <table class="compact-table">
+                <tbody>
+                  <tr><td>Where is gate?</td><td>Gate কোথায়?</td></tr>
+                  <tr><td>How much?</td><td>দাম কত?</td></tr>
+                  <tr><td>Hospital/pharmacy</td><td>Hospital / pharmacy লাগবে</td></tr>
+                  <tr><td>I am lost</td><td>আমি হারিয়ে গেছি</td></tr>
+                  <tr><td>No spicy / less oil</td><td>ঝাল কম / তেল কম</td></tr>
+                  <tr><td>Please call this number</td><td>এই number-এ call করুন</td></tr>
+                </tbody>
+              </table>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Safety</span>
+              <strong>Scam / overcharge warning</strong>
+              <p>WhatsApp-only payment, unofficial taxi, fake agent, too-cheap package, SIM overprice, shop “special discount” চাপ এড়ান। Receipt, official confirmation, map route, fare আগে confirm করুন।</p>
+              <div class="visit-actions"><span class="fee-note">Pay only after verify</span><span class="fee-note">Keep receipts</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Rules</span>
+              <strong>Umrah rules quick notes</strong>
+              <p>Ihram restrictions, tawaf/sa'i order, hair trim/shave, women/family practical notes, wheelchair option আগে শিখুন। Religious details trusted scholar/official guidance থেকে confirm করুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/search?q=official+Nusuk+Umrah+guide" target="_blank" rel="noopener">Official guide search</a><span class="fee-note">Confirm before acting</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Print</span>
+              <strong>Offline printable checklist</strong>
+              <p>Trip-এর আগে print/PDF করে family group-এ দিন।</p>
+              <label class="visit-check"><input type="checkbox" data-trip-check="print-docs" />Docs printed</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="print-hotel" />Hotel/route printed</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="print-emergency" />Emergency card printed</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="print-dua" />Dua/amal list ready</label>
+              <div class="visit-actions"><button class="secondary" id="printChecklistBtn" type="button">Print checklist</button><button class="secondary" data-menu-action="export" type="button">Backup</button></div>
+            </article>
+          </div>
+        </section>
+
         <section class="panel full-row" id="mobileUse">
           <div class="panel-head">
             <div>
@@ -2165,6 +2275,7 @@
       <button data-jump="#packingGuide" type="button">Pack</button>
       <button data-jump="#travelTools" type="button">Tools</button>
       <button data-jump="#smartTools" type="button">Smart</button>
+      <button data-jump="#tripExtras" type="button">Extra</button>
       <button data-jump="#mobileUse" type="button">Mobile</button>
       <button data-jump="#installments" type="button">Due</button>
     </nav>
@@ -2212,6 +2323,12 @@
         shareTripSummary: document.querySelector("#shareTripSummary"),
         printTripSummary: document.querySelector("#printTripSummary"),
         shareResult: document.querySelector("#shareResult"),
+        hotelCompareNote: document.querySelector("#hotelCompareNote"),
+        ziyarahPlanNote: document.querySelector("#ziyarahPlanNote"),
+        rawdahPrayerNote: document.querySelector("#rawdahPrayerNote"),
+        groupMemberNote: document.querySelector("#groupMemberNote"),
+        foodBudgetNote: document.querySelector("#foodBudgetNote"),
+        printChecklistBtn: document.querySelector("#printChecklistBtn"),
         planForm: document.querySelector("#planForm"),
         transactionForm: document.querySelector("#transactionForm"),
         target: document.querySelector("#target"),
@@ -2308,6 +2425,11 @@
           dayPlanner: "",
           safetyCard: "",
           medicineNote: "",
+          hotelCompareNote: "",
+          ziyarahPlanNote: "",
+          rawdahPrayerNote: "",
+          groupMemberNote: "",
+          foodBudgetNote: "",
           sarRate: 32,
           bag: { limit: "", current: "", gifts: "" },
           counters: { tawaf: 0, sai: 0 }
@@ -2337,6 +2459,11 @@
         if (els.dayPlanner) els.dayPlanner.value = data.dayPlanner || "";
         if (els.safetyCard) els.safetyCard.value = data.safetyCard || "";
         if (els.medicineNote) els.medicineNote.value = data.medicineNote || "";
+        if (els.hotelCompareNote) els.hotelCompareNote.value = data.hotelCompareNote || "";
+        if (els.ziyarahPlanNote) els.ziyarahPlanNote.value = data.ziyarahPlanNote || "";
+        if (els.rawdahPrayerNote) els.rawdahPrayerNote.value = data.rawdahPrayerNote || "";
+        if (els.groupMemberNote) els.groupMemberNote.value = data.groupMemberNote || "";
+        if (els.foodBudgetNote) els.foodBudgetNote.value = data.foodBudgetNote || "";
         if (els.bagLimit && !els.bagLimit.value) els.bagLimit.value = data.bag?.limit || "";
         if (els.bagCurrent && !els.bagCurrent.value) els.bagCurrent.value = data.bag?.current || "";
         if (els.bagGifts && !els.bagGifts.value) els.bagGifts.value = data.bag?.gifts || "";
@@ -2390,6 +2517,21 @@
           "",
           "Medicine:",
           tools.medicineNote || "Not set",
+          "",
+          "Hotel compare:",
+          tools.hotelCompareNote || "Not set",
+          "",
+          "Ziyarah plan:",
+          tools.ziyarahPlanNote || "Not set",
+          "",
+          "Rawdah/prayer:",
+          tools.rawdahPrayerNote || "Not set",
+          "",
+          "Food budget:",
+          tools.foodBudgetNote || "Not set",
+          "",
+          "Members:",
+          tools.groupMemberNote || "Not set",
           "",
           "Group notes:",
           tools.groupNotes || "Not set",
@@ -3109,6 +3251,11 @@
       els.dayPlanner?.addEventListener("input", () => saveTripTools({ dayPlanner: els.dayPlanner.value }));
       els.safetyCard?.addEventListener("input", () => saveTripTools({ safetyCard: els.safetyCard.value }));
       els.medicineNote?.addEventListener("input", () => saveTripTools({ medicineNote: els.medicineNote.value }));
+      els.hotelCompareNote?.addEventListener("input", () => saveTripTools({ hotelCompareNote: els.hotelCompareNote.value }));
+      els.ziyarahPlanNote?.addEventListener("input", () => saveTripTools({ ziyarahPlanNote: els.ziyarahPlanNote.value }));
+      els.rawdahPrayerNote?.addEventListener("input", () => saveTripTools({ rawdahPrayerNote: els.rawdahPrayerNote.value }));
+      els.groupMemberNote?.addEventListener("input", () => saveTripTools({ groupMemberNote: els.groupMemberNote.value }));
+      els.foodBudgetNote?.addEventListener("input", () => saveTripTools({ foodBudgetNote: els.foodBudgetNote.value }));
       [els.bagLimit, els.bagCurrent, els.bagGifts].forEach((input) => input?.addEventListener("input", () => {
         saveTripTools({ bag: { limit: els.bagLimit?.value || "", current: els.bagCurrent?.value || "", gifts: els.bagGifts?.value || "" } });
       }));
@@ -3124,6 +3271,7 @@
       els.copyTripSummary?.addEventListener("click", copyTripSummary);
       els.shareTripSummary?.addEventListener("click", shareTripSummary);
       els.printTripSummary?.addEventListener("click", () => window.print());
+      els.printChecklistBtn?.addEventListener("click", () => window.print());
       els.calcSarToBdt?.addEventListener("click", () => calculateCurrency("sarToBdt"));
       els.calcBdtToSar?.addEventListener("click", () => calculateCurrency("bdtToSar"));
       els.themeBtn.addEventListener("click", () => applyTheme(document.body.dataset.theme === "night" ? "day" : "night"));
