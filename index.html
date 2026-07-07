@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-07-hotel-tripcard-analytics" />
+    <meta name="app-version" content="2026-07-08-dua-notes" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -2249,6 +2249,16 @@
             <article class="visit-card"><label class="visit-check"><input type="checkbox" data-trip-check="rawdah" />Rawdah permit/plan</label><span class="visit-tag">Madinah</span><strong>Rawdah plan</strong><p>Permit/schedule দরকার হতে পারে। app/time slot আগে check করুন।</p></article>
             <article class="visit-card"><label class="visit-check"><input type="checkbox" data-trip-check="quran" />Daily Quran/Zikr</label><span class="visit-tag">Daily</span><strong>Daily Quran ও Zikr</strong><p>প্রতিদিন ছোট target রাখুন: Quran, durood, istighfar, dua list।</p></article>
             <article class="visit-card"><label class="visit-check"><input type="checkbox" data-trip-check="charity" />Sadaqah/help others</label><span class="visit-tag">Good Deed</span><strong>Sadaqah ও service</strong><p>পরিবার/elderly help, water/food share, sadaqah budget রাখুন।</p></article>
+            <article class="visit-card">
+              <span class="visit-tag">Dua Notes</span>
+              <strong>Personal dua notes</strong>
+              <p>Makkah, Madinah, family এবং নিজের personal dua আলাদা করে লিখে রাখুন।</p>
+              <label>Makkah dua <textarea id="makkahDuaNote" rows="4" placeholder="Kaaba/Haram dua list..."></textarea></label>
+              <label>Madinah dua <textarea id="madinahDuaNote" rows="4" placeholder="Nabawi/Rawdah dua list..."></textarea></label>
+              <label>Family dua <textarea id="familyDuaNote" rows="4" placeholder="Parents, spouse, children, relatives..."></textarea></label>
+              <label>Personal dua <textarea id="personalDuaNote" rows="4" placeholder="Forgiveness, rizq, health, akhirah..."></textarea></label>
+              <div class="visit-actions"><button class="secondary" id="copyDuaBtn" type="button">Copy duas</button><button class="secondary" id="printDuaBtn" type="button">Print duas</button></div>
+            </article>
           </div>
         </section>
 
@@ -2722,6 +2732,12 @@
         shareTripSummary: document.querySelector("#shareTripSummary"),
         printTripSummary: document.querySelector("#printTripSummary"),
         shareResult: document.querySelector("#shareResult"),
+        makkahDuaNote: document.querySelector("#makkahDuaNote"),
+        madinahDuaNote: document.querySelector("#madinahDuaNote"),
+        familyDuaNote: document.querySelector("#familyDuaNote"),
+        personalDuaNote: document.querySelector("#personalDuaNote"),
+        copyDuaBtn: document.querySelector("#copyDuaBtn"),
+        printDuaBtn: document.querySelector("#printDuaBtn"),
         globalSearch: document.querySelector("#globalSearch"),
         clearSearchBtn: document.querySelector("#clearSearchBtn"),
         searchCount: document.querySelector("#searchCount"),
@@ -2849,6 +2865,10 @@
           simCompareNote: "",
           shoppingListNote: "",
           tripCardNote: "",
+          makkahDuaNote: "",
+          madinahDuaNote: "",
+          familyDuaNote: "",
+          personalDuaNote: "",
           sarRate: 32,
           bag: { limit: "", current: "", gifts: "" },
           split: { total: "", people: "" },
@@ -3001,6 +3021,10 @@
         if (els.simCompareNote) els.simCompareNote.value = data.simCompareNote || "";
         if (els.shoppingListNote) els.shoppingListNote.value = data.shoppingListNote || "";
         if (els.tripCardNote) els.tripCardNote.value = data.tripCardNote || "";
+        if (els.makkahDuaNote) els.makkahDuaNote.value = data.makkahDuaNote || "";
+        if (els.madinahDuaNote) els.madinahDuaNote.value = data.madinahDuaNote || "";
+        if (els.familyDuaNote) els.familyDuaNote.value = data.familyDuaNote || "";
+        if (els.personalDuaNote) els.personalDuaNote.value = data.personalDuaNote || "";
         if (els.bagLimit && !els.bagLimit.value) els.bagLimit.value = data.bag?.limit || "";
         if (els.bagCurrent && !els.bagCurrent.value) els.bagCurrent.value = data.bag?.current || "";
         if (els.bagGifts && !els.bagGifts.value) els.bagGifts.value = data.bag?.gifts || "";
@@ -3127,6 +3151,14 @@
           "Trip card:",
           tools.tripCardNote || "Not set",
           "",
+          "Dua notes:",
+          [
+            `Makkah: ${tools.makkahDuaNote || "Not set"}`,
+            `Madinah: ${tools.madinahDuaNote || "Not set"}`,
+            `Family: ${tools.familyDuaNote || "Not set"}`,
+            `Personal: ${tools.personalDuaNote || "Not set"}`
+          ].join("\n"),
+          "",
           "Members:",
           tools.groupMemberNote || "Not set",
           "",
@@ -3168,6 +3200,31 @@
         try {
           await navigator.clipboard.writeText(text);
           markSaved("Trip card copied");
+        } catch {
+          alert(text);
+        }
+      }
+
+      async function copyDuaNotes() {
+        const tools = loadTripTools();
+        const text = [
+          "Umrah Dua Notes",
+          "",
+          "Makkah dua:",
+          tools.makkahDuaNote || "Not set",
+          "",
+          "Madinah dua:",
+          tools.madinahDuaNote || "Not set",
+          "",
+          "Family dua:",
+          tools.familyDuaNote || "Not set",
+          "",
+          "Personal dua:",
+          tools.personalDuaNote || "Not set"
+        ].join("\n");
+        try {
+          await navigator.clipboard.writeText(text);
+          markSaved("Dua notes copied");
         } catch {
           alert(text);
         }
@@ -3902,6 +3959,10 @@
       els.simCompareNote?.addEventListener("input", () => saveTripTools({ simCompareNote: els.simCompareNote.value }));
       els.shoppingListNote?.addEventListener("input", () => saveTripTools({ shoppingListNote: els.shoppingListNote.value }));
       els.tripCardNote?.addEventListener("input", () => saveTripTools({ tripCardNote: els.tripCardNote.value }));
+      els.makkahDuaNote?.addEventListener("input", () => saveTripTools({ makkahDuaNote: els.makkahDuaNote.value }));
+      els.madinahDuaNote?.addEventListener("input", () => saveTripTools({ madinahDuaNote: els.madinahDuaNote.value }));
+      els.familyDuaNote?.addEventListener("input", () => saveTripTools({ familyDuaNote: els.familyDuaNote.value }));
+      els.personalDuaNote?.addEventListener("input", () => saveTripTools({ personalDuaNote: els.personalDuaNote.value }));
       [els.bagLimit, els.bagCurrent, els.bagGifts].forEach((input) => input?.addEventListener("input", () => {
         saveTripTools({ bag: { limit: els.bagLimit?.value || "", current: els.bagCurrent?.value || "", gifts: els.bagGifts?.value || "" } });
       }));
@@ -3938,6 +3999,8 @@
       els.printChecklistBtn?.addEventListener("click", () => window.print());
       els.printTripCardBtn?.addEventListener("click", () => window.print());
       els.copyTripCardBtn?.addEventListener("click", copyTripCard);
+      els.copyDuaBtn?.addEventListener("click", copyDuaNotes);
+      els.printDuaBtn?.addEventListener("click", () => window.print());
       els.globalSearch?.addEventListener("input", runGlobalSearch);
       els.clearSearchBtn?.addEventListener("click", () => {
         els.globalSearch.value = "";
