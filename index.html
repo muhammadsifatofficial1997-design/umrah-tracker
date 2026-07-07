@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-07-pwa-ready" />
+    <meta name="app-version" content="2026-07-07-city-split" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -748,6 +748,7 @@
       body[data-theme="night"] .secondary,
       body[data-theme="night"] .menu-toggle,
       body[data-theme="night"] .menu-close,
+      body[data-theme="night"] .city-filter button,
       body[data-theme="night"] .side-menu-nav button,
       body[data-theme="night"] .quick-buttons button,
       body[data-theme="night"] .section-nav button {
@@ -768,6 +769,7 @@
       }
 
       body[data-theme="night"] .section-nav button.is-active,
+      body[data-theme="night"] .city-filter button.is-active,
       body[data-theme="night"] .side-menu-nav button.is-active,
       body[data-theme="night"] .bottom-nav button.is-active {
         border-color: var(--gold);
@@ -800,6 +802,10 @@
 
       body[data-theme="night"] .visit-card.done {
         background: #1c3329;
+      }
+
+      body[data-theme="night"] .city-heading {
+        background: #17231d;
       }
 
       body[data-theme="night"] .map-link {
@@ -946,6 +952,64 @@
 
       .visit-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .city-guide {
+        display: grid;
+        gap: 16px;
+      }
+
+      .city-filter {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .city-filter button {
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 14px;
+        color: var(--green-dark);
+        background: #fffdf7;
+        font-weight: 900;
+      }
+
+      .city-filter button.is-active {
+        border-color: var(--gold);
+        color: #fffdf2;
+        background: var(--green-dark);
+      }
+
+      .city-block {
+        display: grid;
+        gap: 10px;
+      }
+
+      .city-block.is-hidden {
+        display: none;
+      }
+
+      .city-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(234, 223, 198, 0.52);
+      }
+
+      .city-heading h3 {
+        margin: 0;
+        font-size: clamp(22px, 3vw, 32px);
+      }
+
+      .city-heading p {
+        max-width: 720px;
+        margin: 4px 0 0;
+        color: var(--muted);
       }
 
       .milestone-row {
@@ -1604,7 +1668,22 @@
               <p>সময়, অনুমতি ও স্থানীয় নিয়ম দেখে পরিকল্পনা করুন। ইবাদতের জায়গায় আদব ও শান্ত পরিবেশ বজায় রাখুন।</p>
             </div>
           </div>
-          <div class="visit-grid">
+          <div class="city-filter" aria-label="Visit city filter">
+            <button class="is-active" data-city-filter="all" type="button">All</button>
+            <button data-city-filter="makkah" type="button">Makkah</button>
+            <button data-city-filter="madinah" type="button">Madinah</button>
+            <button data-city-filter="extra" type="button">Jeddah / Taif / Saudi</button>
+          </div>
+          <div class="city-guide">
+            <section class="city-block" data-city-section="makkah">
+              <div class="city-heading">
+                <div>
+                  <h3>Makkah Visit & Ziyarah</h3>
+                  <p>Umrah core ibadat, Haram area, historic mountains, Hajj sites and Makkah cemetery.</p>
+                </div>
+                <span class="fee-note">6 places</span>
+              </div>
+              <div class="visit-grid">
             <article class="visit-card" data-visit-id="haram">
               <label class="visit-check"><input type="checkbox" data-visit-check="haram" />Visited</label>
               <span class="visit-tag">Makkah</span>
@@ -1647,6 +1726,17 @@
               <p>কী আছে: মক্কার ঐতিহাসিক কবরস্থান। কেন যাবেন: সালাফ ও মক্কার ইতিহাস স্মরণ করে দোয়া করার জন্য।</p>
               <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Jannat+al+Mualla+Makkah" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: সাধারণত ফ্রি</span></div>
             </article>
+              </div>
+            </section>
+            <section class="city-block" data-city-section="madinah">
+              <div class="city-heading">
+                <div>
+                  <h3>Madinah Visit & Ziyarah</h3>
+                  <p>Masjid an-Nabawi, Rawdah planning, Quba, Uhud, Baqi and date market in one group.</p>
+                </div>
+                <span class="fee-note">6 places</span>
+              </div>
+              <div class="visit-grid">
             <article class="visit-card" data-visit-id="nabawi">
               <label class="visit-check"><input type="checkbox" data-visit-check="nabawi" />Visited</label>
               <span class="visit-tag">Madinah</span>
@@ -1689,6 +1779,17 @@
               <p>কী আছে: আজওয়া, সাফাওয়ি, খুদরি সহ নানা খেজুর। কেন যাবেন: উপহার ও নিজের জন্য ভালো মানের খেজুর কেনার সুবিধা।</p>
               <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Madinah+Dates+Market" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: ফ্রি; কেনাকাটার খরচ আলাদা</span></div>
             </article>
+              </div>
+            </section>
+            <section class="city-block" data-city-section="extra">
+              <div class="city-heading">
+                <div>
+                  <h3>Jeddah / Taif / Saudi Extras</h3>
+                  <p>Transit, extra day, culture, mountains and wider Saudi heritage options.</p>
+                </div>
+                <span class="fee-note">3 places</span>
+              </div>
+              <div class="visit-grid">
             <article class="visit-card" data-visit-id="jeddah">
               <label class="visit-check"><input type="checkbox" data-visit-check="jeddah" />Visited</label>
               <span class="visit-tag">Jeddah</span>
@@ -1710,6 +1811,8 @@
               <p>কী আছে: heritage sites, museums, desert landscapes, modern Riyadh। কেন যাবেন: সময় বেশি থাকলে Saudi history ও culture দেখার জন্য।</p>
               <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=AlUla+Diriyah+Riyadh+Saudi+Arabia" target="_blank" rel="noopener">Google Maps</a><span class="fee-note">Entry: অনেক জায়গায় paid ticket লাগে</span></div>
             </article>
+              </div>
+            </section>
           </div>
         </section>
 
@@ -2677,6 +2780,15 @@
         setActiveSection("#overview");
       }
 
+      function setCityFilter(city) {
+        document.querySelectorAll("[data-city-filter]").forEach((button) => {
+          button.classList.toggle("is-active", button.dataset.cityFilter === city);
+        });
+        document.querySelectorAll("[data-city-section]").forEach((section) => {
+          section.classList.toggle("is-hidden", city !== "all" && section.dataset.citySection !== city);
+        });
+      }
+
       function runMenuAction(action) {
         const actionMap = {
           export: "#exportBtn",
@@ -3330,6 +3442,9 @@
           setActiveSection(button.dataset.jump);
           setMenu(false);
         });
+      });
+      document.querySelectorAll("[data-city-filter]").forEach((button) => {
+        button.addEventListener("click", () => setCityFilter(button.dataset.cityFilter));
       });
 
       if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
