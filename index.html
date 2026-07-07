@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-07-all-extras" />
+    <meta name="app-version" content="2026-07-07-pwa-ready" />
+    <meta name="theme-color" content="#102017" />
+    <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
+    <meta property="og:title" content="Umrah Tracker" />
+    <meta property="og:description" content="Savings, expenses, visit guide, hotel compare, free services, transport and trip checklist in one mobile-friendly app." />
+    <meta property="og:type" content="website" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="assets/umrah-madinah-hero.png" />
     <title>Umrah Savings Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1130,18 +1137,43 @@
         .toolbar,
         .danger,
         .secondary,
+        .floating-add,
+        .bottom-nav,
+        .side-menu,
+        .side-overlay,
+        .section-nav,
         #transactionForm,
         #installmentForm {
           display: none !important;
         }
 
         body {
-          background: #fff;
+          background: #fff !important;
         }
 
         .app {
           width: 100%;
           padding: 0;
+        }
+
+        .app-topbar,
+        .panel,
+        .hero {
+          box-shadow: none;
+          break-inside: avoid;
+        }
+
+        .hero {
+          min-height: auto;
+        }
+
+        .poster {
+          display: none;
+        }
+
+        .grid,
+        .visit-grid {
+          grid-template-columns: 1fr 1fr !important;
         }
       }
 
@@ -3299,6 +3331,12 @@
           setMenu(false);
         });
       });
+
+      if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("sw.js").catch(() => {});
+        });
+      }
 
       prepareMenuUi();
       applyTheme();

@@ -1,0 +1,19 @@
+{
+  "name": "Umrah Tracker",
+  "short_name": "Umrah",
+  "description": "Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f0e4",
+  "theme_color": "#102017",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/umrah-madinah-hero.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
