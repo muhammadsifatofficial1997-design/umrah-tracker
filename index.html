@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-08-dua-notes" />
+    <meta name="app-version" content="2026-07-08-menu-groups" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -593,8 +593,37 @@
       .side-menu-nav {
         display: grid;
         align-content: start;
-        gap: 10px;
+        gap: 0;
         padding: 18px 0;
+      }
+
+      .menu-group {
+        display: grid;
+        gap: 8px;
+        padding: 10px 0 12px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .menu-group:first-child {
+        padding-top: 0;
+      }
+
+      .menu-group:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      .menu-group-title {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .menu-group-actions {
+        display: grid;
+        gap: 8px;
       }
 
       .side-menu-nav button {
@@ -1460,22 +1489,47 @@
         <button class="menu-close" id="menuCloseBtn" type="button" aria-label="Close menu">�</button>
       </div>
       <nav class="side-menu-nav">
-        <button data-jump="#overview" type="button">Overview</button>
-        <button data-jump="#addEntry" type="button">Add Entry</button>
-        <button data-jump="#analysis" type="button">Analysis</button>
-        <button data-jump="#ledgerPanel" type="button">Ledger</button>
-        <button data-jump="#visitGuide" type="button">Visit Guide</button>
-        <button data-jump="#freeGuide" type="button">Free Guide</button>
-        <button data-jump="#transportGuide" type="button">Transport</button>
-        <button data-jump="#hotelGuide" type="button">Hotel</button>
-        <button data-jump="#packingGuide" type="button">Packing</button>
-        <button data-jump="#amalGuide" type="button">Amal</button>
-        <button data-jump="#docsGuide" type="button">Docs</button>
-        <button data-jump="#travelTools" type="button">Tools</button>
-        <button data-jump="#smartTools" type="button">Smart Tools</button>
-        <button data-jump="#tripExtras" type="button">Trip Extras</button>
-        <button data-jump="#mobileUse" type="button">Mobile Use</button>
-        <button data-jump="#installments" type="button">Installments</button>
+        <div class="menu-group">
+          <span class="menu-group-title">Core</span>
+          <div class="menu-group-actions">
+            <button data-jump="#overview" type="button">Overview</button>
+            <button data-jump="#addEntry" type="button">Add Entry</button>
+            <button data-jump="#ledgerPanel" type="button">Ledger</button>
+          </div>
+        </div>
+        <div class="menu-group">
+          <span class="menu-group-title">Money</span>
+          <div class="menu-group-actions">
+            <button data-jump="#analysis" type="button">Analysis</button>
+            <button data-jump="#installments" type="button">Installments</button>
+          </div>
+        </div>
+        <div class="menu-group">
+          <span class="menu-group-title">Guides</span>
+          <div class="menu-group-actions">
+            <button data-jump="#visitGuide" type="button">Visit Guide</button>
+            <button data-jump="#freeGuide" type="button">Free Guide</button>
+            <button data-jump="#transportGuide" type="button">Transport</button>
+            <button data-jump="#hotelGuide" type="button">Hotel</button>
+          </div>
+        </div>
+        <div class="menu-group">
+          <span class="menu-group-title">Trip Prep</span>
+          <div class="menu-group-actions">
+            <button data-jump="#packingGuide" type="button">Packing</button>
+            <button data-jump="#amalGuide" type="button">Amal & Dua</button>
+            <button data-jump="#docsGuide" type="button">Docs</button>
+          </div>
+        </div>
+        <div class="menu-group">
+          <span class="menu-group-title">Tools</span>
+          <div class="menu-group-actions">
+            <button data-jump="#travelTools" type="button">Travel Tools</button>
+            <button data-jump="#smartTools" type="button">Smart Tools</button>
+            <button data-jump="#tripExtras" type="button">Trip Extras</button>
+            <button data-jump="#mobileUse" type="button">Mobile Use</button>
+          </div>
+        </div>
       </nav>
       <div class="side-status">
         <div><small>Saved</small><strong id="sideSaved">৳0</strong></div>
@@ -1504,21 +1558,13 @@
 
       <nav class="section-nav" aria-label="Tracker sections">
         <button data-jump="#overview" type="button">Overview</button>
-        <button data-jump="#addEntry" type="button">Add Entry</button>
-        <button data-jump="#analysis" type="button">Analysis</button>
-        <button data-jump="#ledgerPanel" type="button">Ledger</button>
-        <button data-jump="#visitGuide" type="button">Visit Guide</button>
-        <button data-jump="#freeGuide" type="button">Free Guide</button>
-        <button data-jump="#transportGuide" type="button">Transport</button>
-        <button data-jump="#hotelGuide" type="button">Hotel</button>
-        <button data-jump="#packingGuide" type="button">Packing</button>
-        <button data-jump="#amalGuide" type="button">Amal</button>
-        <button data-jump="#docsGuide" type="button">Docs</button>
+        <button data-jump="#addEntry" type="button">Add</button>
+        <button data-jump="#analysis" type="button">Money</button>
+        <button data-jump="#visitGuide" type="button">Visit</button>
+        <button data-jump="#freeGuide" type="button">Guides</button>
         <button data-jump="#travelTools" type="button">Tools</button>
-        <button data-jump="#smartTools" type="button">Smart Tools</button>
-        <button data-jump="#tripExtras" type="button">Trip Extras</button>
-        <button data-jump="#mobileUse" type="button">Mobile Use</button>
-        <button data-jump="#installments" type="button">Installments</button>
+        <button data-jump="#packingGuide" type="button">Prep</button>
+        <button data-jump="#installments" type="button">Due</button>
       </nav>
 
       <section class="panel search-panel" id="quickSearchPanel">
