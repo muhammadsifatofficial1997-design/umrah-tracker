@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-07-more-tools" />
+    <meta name="app-version" content="2026-07-07-maps-sim-shopping" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -2413,6 +2413,26 @@
               <p>Mobile/PWA পুরনো cached page দেখালে latest version আনতে এই button ব্যবহার করুন।</p>
               <div class="visit-actions"><button class="secondary" id="refreshAppBtn" type="button">Refresh app</button><span class="mini-result" id="refreshResult">Current version ready</span></div>
             </article>
+            <article class="visit-card">
+              <span class="visit-tag">Offline Map</span>
+              <strong>Google Maps offline checklist</strong>
+              <p>Internet slow হলে hotel/Haram/Nabawi route যেন থাকে। Google Maps app থেকে offline area download করে রাখুন।</p>
+              <label class="visit-check"><input type="checkbox" data-trip-check="map-makkah-offline" />Makkah offline area</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="map-madinah-offline" />Madinah offline area</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="map-hotel-pin" />Hotel pin saved</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="map-haram-gate" />Haram gate pin saved</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="map-nabawi-gate" />Nabawi gate pin saved</label>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al-Haram+Makkah" target="_blank" rel="noopener">Haram</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Al+Masjid+an+Nabawi+Madinah" target="_blank" rel="noopener">Nabawi</a></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Taxi</span>
+              <strong>Taxi fare rough estimate</strong>
+              <p>Distance km + expected SAR/km দিয়ে rough idea নিন। Actual fare traffic, surge, route ও waiting অনুযায়ী বদলাবে।</p>
+              <label>Distance km <input id="taxiKm" type="number" min="0" step="0.1" placeholder="8" /></label>
+              <label>SAR per km <input id="taxiRate" type="number" min="0" step="0.1" placeholder="3" /></label>
+              <label>Base / waiting SAR <input id="taxiBase" type="number" min="0" step="0.1" placeholder="10" /></label>
+              <div class="visit-actions"><button class="secondary" id="calcTaxi" type="button">Estimate</button><span class="mini-result" id="taxiResult">Estimated fare</span></div>
+            </article>
           </div>
         </section>
 
@@ -2500,6 +2520,28 @@
               <label class="visit-check"><input type="checkbox" data-trip-check="print-emergency" />Emergency card printed</label>
               <label class="visit-check"><input type="checkbox" data-trip-check="print-dua" />Dua/amal list ready</label>
               <div class="visit-actions"><button class="secondary" id="printChecklistBtn" type="button">Print checklist</button><button class="secondary" data-menu-action="export" type="button">Backup</button></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">SIM/eSIM</span>
+              <strong>SIM/eSIM compare table</strong>
+              <p>STC/Mobily/Zain/eSIM price, data, validity, hotspot ও passport requirement compare করে final choice note করুন।</p>
+              <table class="compact-table">
+                <thead><tr><th>Provider</th><th>Check</th></tr></thead>
+                <tbody>
+                  <tr><td>STC</td><td>Coverage strong কিনা, data package, hotspot, passport/visa need.</td></tr>
+                  <tr><td>Mobily</td><td>Price vs data, airport/mall store, validity, app recharge.</td></tr>
+                  <tr><td>Zain</td><td>Budget package, 5G area, hotspot rule, support language.</td></tr>
+                  <tr><td>eSIM</td><td>Phone supports eSIM কিনা, QR before travel, data-only or call/SMS.</td></tr>
+                </tbody>
+              </table>
+              <textarea id="simCompareNote" rows="4" placeholder="STC: price/data/validity&#10;Mobily: ...&#10;Zain/eSIM: ..."></textarea>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Shopping</span>
+              <strong>Shopping list with budget</strong>
+              <p>Dates, attar, tasbih, gift item, quantity, expected cost, bought status save করুন।</p>
+              <textarea id="shoppingListNote" rows="6" placeholder="[ ] Ajwa dates - 2kg - SAR ...&#10;[ ] Attar - 3 pcs - SAR ...&#10;[ ] Tasbih - 10 pcs - SAR ..."></textarea>
+              <div class="visit-actions"><button class="secondary" id="addShoppingExpenseBtn" type="button">Add shopping expense</button><span class="fee-note">Use tracker category</span></div>
             </article>
           </div>
         </section>
@@ -2641,6 +2683,11 @@
         splitResult: document.querySelector("#splitResult"),
         refreshAppBtn: document.querySelector("#refreshAppBtn"),
         refreshResult: document.querySelector("#refreshResult"),
+        taxiKm: document.querySelector("#taxiKm"),
+        taxiRate: document.querySelector("#taxiRate"),
+        taxiBase: document.querySelector("#taxiBase"),
+        calcTaxi: document.querySelector("#calcTaxi"),
+        taxiResult: document.querySelector("#taxiResult"),
         medicineNote: document.querySelector("#medicineNote"),
         copyTripSummary: document.querySelector("#copyTripSummary"),
         shareTripSummary: document.querySelector("#shareTripSummary"),
@@ -2660,6 +2707,9 @@
         rawdahPrayerNote: document.querySelector("#rawdahPrayerNote"),
         groupMemberNote: document.querySelector("#groupMemberNote"),
         foodBudgetNote: document.querySelector("#foodBudgetNote"),
+        simCompareNote: document.querySelector("#simCompareNote"),
+        shoppingListNote: document.querySelector("#shoppingListNote"),
+        addShoppingExpenseBtn: document.querySelector("#addShoppingExpenseBtn"),
         printChecklistBtn: document.querySelector("#printChecklistBtn"),
         planForm: document.querySelector("#planForm"),
         transactionForm: document.querySelector("#transactionForm"),
@@ -2763,9 +2813,12 @@
           groupMemberNote: "",
           foodBudgetNote: "",
           tripTimelineNote: "",
+          simCompareNote: "",
+          shoppingListNote: "",
           sarRate: 32,
           bag: { limit: "", current: "", gifts: "" },
           split: { total: "", people: "" },
+          taxi: { km: "", rate: "", base: "" },
           counters: { tawaf: 0, sai: 0 }
         };
       }
@@ -2911,11 +2964,16 @@
         if (els.groupMemberNote) els.groupMemberNote.value = data.groupMemberNote || "";
         if (els.foodBudgetNote) els.foodBudgetNote.value = data.foodBudgetNote || "";
         if (els.tripTimelineNote) els.tripTimelineNote.value = data.tripTimelineNote || "";
+        if (els.simCompareNote) els.simCompareNote.value = data.simCompareNote || "";
+        if (els.shoppingListNote) els.shoppingListNote.value = data.shoppingListNote || "";
         if (els.bagLimit && !els.bagLimit.value) els.bagLimit.value = data.bag?.limit || "";
         if (els.bagCurrent && !els.bagCurrent.value) els.bagCurrent.value = data.bag?.current || "";
         if (els.bagGifts && !els.bagGifts.value) els.bagGifts.value = data.bag?.gifts || "";
         if (els.splitTotal && !els.splitTotal.value) els.splitTotal.value = data.split?.total || "";
         if (els.splitPeople && !els.splitPeople.value) els.splitPeople.value = data.split?.people || "";
+        if (els.taxiKm && !els.taxiKm.value) els.taxiKm.value = data.taxi?.km || "";
+        if (els.taxiRate && !els.taxiRate.value) els.taxiRate.value = data.taxi?.rate || "";
+        if (els.taxiBase && !els.taxiBase.value) els.taxiBase.value = data.taxi?.base || "";
         const tawaf = Math.min(Math.max(Number(data.counters?.tawaf || 0), 0), 7);
         const sai = Math.min(Math.max(Number(data.counters?.sai || 0), 0), 7);
         if (els.tawafCount) els.tawafCount.textContent = `${tawaf}/7`;
@@ -2958,6 +3016,21 @@
         }
         els.splitResult.textContent = `${(total / people).toFixed(2)} each`;
         markSaved("Cost split calculated");
+      }
+
+      function updateTaxiResult() {
+        const km = Number(els.taxiKm?.value || 0);
+        const rate = Number(els.taxiRate?.value || 0);
+        const base = Number(els.taxiBase?.value || 0);
+        saveTripTools({ taxi: { km: els.taxiKm?.value || "", rate: els.taxiRate?.value || "", base: els.taxiBase?.value || "" } });
+        if (!els.taxiResult) return;
+        if (!km || !rate) {
+          els.taxiResult.textContent = "km এবং SAR/km দিন";
+          return;
+        }
+        const fare = (km * rate) + base;
+        els.taxiResult.textContent = `Approx ${sar(fare)} (${money(fare * Number(state.sarRate || 1))})`;
+        markSaved("Taxi fare estimated");
       }
 
       async function refreshAppCache() {
@@ -3009,6 +3082,12 @@
           "",
           "Timeline:",
           tools.tripTimelineNote || "Not set",
+          "",
+          "SIM/eSIM:",
+          tools.simCompareNote || "Not set",
+          "",
+          "Shopping list:",
+          tools.shoppingListNote || "Not set",
           "",
           "Members:",
           tools.groupMemberNote || "Not set",
@@ -3750,11 +3829,16 @@
       els.groupMemberNote?.addEventListener("input", () => saveTripTools({ groupMemberNote: els.groupMemberNote.value }));
       els.foodBudgetNote?.addEventListener("input", () => saveTripTools({ foodBudgetNote: els.foodBudgetNote.value }));
       els.tripTimelineNote?.addEventListener("input", () => saveTripTools({ tripTimelineNote: els.tripTimelineNote.value }));
+      els.simCompareNote?.addEventListener("input", () => saveTripTools({ simCompareNote: els.simCompareNote.value }));
+      els.shoppingListNote?.addEventListener("input", () => saveTripTools({ shoppingListNote: els.shoppingListNote.value }));
       [els.bagLimit, els.bagCurrent, els.bagGifts].forEach((input) => input?.addEventListener("input", () => {
         saveTripTools({ bag: { limit: els.bagLimit?.value || "", current: els.bagCurrent?.value || "", gifts: els.bagGifts?.value || "" } });
       }));
       [els.splitTotal, els.splitPeople].forEach((input) => input?.addEventListener("input", () => {
         saveTripTools({ split: { total: els.splitTotal?.value || "", people: els.splitPeople?.value || "" } });
+      }));
+      [els.taxiKm, els.taxiRate, els.taxiBase].forEach((input) => input?.addEventListener("input", () => {
+        saveTripTools({ taxi: { km: els.taxiKm?.value || "", rate: els.taxiRate?.value || "", base: els.taxiBase?.value || "" } });
       }));
       document.querySelectorAll("[data-counter]").forEach((button) => {
         button.addEventListener("click", () => updateCounter(button.dataset.counter, Number(button.dataset.step || 1)));
@@ -3766,7 +3850,17 @@
       });
       els.calcBag?.addEventListener("click", updateBagResult);
       els.calcSplit?.addEventListener("click", updateSplitResult);
+      els.calcTaxi?.addEventListener("click", updateTaxiResult);
       els.refreshAppBtn?.addEventListener("click", refreshAppCache);
+      els.addShoppingExpenseBtn?.addEventListener("click", () => {
+        els.type.value = "personal";
+        renderCategoryOptions();
+        els.category.value = "Shopping";
+        els.envelope.value = "shoppingFund";
+        els.note.value = "Shopping / gifts";
+        els.transactionForm.scrollIntoView({ behavior: "smooth", block: "start" });
+        markSaved("Shopping entry ready");
+      });
       els.copyTripSummary?.addEventListener("click", copyTripSummary);
       els.shareTripSummary?.addEventListener("click", shareTripSummary);
       els.printTripSummary?.addEventListener("click", () => window.print());
