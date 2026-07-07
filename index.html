@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-07-city-split" />
+    <meta name="app-version" content="2026-07-07-final-tools" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -749,6 +749,7 @@
       body[data-theme="night"] .menu-toggle,
       body[data-theme="night"] .menu-close,
       body[data-theme="night"] .city-filter button,
+      body[data-theme="night"] .star-btn,
       body[data-theme="night"] .side-menu-nav button,
       body[data-theme="night"] .quick-buttons button,
       body[data-theme="night"] .section-nav button {
@@ -805,6 +806,10 @@
       }
 
       body[data-theme="night"] .city-heading {
+        background: #17231d;
+      }
+
+      body[data-theme="night"] .priority-item {
         background: #17231d;
       }
 
@@ -1102,6 +1107,80 @@
         background: rgba(241, 232, 211, 0.72);
       }
 
+      .search-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+
+      .search-panel input {
+        min-height: 46px;
+      }
+
+      .search-count {
+        color: var(--muted);
+        font-weight: 800;
+      }
+
+      .hidden-by-search,
+      .hidden-by-guide-filter {
+        display: none !important;
+      }
+
+      .star-btn {
+        width: 38px;
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--green-dark);
+        background: #fffdf7;
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      .star-btn.is-active {
+        border-color: var(--gold);
+        color: #101a15;
+        background: var(--gold);
+      }
+
+      .priority-list {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .priority-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 253, 247, 0.76);
+        font-weight: 800;
+      }
+
+      .qr-img {
+        width: min(190px, 100%);
+        aspect-ratio: 1;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      body.compact-mode .visit-card p,
+      body.compact-mode .panel-head p {
+        display: none;
+      }
+
+      body.compact-mode .visit-card {
+        min-height: 112px;
+      }
+
       .visit-card.done {
         border-color: rgba(25, 116, 76, 0.48);
         background: #e8f4ec;
@@ -1268,6 +1347,10 @@
           align-items: center;
           gap: 10px;
           padding: 10px;
+        }
+
+        .search-panel {
+          grid-template-columns: 1fr;
         }
 
         .menu-toggle {
@@ -1437,6 +1520,12 @@
         <button data-jump="#mobileUse" type="button">Mobile Use</button>
         <button data-jump="#installments" type="button">Installments</button>
       </nav>
+
+      <section class="panel search-panel" id="quickSearchPanel">
+        <input id="globalSearch" type="search" placeholder="Search: Rawdah, Zamzam, hotel, SIM, transport..." />
+        <button class="secondary" id="clearSearchBtn" type="button">Clear</button>
+        <span class="search-count" id="searchCount">All cards</span>
+      </section>
 
       <section class="hero" id="overview">
         <div class="hero-copy">
@@ -1661,6 +1750,48 @@
           <div class="pill-grid" id="tripSummary"></div>
         </section>
 
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Checklist Progress</h2>
+              <p>Visit, packing/docs/amal এবং priority status এক জায়গায়।</p>
+            </div>
+          </div>
+          <div class="pill-grid" id="progressDashboard"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>My Priority</h2>
+              <p>যে card গুরুত্বপূর্ণ, star চাপলে এখানে থাকবে।</p>
+            </div>
+          </div>
+          <div class="priority-list" id="priorityList"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Trip Timeline</h2>
+              <p>Day-wise Makkah/Madinah plan save করুন।</p>
+            </div>
+          </div>
+          <textarea id="tripTimelineNote" rows="7" placeholder="Day 1: Arrival + Umrah&#10;Day 2: Makkah ziyarah&#10;Day 3: Rest + shopping&#10;Day 4: Madinah transfer&#10;Day 5: Rawdah + Quba"></textarea>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>QR Share</h2>
+              <p>Friend/family mobile দিয়ে scan করে app open করতে পারবে।</p>
+            </div>
+          </div>
+          <img class="qr-img" alt="Umrah Tracker QR code" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https%3A%2F%2Fmuhammadsifatofficial1997-design.github.io%2Fumrah-tracker%2F" />
+          <div class="visit-actions"><button class="secondary" id="copyPublicLinkBtn" type="button">Copy link</button><button class="secondary" id="toggleCompactBtn" type="button">Compact mode</button></div>
+          <span class="mini-result" id="linkCopyResult">Stable link ready</span>
+        </section>
+
         <section class="panel full-row" id="visitGuide">
           <div class="panel-head">
             <div>
@@ -1823,6 +1954,12 @@
               <p>ফ্রি সুবিধা সময়, মৌসুম, ভিড় ও কর্তৃপক্ষের নিয়ম অনুযায়ী বদলাতে পারে। সাইনবোর্ড, হারাম/মসজিদ staff, hotel reception বা official app দেখে confirm করুন।</p>
             </div>
           </div>
+          <div class="city-filter" data-guide-filter-for="freeGuide">
+            <button class="is-active" data-guide-filter="all" type="button">All</button>
+            <button data-guide-filter="makkah" type="button">Makkah</button>
+            <button data-guide-filter="madinah" type="button">Madinah</button>
+            <button data-guide-filter="both" type="button">Both / Other</button>
+          </div>
           <div class="visit-grid">
             <article class="visit-card">
               <span class="visit-tag">Makkah</span>
@@ -1906,6 +2043,12 @@
               <p>Saudi-তে transport price city, season, distance ও app surge অনুযায়ী বদলায়। সবচেয়ে কম খরচে চলার জন্য আগে route, walking distance, hotel shuttle এবং app fare compare করুন।</p>
             </div>
           </div>
+          <div class="city-filter" data-guide-filter-for="transportGuide">
+            <button class="is-active" data-guide-filter="all" type="button">All</button>
+            <button data-guide-filter="makkah" type="button">Makkah</button>
+            <button data-guide-filter="madinah" type="button">Madinah</button>
+            <button data-guide-filter="both" type="button">Airport / Intercity / Other</button>
+          </div>
           <div class="visit-grid">
             <article class="visit-card">
               <span class="visit-tag">Self Ride</span>
@@ -1988,6 +2131,12 @@
               <h2>Nusuk Hotel Guide: Makkah ও Madinah</h2>
               <p>Nusuk/official booking availability, distance, price ও permit rules সময়ভেদে বদলায়। বুকিংয়ের আগে hotel name, distance, shuttle, cancellation policy এবং official/authorized listing confirm করুন।</p>
             </div>
+          </div>
+          <div class="city-filter" data-guide-filter-for="hotelGuide">
+            <button class="is-active" data-guide-filter="all" type="button">All</button>
+            <button data-guide-filter="makkah" type="button">Makkah</button>
+            <button data-guide-filter="madinah" type="button">Madinah</button>
+            <button data-guide-filter="both" type="button">Checklist / Budget</button>
           </div>
           <div class="visit-grid">
             <article class="visit-card">
@@ -2421,6 +2570,8 @@
       const THEME_KEY = "standalone-umrah-theme";
       const VISIT_KEY = "standalone-umrah-visit-checklist-v1";
       const TRIP_KEY = "standalone-umrah-trip-tools-v1";
+      const FAVORITE_KEY = "standalone-umrah-favorites-v1";
+      const PUBLIC_URL = "https://muhammadsifatofficial1997-design.github.io/umrah-tracker/";
       const bn = new Intl.NumberFormat("bn-BD", { maximumFractionDigits: 0 });
       const els = {
         saveStatus: document.querySelector("#saveStatus"),
@@ -2458,6 +2609,15 @@
         shareTripSummary: document.querySelector("#shareTripSummary"),
         printTripSummary: document.querySelector("#printTripSummary"),
         shareResult: document.querySelector("#shareResult"),
+        globalSearch: document.querySelector("#globalSearch"),
+        clearSearchBtn: document.querySelector("#clearSearchBtn"),
+        searchCount: document.querySelector("#searchCount"),
+        progressDashboard: document.querySelector("#progressDashboard"),
+        priorityList: document.querySelector("#priorityList"),
+        tripTimelineNote: document.querySelector("#tripTimelineNote"),
+        copyPublicLinkBtn: document.querySelector("#copyPublicLinkBtn"),
+        toggleCompactBtn: document.querySelector("#toggleCompactBtn"),
+        linkCopyResult: document.querySelector("#linkCopyResult"),
         hotelCompareNote: document.querySelector("#hotelCompareNote"),
         ziyarahPlanNote: document.querySelector("#ziyarahPlanNote"),
         rawdahPrayerNote: document.querySelector("#rawdahPrayerNote"),
@@ -2565,6 +2725,7 @@
           rawdahPrayerNote: "",
           groupMemberNote: "",
           foodBudgetNote: "",
+          tripTimelineNote: "",
           sarRate: 32,
           bag: { limit: "", current: "", gifts: "" },
           counters: { tawaf: 0, sai: 0 }
@@ -2583,6 +2744,118 @@
         localStorage.setItem(TRIP_KEY, JSON.stringify({ ...loadTripTools(), ...next }));
       }
 
+      function loadFavorites() {
+        try {
+          return new Set(JSON.parse(localStorage.getItem(FAVORITE_KEY) || "[]"));
+        } catch {
+          return new Set();
+        }
+      }
+
+      function saveFavorites(next) {
+        localStorage.setItem(FAVORITE_KEY, JSON.stringify(Array.from(next)));
+      }
+
+      function cardTitle(card) {
+        return card.querySelector("strong")?.textContent?.trim() || card.querySelector("h2")?.textContent?.trim() || "Priority item";
+      }
+
+      function prepareFavoriteButtons() {
+        const favorites = loadFavorites();
+        document.querySelectorAll(".visit-card").forEach((card, index) => {
+          if (card.querySelector(".star-btn")) return;
+          const title = cardTitle(card);
+          const key = card.dataset.favoriteKey || card.dataset.visitId || `${title}-${index}`;
+          card.dataset.favoriteKey = key;
+          const button = document.createElement("button");
+          button.className = "star-btn";
+          button.type = "button";
+          button.setAttribute("aria-label", "Add to priority");
+          button.textContent = "☆";
+          button.classList.toggle("is-active", favorites.has(key));
+          button.textContent = favorites.has(key) ? "★" : "☆";
+          button.addEventListener("click", () => {
+            const next = loadFavorites();
+            if (next.has(key)) next.delete(key);
+            else next.add(key);
+            saveFavorites(next);
+            renderFavorites();
+            renderProgressDashboard();
+          });
+          card.prepend(button);
+        });
+      }
+
+      function renderFavorites() {
+        const favorites = loadFavorites();
+        document.querySelectorAll(".star-btn").forEach((button) => {
+          const card = button.closest(".visit-card");
+          const active = favorites.has(card?.dataset.favoriteKey);
+          button.classList.toggle("is-active", active);
+          button.textContent = active ? "★" : "☆";
+        });
+        const items = Array.from(document.querySelectorAll(".visit-card"))
+          .filter((card) => favorites.has(card.dataset.favoriteKey))
+          .map((card) => `<div class="priority-item"><span>${cardTitle(card)}</span><small>${card.querySelector(".visit-tag")?.textContent || ""}</small></div>`);
+        if (els.priorityList) els.priorityList.innerHTML = items.join("") || `<div class="priority-item"><span>No priority yet</span><small>Tap ☆ on any card</small></div>`;
+      }
+
+      function todayPersonalSpent() {
+        return state.transactions
+          .filter((item) => item.type === "personal" && item.date === today())
+          .reduce((total, item) => total + amountBdt(item), 0);
+      }
+
+      function renderProgressDashboard() {
+        const visitInputs = Array.from(document.querySelectorAll("[data-visit-check]"));
+        const tripInputs = Array.from(document.querySelectorAll("[data-trip-check]"));
+        const visitDone = visitInputs.filter((input) => input.checked).length;
+        const tripDone = tripInputs.filter((input) => input.checked).length;
+        const favorites = loadFavorites().size;
+        const data = totals();
+        const dailyLeft = Number(state.dailyBudget || 0) - todayPersonalSpent();
+        if (!els.progressDashboard) return;
+        els.progressDashboard.innerHTML = `
+          <div class="info-pill"><small>Visit progress</small><strong>${visitDone}/${visitInputs.length}</strong></div>
+          <div class="info-pill"><small>Checklist progress</small><strong>${tripDone}/${tripInputs.length}</strong></div>
+          <div class="info-pill"><small>Priority saved</small><strong>${favorites}</strong></div>
+          <div class="info-pill"><small>Budget alert</small><strong class="${dailyLeft >= 0 ? "good" : "bad"}">${dailyLeft >= 0 ? "OK" : "Over"} ${money(Math.abs(dailyLeft))}</strong></div>
+        `;
+      }
+
+      function runGlobalSearch() {
+        const query = (els.globalSearch?.value || "").trim().toLowerCase();
+        const cards = Array.from(document.querySelectorAll(".visit-card, .info-pill, .ledger-item, .week-card"));
+        let shown = 0;
+        cards.forEach((card) => {
+          const match = !query || card.textContent.toLowerCase().includes(query);
+          card.classList.toggle("hidden-by-search", !match);
+          if (match) shown += 1;
+        });
+        if (els.searchCount) els.searchCount.textContent = query ? `${shown} match` : "All cards";
+      }
+
+      function cardGuideCity(card) {
+        const text = `${card.querySelector(".visit-tag")?.textContent || ""} ${card.textContent}`.toLowerCase();
+        const hasMakkah = text.includes("makkah") || text.includes("haram") || text.includes("aziziyah");
+        const hasMadinah = text.includes("madinah") || text.includes("nabawi") || text.includes("rawdah");
+        if (hasMakkah && !hasMadinah) return "makkah";
+        if (hasMadinah && !hasMakkah) return "madinah";
+        return "both";
+      }
+
+      function setGuideFilter(sectionId, filter) {
+        const section = document.querySelector(`#${sectionId}`);
+        if (!section) return;
+        section.querySelectorAll("[data-guide-filter]").forEach((button) => {
+          button.classList.toggle("is-active", button.dataset.guideFilter === filter);
+        });
+        section.querySelectorAll(".visit-card").forEach((card) => {
+          const city = cardGuideCity(card);
+          card.classList.toggle("hidden-by-guide-filter", filter !== "all" && city !== filter);
+        });
+      }
+
       function renderTripTools() {
         const data = loadTripTools();
         const done = new Set(data.checklist || []);
@@ -2599,6 +2872,7 @@
         if (els.rawdahPrayerNote) els.rawdahPrayerNote.value = data.rawdahPrayerNote || "";
         if (els.groupMemberNote) els.groupMemberNote.value = data.groupMemberNote || "";
         if (els.foodBudgetNote) els.foodBudgetNote.value = data.foodBudgetNote || "";
+        if (els.tripTimelineNote) els.tripTimelineNote.value = data.tripTimelineNote || "";
         if (els.bagLimit && !els.bagLimit.value) els.bagLimit.value = data.bag?.limit || "";
         if (els.bagCurrent && !els.bagCurrent.value) els.bagCurrent.value = data.bag?.current || "";
         if (els.bagGifts && !els.bagGifts.value) els.bagGifts.value = data.bag?.gifts || "";
@@ -2664,6 +2938,9 @@
           "",
           "Food budget:",
           tools.foodBudgetNote || "Not set",
+          "",
+          "Timeline:",
+          tools.tripTimelineNote || "Not set",
           "",
           "Members:",
           tools.groupMemberNote || "Not set",
@@ -3180,6 +3457,8 @@
             `;
           })
           .join("") || `<div class="empty">কোনো installment যোগ করা হয়নি।</div>`;
+        renderProgressDashboard();
+        runGlobalSearch();
       }
 
       els.planForm.addEventListener("submit", (event) => {
@@ -3377,6 +3656,7 @@
           else done.delete(input.dataset.visitCheck);
           saveVisitChecklist(done);
           renderVisitChecklist();
+          renderProgressDashboard();
           markSaved(input.checked ? "Visit checklist updated" : "Visit unchecked");
         });
       });
@@ -3388,6 +3668,7 @@
           else done.delete(input.dataset.tripCheck);
           saveTripTools({ checklist: Array.from(done) });
           renderTripTools();
+          renderProgressDashboard();
           markSaved(input.checked ? "Checklist updated" : "Checklist unchecked");
         });
       });
@@ -3400,6 +3681,7 @@
       els.rawdahPrayerNote?.addEventListener("input", () => saveTripTools({ rawdahPrayerNote: els.rawdahPrayerNote.value }));
       els.groupMemberNote?.addEventListener("input", () => saveTripTools({ groupMemberNote: els.groupMemberNote.value }));
       els.foodBudgetNote?.addEventListener("input", () => saveTripTools({ foodBudgetNote: els.foodBudgetNote.value }));
+      els.tripTimelineNote?.addEventListener("input", () => saveTripTools({ tripTimelineNote: els.tripTimelineNote.value }));
       [els.bagLimit, els.bagCurrent, els.bagGifts].forEach((input) => input?.addEventListener("input", () => {
         saveTripTools({ bag: { limit: els.bagLimit?.value || "", current: els.bagCurrent?.value || "", gifts: els.bagGifts?.value || "" } });
       }));
@@ -3416,6 +3698,27 @@
       els.shareTripSummary?.addEventListener("click", shareTripSummary);
       els.printTripSummary?.addEventListener("click", () => window.print());
       els.printChecklistBtn?.addEventListener("click", () => window.print());
+      els.globalSearch?.addEventListener("input", runGlobalSearch);
+      els.clearSearchBtn?.addEventListener("click", () => {
+        els.globalSearch.value = "";
+        runGlobalSearch();
+      });
+      document.querySelectorAll("[data-guide-filter-for] [data-guide-filter]").forEach((button) => {
+        button.addEventListener("click", () => setGuideFilter(button.closest("[data-guide-filter-for]").dataset.guideFilterFor, button.dataset.guideFilter));
+      });
+      els.copyPublicLinkBtn?.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(PUBLIC_URL);
+          if (els.linkCopyResult) els.linkCopyResult.textContent = "Link copied";
+          markSaved("Public link copied");
+        } catch {
+          if (els.linkCopyResult) els.linkCopyResult.textContent = PUBLIC_URL;
+        }
+      });
+      els.toggleCompactBtn?.addEventListener("click", () => {
+        document.body.classList.toggle("compact-mode");
+        els.toggleCompactBtn.textContent = document.body.classList.contains("compact-mode") ? "Full mode" : "Compact mode";
+      });
       els.calcSarToBdt?.addEventListener("click", () => calculateCurrency("sarToBdt"));
       els.calcBdtToSar?.addEventListener("click", () => calculateCurrency("bdtToSar"));
       els.themeBtn.addEventListener("click", () => applyTheme(document.body.dataset.theme === "night" ? "day" : "night"));
@@ -3454,10 +3757,14 @@
       }
 
       prepareMenuUi();
+      prepareFavoriteButtons();
       applyTheme();
       watchActiveSections();
       renderVisitChecklist();
       renderTripTools();
+      renderFavorites();
+      renderProgressDashboard();
+      runGlobalSearch();
       els.date.value = today();
       if (els.installmentDue) els.installmentDue.value = today();
       render();
