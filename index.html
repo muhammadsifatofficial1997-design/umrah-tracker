@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-07-smart-tools" />
+    <meta name="app-version" content="2026-07-07-trip-companion" />
     <title>Umrah Savings Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -997,6 +997,18 @@
         margin-top: 0;
         font-size: 24px;
         color: var(--green-dark);
+      }
+
+      .mini-result {
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--green-dark);
+        background: rgba(246, 235, 207, 0.7);
+        font-weight: 900;
       }
 
       .visit-card.done {
@@ -2042,6 +2054,28 @@
               <p>Cash ৩ ভাগ: daily pocket, hotel safe reserve, emergency reserve. প্রতিদিন রাতে tracker-এ expense add করুন, next day pocket amount fix করুন।</p>
               <div class="visit-actions"><button class="secondary" data-jump="#addEntry" type="button">Add expense</button><button class="secondary" data-jump="#analysis" type="button">See analysis</button></div>
             </article>
+            <article class="visit-card">
+              <span class="visit-tag">Luggage</span>
+              <strong>Bag weight planner</strong>
+              <p>Airline limit অনুযায়ী luggage + gifts হিসাব করুন। Extra dates/gift কেনার আগে remaining kg দেখুন।</p>
+              <label>Allowed kg <input id="bagLimit" type="number" min="0" step="0.1" placeholder="30" /></label>
+              <label>Current kg <input id="bagCurrent" type="number" min="0" step="0.1" placeholder="22" /></label>
+              <label>Gift/Dates kg <input id="bagGifts" type="number" min="0" step="0.1" placeholder="3" /></label>
+              <div class="visit-actions"><button class="secondary" id="calcBag" type="button">Check weight</button><span class="mini-result" id="bagResult">Remaining kg</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Medicine</span>
+              <strong>Medicine schedule note</strong>
+              <p>Regular medicine কখন খাবেন, allergy, emergency medicine এবং prescription reminder লিখে রাখুন।</p>
+              <textarea id="medicineNote" rows="5" placeholder="Morning:&#10;After lunch:&#10;Night:&#10;Allergy / emergency note:"></textarea>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Share</span>
+              <strong>Family trip summary</strong>
+              <p>Saved amount, remaining target, hotel/meeting note, planner ও emergency card একসাথে copy/share করুন।</p>
+              <div class="visit-actions"><button class="secondary" id="copyTripSummary" type="button">Copy summary</button><button class="secondary" id="shareTripSummary" type="button">Share</button><button class="secondary" id="printTripSummary" type="button">Print</button></div>
+              <span class="mini-result" id="shareResult">Ready to share</span>
+            </article>
           </div>
         </section>
 
@@ -2168,6 +2202,16 @@
         tawafCount: document.querySelector("#tawafCount"),
         saiCount: document.querySelector("#saiCount"),
         resetCounters: document.querySelector("#resetCounters"),
+        bagLimit: document.querySelector("#bagLimit"),
+        bagCurrent: document.querySelector("#bagCurrent"),
+        bagGifts: document.querySelector("#bagGifts"),
+        bagResult: document.querySelector("#bagResult"),
+        calcBag: document.querySelector("#calcBag"),
+        medicineNote: document.querySelector("#medicineNote"),
+        copyTripSummary: document.querySelector("#copyTripSummary"),
+        shareTripSummary: document.querySelector("#shareTripSummary"),
+        printTripSummary: document.querySelector("#printTripSummary"),
+        shareResult: document.querySelector("#shareResult"),
         planForm: document.querySelector("#planForm"),
         transactionForm: document.querySelector("#transactionForm"),
         target: document.querySelector("#target"),
@@ -2258,7 +2302,16 @@
       }
 
       function defaultTripTools() {
-        return { checklist: [], groupNotes: "", dayPlanner: "", safetyCard: "", sarRate: 32, counters: { tawaf: 0, sai: 0 } };
+        return {
+          checklist: [],
+          groupNotes: "",
+          dayPlanner: "",
+          safetyCard: "",
+          medicineNote: "",
+          sarRate: 32,
+          bag: { limit: "", current: "", gifts: "" },
+          counters: { tawaf: 0, sai: 0 }
+        };
       }
 
       function loadTripTools() {
@@ -2283,6 +2336,10 @@
         if (els.groupNotes) els.groupNotes.value = data.groupNotes || "";
         if (els.dayPlanner) els.dayPlanner.value = data.dayPlanner || "";
         if (els.safetyCard) els.safetyCard.value = data.safetyCard || "";
+        if (els.medicineNote) els.medicineNote.value = data.medicineNote || "";
+        if (els.bagLimit && !els.bagLimit.value) els.bagLimit.value = data.bag?.limit || "";
+        if (els.bagCurrent && !els.bagCurrent.value) els.bagCurrent.value = data.bag?.current || "";
+        if (els.bagGifts && !els.bagGifts.value) els.bagGifts.value = data.bag?.gifts || "";
         const tawaf = Math.min(Math.max(Number(data.counters?.tawaf || 0), 0), 7);
         const sai = Math.min(Math.max(Number(data.counters?.sai || 0), 0), 7);
         if (els.tawafCount) els.tawafCount.textContent = `${tawaf}/7`;
@@ -2297,6 +2354,74 @@
         saveTripTools({ counters });
         renderTripTools();
         markSaved(`${name === "tawaf" ? "Tawaf" : "Sa'i"} ${counters[name]}/7`);
+      }
+
+      function updateBagResult() {
+        const limit = Number(els.bagLimit?.value || 0);
+        const current = Number(els.bagCurrent?.value || 0);
+        const gifts = Number(els.bagGifts?.value || 0);
+        saveTripTools({ bag: { limit: els.bagLimit?.value || "", current: els.bagCurrent?.value || "", gifts: els.bagGifts?.value || "" } });
+        if (!els.bagResult) return;
+        if (!limit) {
+          els.bagResult.textContent = "Allowed kg দিন";
+          return;
+        }
+        const left = limit - current - gifts;
+        els.bagResult.textContent = left >= 0 ? `${left.toFixed(1)} kg বাকি আছে` : `${Math.abs(left).toFixed(1)} kg বেশি হয়ে গেছে`;
+        markSaved("Bag weight checked");
+      }
+
+      function buildTripSummary() {
+        const tools = loadTripTools();
+        const saved = totalSaved();
+        const remaining = Math.max(state.target - saved, 0);
+        return [
+          "Umrah Trip Summary",
+          `Saved: ${money(saved)}`,
+          `Remaining target: ${money(remaining)}`,
+          `Travel date: ${state.travelDate || "Not set"}`,
+          `Daily budget: ${money(state.dailyBudget || 0)}`,
+          "",
+          "Safety card:",
+          tools.safetyCard || "Not set",
+          "",
+          "Day planner:",
+          tools.dayPlanner || "Not set",
+          "",
+          "Medicine:",
+          tools.medicineNote || "Not set",
+          "",
+          "Group notes:",
+          tools.groupNotes || "Not set",
+          "",
+          "Tracker:",
+          "https://muhammadsifatofficial1997-design.github.io/umrah-tracker/"
+        ].join("\n");
+      }
+
+      async function copyTripSummary() {
+        const summary = buildTripSummary();
+        try {
+          await navigator.clipboard.writeText(summary);
+          if (els.shareResult) els.shareResult.textContent = "Summary copied";
+          markSaved("Summary copied");
+        } catch {
+          if (els.shareResult) els.shareResult.textContent = "Copy blocked; select text manually";
+        }
+      }
+
+      async function shareTripSummary() {
+        const summary = buildTripSummary();
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: "Umrah Trip Summary", text: summary });
+            markSaved("Summary shared");
+            return;
+          } catch {
+            return;
+          }
+        }
+        await copyTripSummary();
       }
 
       function calculateCurrency(direction) {
@@ -2983,6 +3108,10 @@
       els.groupNotes?.addEventListener("input", () => saveTripTools({ groupNotes: els.groupNotes.value }));
       els.dayPlanner?.addEventListener("input", () => saveTripTools({ dayPlanner: els.dayPlanner.value }));
       els.safetyCard?.addEventListener("input", () => saveTripTools({ safetyCard: els.safetyCard.value }));
+      els.medicineNote?.addEventListener("input", () => saveTripTools({ medicineNote: els.medicineNote.value }));
+      [els.bagLimit, els.bagCurrent, els.bagGifts].forEach((input) => input?.addEventListener("input", () => {
+        saveTripTools({ bag: { limit: els.bagLimit?.value || "", current: els.bagCurrent?.value || "", gifts: els.bagGifts?.value || "" } });
+      }));
       document.querySelectorAll("[data-counter]").forEach((button) => {
         button.addEventListener("click", () => updateCounter(button.dataset.counter, Number(button.dataset.step || 1)));
       });
@@ -2991,6 +3120,10 @@
         renderTripTools();
         markSaved("Counters reset");
       });
+      els.calcBag?.addEventListener("click", updateBagResult);
+      els.copyTripSummary?.addEventListener("click", copyTripSummary);
+      els.shareTripSummary?.addEventListener("click", shareTripSummary);
+      els.printTripSummary?.addEventListener("click", () => window.print());
       els.calcSarToBdt?.addEventListener("click", () => calculateCurrency("sarToBdt"));
       els.calcBdtToSar?.addEventListener("click", () => calculateCurrency("bdtToSar"));
       els.themeBtn.addEventListener("click", () => applyTheme(document.body.dataset.theme === "night" ? "day" : "night"));
