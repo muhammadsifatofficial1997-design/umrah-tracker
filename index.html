@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-07-final-tools" />
+    <meta name="app-version" content="2026-07-07-more-tools" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -2382,6 +2382,37 @@
               <div class="visit-actions"><button class="secondary" id="copyTripSummary" type="button">Copy summary</button><button class="secondary" id="shareTripSummary" type="button">Share</button><button class="secondary" id="printTripSummary" type="button">Print</button></div>
               <span class="mini-result" id="shareResult">Ready to share</span>
             </article>
+            <article class="visit-card">
+              <span class="visit-tag">Split</span>
+              <strong>Group cost splitter</strong>
+              <p>Taxi, food, ziyarah car বা hotel extra cost group members-এর মধ্যে ভাগ করুন।</p>
+              <label>Total SAR/BDT <input id="splitTotal" type="number" min="0" step="0.01" placeholder="120" /></label>
+              <label>People <input id="splitPeople" type="number" min="1" step="1" placeholder="4" /></label>
+              <div class="visit-actions"><button class="secondary" id="calcSplit" type="button">Split</button><span class="mini-result" id="splitResult">Per person</span></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Before Fly</span>
+              <strong>Pre-departure final check</strong>
+              <p>Airport যাওয়ার আগে final ৬টা check।</p>
+              <label class="visit-check"><input type="checkbox" data-trip-check="fly-passport" />Passport/visa/ticket</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="fly-cash-card" />Cash/card/SAR</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="fly-medicine" />Medicine/prescription</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="fly-charger" />Phone/charger/power bank</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="fly-ihram" />Ihram/abaya ready</label>
+              <label class="visit-check"><input type="checkbox" data-trip-check="fly-backup" />Backup exported</label>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Emergency</span>
+              <strong>Emergency quick card</strong>
+              <p>Saudi emergency numbers commonly include 911 unified emergency in many regions, 997 ambulance, 999 police. Local signs/authority info always confirm করুন।</p>
+              <div class="visit-actions"><a class="map-link" href="tel:911">Call 911</a><a class="map-link" href="tel:997">Ambulance 997</a><a class="map-link" href="tel:999">Police 999</a></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Update</span>
+              <strong>Refresh latest version</strong>
+              <p>Mobile/PWA পুরনো cached page দেখালে latest version আনতে এই button ব্যবহার করুন।</p>
+              <div class="visit-actions"><button class="secondary" id="refreshAppBtn" type="button">Refresh app</button><span class="mini-result" id="refreshResult">Current version ready</span></div>
+            </article>
           </div>
         </section>
 
@@ -2604,6 +2635,12 @@
         bagGifts: document.querySelector("#bagGifts"),
         bagResult: document.querySelector("#bagResult"),
         calcBag: document.querySelector("#calcBag"),
+        splitTotal: document.querySelector("#splitTotal"),
+        splitPeople: document.querySelector("#splitPeople"),
+        calcSplit: document.querySelector("#calcSplit"),
+        splitResult: document.querySelector("#splitResult"),
+        refreshAppBtn: document.querySelector("#refreshAppBtn"),
+        refreshResult: document.querySelector("#refreshResult"),
         medicineNote: document.querySelector("#medicineNote"),
         copyTripSummary: document.querySelector("#copyTripSummary"),
         shareTripSummary: document.querySelector("#shareTripSummary"),
@@ -2728,6 +2765,7 @@
           tripTimelineNote: "",
           sarRate: 32,
           bag: { limit: "", current: "", gifts: "" },
+          split: { total: "", people: "" },
           counters: { tawaf: 0, sai: 0 }
         };
       }
@@ -2876,6 +2914,8 @@
         if (els.bagLimit && !els.bagLimit.value) els.bagLimit.value = data.bag?.limit || "";
         if (els.bagCurrent && !els.bagCurrent.value) els.bagCurrent.value = data.bag?.current || "";
         if (els.bagGifts && !els.bagGifts.value) els.bagGifts.value = data.bag?.gifts || "";
+        if (els.splitTotal && !els.splitTotal.value) els.splitTotal.value = data.split?.total || "";
+        if (els.splitPeople && !els.splitPeople.value) els.splitPeople.value = data.split?.people || "";
         const tawaf = Math.min(Math.max(Number(data.counters?.tawaf || 0), 0), 7);
         const sai = Math.min(Math.max(Number(data.counters?.sai || 0), 0), 7);
         if (els.tawafCount) els.tawafCount.textContent = `${tawaf}/7`;
@@ -2905,6 +2945,34 @@
         const left = limit - current - gifts;
         els.bagResult.textContent = left >= 0 ? `${left.toFixed(1)} kg বাকি আছে` : `${Math.abs(left).toFixed(1)} kg বেশি হয়ে গেছে`;
         markSaved("Bag weight checked");
+      }
+
+      function updateSplitResult() {
+        const total = Number(els.splitTotal?.value || 0);
+        const people = Number(els.splitPeople?.value || 0);
+        saveTripTools({ split: { total: els.splitTotal?.value || "", people: els.splitPeople?.value || "" } });
+        if (!els.splitResult) return;
+        if (!total || !people) {
+          els.splitResult.textContent = "Total ও people দিন";
+          return;
+        }
+        els.splitResult.textContent = `${(total / people).toFixed(2)} each`;
+        markSaved("Cost split calculated");
+      }
+
+      async function refreshAppCache() {
+        if (els.refreshResult) els.refreshResult.textContent = "Refreshing...";
+        try {
+          if ("serviceWorker" in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(registrations.map((registration) => registration.update()));
+          }
+          if ("caches" in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.filter((key) => key.includes("umrah-tracker")).map((key) => caches.delete(key)));
+          }
+        } catch {}
+        location.reload();
       }
 
       function buildTripSummary() {
@@ -3685,6 +3753,9 @@
       [els.bagLimit, els.bagCurrent, els.bagGifts].forEach((input) => input?.addEventListener("input", () => {
         saveTripTools({ bag: { limit: els.bagLimit?.value || "", current: els.bagCurrent?.value || "", gifts: els.bagGifts?.value || "" } });
       }));
+      [els.splitTotal, els.splitPeople].forEach((input) => input?.addEventListener("input", () => {
+        saveTripTools({ split: { total: els.splitTotal?.value || "", people: els.splitPeople?.value || "" } });
+      }));
       document.querySelectorAll("[data-counter]").forEach((button) => {
         button.addEventListener("click", () => updateCounter(button.dataset.counter, Number(button.dataset.step || 1)));
       });
@@ -3694,6 +3765,8 @@
         markSaved("Counters reset");
       });
       els.calcBag?.addEventListener("click", updateBagResult);
+      els.calcSplit?.addEventListener("click", updateSplitResult);
+      els.refreshAppBtn?.addEventListener("click", refreshAppCache);
       els.copyTripSummary?.addEventListener("click", copyTripSummary);
       els.shareTripSummary?.addEventListener("click", shareTripSummary);
       els.printTripSummary?.addEventListener("click", () => window.print());
