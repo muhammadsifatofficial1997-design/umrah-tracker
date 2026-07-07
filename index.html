@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-07-stable" />
+    <meta name="app-version" content="2026-07-07-smart-tools" />
     <title>Umrah Savings Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -973,6 +973,32 @@
         color: var(--muted);
       }
 
+      .counter-strip {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .counter-box {
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(241, 232, 211, 0.62);
+      }
+
+      .counter-box small {
+        display: block;
+        color: var(--muted);
+        font-weight: 800;
+      }
+
+      .counter-box strong {
+        margin-top: 0;
+        font-size: 24px;
+        color: var(--green-dark);
+      }
+
       .visit-card.done {
         border-color: rgba(25, 116, 76, 0.48);
         background: #e8f4ec;
@@ -1235,6 +1261,7 @@
         <button data-jump="#amalGuide" type="button">Amal</button>
         <button data-jump="#docsGuide" type="button">Docs</button>
         <button data-jump="#travelTools" type="button">Tools</button>
+        <button data-jump="#smartTools" type="button">Smart Tools</button>
         <button data-jump="#mobileUse" type="button">Mobile Use</button>
         <button data-jump="#installments" type="button">Installments</button>
       </nav>
@@ -1276,6 +1303,7 @@
         <button data-jump="#amalGuide" type="button">Amal</button>
         <button data-jump="#docsGuide" type="button">Docs</button>
         <button data-jump="#travelTools" type="button">Tools</button>
+        <button data-jump="#smartTools" type="button">Smart Tools</button>
         <button data-jump="#mobileUse" type="button">Mobile Use</button>
         <button data-jump="#installments" type="button">Installments</button>
       </nav>
@@ -1962,6 +1990,61 @@
           </div>
         </section>
 
+        <section class="panel full-row" id="smartTools">
+          <div class="panel-head">
+            <div>
+              <h2>Smart Trip Tools</h2>
+              <p>Umrah চলার সময় quick counter, route decision, safety card ও bargain reminder।</p>
+            </div>
+          </div>
+          <div class="visit-grid">
+            <article class="visit-card">
+              <span class="visit-tag">Counter</span>
+              <strong>Tawaf ও Sa'i lap counter</strong>
+              <p>ভিড়ের মধ্যে ভুল এড়াতে manual counter রাখুন। শেষ হলে reset করুন।</p>
+              <div class="counter-strip">
+                <div class="counter-box"><small>Tawaf</small><strong id="tawafCount">0/7</strong></div>
+                <div class="counter-box"><small>Sa'i</small><strong id="saiCount">0/7</strong></div>
+              </div>
+              <div class="visit-actions">
+                <button class="secondary" data-counter="tawaf" data-step="1" type="button">Tawaf +</button>
+                <button class="secondary" data-counter="sai" data-step="1" type="button">Sa'i +</button>
+                <button class="secondary" id="resetCounters" type="button">Reset</button>
+              </div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Route</span>
+              <strong>Airport / city route chooser</strong>
+              <p>Jeddah airport থেকে Makkah: train/bus/ride compare. Madinah transfer: Haramain train early booking করলে সময় বাঁচে। family/elderly থাকলে direct ride আর luggage comfort compare করুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Haramain+High+Speed+Railway+Jeddah+Airport+Station" target="_blank" rel="noopener">Jeddah Train</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=SAPTCO+bus+station+Makkah" target="_blank" rel="noopener">Bus Search</a></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Safety</span>
+              <strong>Lost person meeting card</strong>
+              <p>Gate number, hotel name, room, group leader phone, meeting point লিখে screenshot রাখুন। elderly/children-এর pocket card হিসেবে রাখলে ভালো।</p>
+              <textarea id="safetyCard" rows="5" placeholder="Hotel:&#10;Room:&#10;Gate:&#10;Group leader phone:&#10;Meeting point:"></textarea>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Health</span>
+              <strong>Heat ও walking safety</strong>
+              <p>সকাল/রাতে হাঁটা, পানি/ORS, soft sandal, rest break, umbrella/cap, medicine pouch. chest pain, severe dehydration বা breathing issue হলে delay না করে medical help নিন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=medical+center+near+Masjid+al-Haram" target="_blank" rel="noopener">Makkah clinic</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=medical+center+near+Masjid+Nabawi" target="_blank" rel="noopener">Madinah clinic</a></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Shopping</span>
+              <strong>Dates / gift bargain checklist</strong>
+              <p>৩ দোকানে price compare, per kg rate জিজ্ঞেস, sealed pack, luggage weight, receipt, card fee/discount confirm. Haram-এর একদম কাছে price বেশি হতে পারে।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=dates+market+Madinah" target="_blank" rel="noopener">Madinah dates</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=dates+market+Makkah" target="_blank" rel="noopener">Makkah dates</a></div>
+            </article>
+            <article class="visit-card">
+              <span class="visit-tag">Budget</span>
+              <strong>Daily spend rule</strong>
+              <p>Cash ৩ ভাগ: daily pocket, hotel safe reserve, emergency reserve. প্রতিদিন রাতে tracker-এ expense add করুন, next day pocket amount fix করুন।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#addEntry" type="button">Add expense</button><button class="secondary" data-jump="#analysis" type="button">See analysis</button></div>
+            </article>
+          </div>
+        </section>
+
         <section class="panel full-row" id="mobileUse">
           <div class="panel-head">
             <div>
@@ -2047,6 +2130,7 @@
       <button data-jump="#hotelGuide" type="button">Hotel</button>
       <button data-jump="#packingGuide" type="button">Pack</button>
       <button data-jump="#travelTools" type="button">Tools</button>
+      <button data-jump="#smartTools" type="button">Smart</button>
       <button data-jump="#mobileUse" type="button">Mobile</button>
       <button data-jump="#installments" type="button">Due</button>
     </nav>
@@ -2080,6 +2164,10 @@
         currencyResult: document.querySelector("#currencyResult"),
         groupNotes: document.querySelector("#groupNotes"),
         dayPlanner: document.querySelector("#dayPlanner"),
+        safetyCard: document.querySelector("#safetyCard"),
+        tawafCount: document.querySelector("#tawafCount"),
+        saiCount: document.querySelector("#saiCount"),
+        resetCounters: document.querySelector("#resetCounters"),
         planForm: document.querySelector("#planForm"),
         transactionForm: document.querySelector("#transactionForm"),
         target: document.querySelector("#target"),
@@ -2170,7 +2258,7 @@
       }
 
       function defaultTripTools() {
-        return { checklist: [], groupNotes: "", dayPlanner: "", sarRate: 32 };
+        return { checklist: [], groupNotes: "", dayPlanner: "", safetyCard: "", sarRate: 32, counters: { tawaf: 0, sai: 0 } };
       }
 
       function loadTripTools() {
@@ -2194,7 +2282,21 @@
         });
         if (els.groupNotes) els.groupNotes.value = data.groupNotes || "";
         if (els.dayPlanner) els.dayPlanner.value = data.dayPlanner || "";
+        if (els.safetyCard) els.safetyCard.value = data.safetyCard || "";
+        const tawaf = Math.min(Math.max(Number(data.counters?.tawaf || 0), 0), 7);
+        const sai = Math.min(Math.max(Number(data.counters?.sai || 0), 0), 7);
+        if (els.tawafCount) els.tawafCount.textContent = `${tawaf}/7`;
+        if (els.saiCount) els.saiCount.textContent = `${sai}/7`;
         if (els.toolSarRate && !els.toolSarRate.value) els.toolSarRate.value = data.sarRate || state.sarRate || 32;
+      }
+
+      function updateCounter(name, step) {
+        const data = loadTripTools();
+        const counters = { tawaf: 0, sai: 0, ...(data.counters || {}) };
+        counters[name] = Math.min(Math.max(Number(counters[name] || 0) + step, 0), 7);
+        saveTripTools({ counters });
+        renderTripTools();
+        markSaved(`${name === "tawaf" ? "Tawaf" : "Sa'i"} ${counters[name]}/7`);
       }
 
       function calculateCurrency(direction) {
@@ -2880,6 +2982,15 @@
       });
       els.groupNotes?.addEventListener("input", () => saveTripTools({ groupNotes: els.groupNotes.value }));
       els.dayPlanner?.addEventListener("input", () => saveTripTools({ dayPlanner: els.dayPlanner.value }));
+      els.safetyCard?.addEventListener("input", () => saveTripTools({ safetyCard: els.safetyCard.value }));
+      document.querySelectorAll("[data-counter]").forEach((button) => {
+        button.addEventListener("click", () => updateCounter(button.dataset.counter, Number(button.dataset.step || 1)));
+      });
+      els.resetCounters?.addEventListener("click", () => {
+        saveTripTools({ counters: { tawaf: 0, sai: 0 } });
+        renderTripTools();
+        markSaved("Counters reset");
+      });
       els.calcSarToBdt?.addEventListener("click", () => calculateCurrency("sarToBdt"));
       els.calcBdtToSar?.addEventListener("click", () => calculateCurrency("bdtToSar"));
       els.themeBtn.addEventListener("click", () => applyTheme(document.body.dataset.theme === "night" ? "day" : "night"));
