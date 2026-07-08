@@ -1,4 +1,4 @@
-const CACHE_NAME = "umrah-tracker-2026-07-08-menu-groups";
+const CACHE_NAME = "umrah-tracker-2026-07-08-trip-guides";
 const APP_SHELL = [
   "./",
   "index.html",

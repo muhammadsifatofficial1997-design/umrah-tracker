@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-08-menu-groups" />
+    <meta name="app-version" content="2026-07-08-trip-guides" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -1511,12 +1511,16 @@
             <button data-jump="#freeGuide" type="button">Free Guide</button>
             <button data-jump="#transportGuide" type="button">Transport</button>
             <button data-jump="#hotelGuide" type="button">Hotel</button>
+            <button data-jump="#foodGuide" type="button">Food Guide</button>
           </div>
         </div>
         <div class="menu-group">
           <span class="menu-group-title">Trip Prep</span>
           <div class="menu-group-actions">
+            <button data-jump="#dayPlanGuide" type="button">Day Plan</button>
+            <button data-jump="#gateGuide" type="button">Gate & Meeting</button>
             <button data-jump="#packingGuide" type="button">Packing</button>
+            <button data-jump="#healthGuide" type="button">Health</button>
             <button data-jump="#amalGuide" type="button">Amal & Dua</button>
             <button data-jump="#docsGuide" type="button">Docs</button>
           </div>
@@ -2510,6 +2514,222 @@
               <label>SAR per km <input id="taxiRate" type="number" min="0" step="0.1" placeholder="3" /></label>
               <label>Base / waiting SAR <input id="taxiBase" type="number" min="0" step="0.1" placeholder="10" /></label>
               <div class="visit-actions"><button class="secondary" id="calcTaxi" type="button">Estimate</button><span class="mini-result" id="taxiResult">Estimated fare</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel full-row" id="dayPlanGuide">
+          <div class="panel-head">
+            <div>
+              <h2>Day-wise Umrah Plan</h2>
+              <p>Makkah, Madinah, ziyarah, shopping ও rest day আলাদা করে plan করুন। Tick দিলে browser-e save থাকবে।</p>
+            </div>
+          </div>
+          <div class="visit-grid">
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="day-arrival-plan" />Arrival day ready</label>
+              <span class="visit-tag">Day 1</span>
+              <strong>Arrival + hotel setup</strong>
+              <p>Airport/train transfer, hotel check-in, SIM/cash, room safety, Haram/Nabawi first route, group meeting point confirm করুন।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#hotelGuide" type="button">Hotel</button><button class="secondary" data-jump="#gateGuide" type="button">Gate</button></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="day-umrah-plan" />Umrah day planned</label>
+              <span class="visit-tag">Umrah</span>
+              <strong>Umrah day flow</strong>
+              <p>Ihram, niyyah, Tawaf, Sa'i, halq/taqsir, rest, meal, return route. Elderly/family থাকলে wheelchair/rest point আগে ঠিক করুন।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#amalGuide" type="button">Amal</button><button class="secondary" data-jump="#smartTools" type="button">Counter</button></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="day-makkah-ziyarah" />Makkah ziyarah planned</label>
+              <span class="visit-tag">Makkah</span>
+              <strong>Makkah ziyarah day</strong>
+              <p>Jabal al-Nour, Jabal Thawr, Mina, Arafat, Muzdalifah route একসাথে plan করুন। Heat, transport cost, timing ও entry access আগে check করুন।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#visitGuide" type="button">Visit Guide</button><button class="secondary" data-jump="#transportGuide" type="button">Transport</button></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="day-madinah-ziyarah" />Madinah ziyarah planned</label>
+              <span class="visit-tag">Madinah</span>
+              <strong>Madinah ziyarah day</strong>
+              <p>Masjid Quba, Uhud, Qiblatain, Baqi, dates market. Rawdah/Nabawi prayer timing-এর সাথে যেন conflict না হয়।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#visitGuide" type="button">Visit Guide</button><button class="secondary" data-jump="#foodGuide" type="button">Food</button></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="day-shopping-plan" />Shopping day planned</label>
+              <span class="visit-tag">Shopping</span>
+              <strong>Shopping + gift day</strong>
+              <p>Dates, attar, tasbih, gifts, luggage weight, receipt, bargain. Haram/Nabawi close area vs market price compare করুন।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#tripExtras" type="button">Shopping List</button><button class="secondary" data-jump="#smartTools" type="button">Bag Weight</button></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="day-rest-plan" />Rest day kept</label>
+              <span class="visit-tag">Recovery</span>
+              <strong>Rest + laundry + backup day</strong>
+              <p>Long walk-এর পর rest, laundry, medicine refill, expense update, photo/doc backup, next transfer ticket confirm করুন।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#healthGuide" type="button">Health</button><button class="secondary" data-menu-action="export" type="button">Backup</button></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel full-row" id="foodGuide">
+          <div class="panel-head">
+            <div>
+              <h2>Food Guide: Makkah ও Madinah</h2>
+              <p>Budget meal, family meal, water/snack, Bengali/Indian/Pakistani খাবার ও daily food cost plan রাখুন।</p>
+            </div>
+          </div>
+          <div class="city-filter" data-guide-filter-for="foodGuide">
+            <button class="is-active" data-guide-filter="all" type="button">All</button>
+            <button data-guide-filter="makkah" type="button">Makkah</button>
+            <button data-guide-filter="madinah" type="button">Madinah</button>
+            <button data-guide-filter="both" type="button">Budget / Safety</button>
+          </div>
+          <div class="visit-grid">
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="food-water-plan" />Water/snack plan</label>
+              <span class="visit-tag">Budget</span>
+              <strong>Daily food budget rule</strong>
+              <p>Breakfast hotel-e থাকলে daily cost কমে। Water, dates, banana, yogurt, bread, light dinner রাখলে walking day-e শরীর ভালো থাকে।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#addEntry" type="button">Add food cost</button><span class="fee-note">Track daily</span></div>
+            </article>
+            <article class="visit-card" data-guide-city="makkah">
+              <span class="visit-tag">Makkah</span>
+              <strong>Makkah cheap food search</strong>
+              <p>Haram-এর খুব কাছে price বেশি হতে পারে। Ibrahim Khalil/food court/supermarket area compare করুন, crowd time avoid করুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=cheap+food+near+Masjid+al-Haram+Makkah" target="_blank" rel="noopener">Cheap food</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=supermarket+near+Masjid+al-Haram+Makkah" target="_blank" rel="noopener">Supermarket</a></div>
+            </article>
+            <article class="visit-card" data-guide-city="madinah">
+              <span class="visit-tag">Madinah</span>
+              <strong>Madinah budget food search</strong>
+              <p>Nabawi gate side, food court, supermarket, dates market-এর কাছাকাছি quick meal পাওয়া যায়। Prayer rush-এর আগে/পরে plan করুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=cheap+food+near+Masjid+an+Nabawi+Madinah" target="_blank" rel="noopener">Cheap food</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=supermarket+near+Masjid+an+Nabawi+Madinah" target="_blank" rel="noopener">Supermarket</a></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="food-family-meal" />Family meal backup</label>
+              <span class="visit-tag">Family</span>
+              <strong>Bengali / Indian / Pakistani food</strong>
+              <p>Family/elderly থাকলে spice level, seating, takeaway, delivery, distance check করুন। Long ziyarah day-e dry snack সাথে রাখুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Bangladeshi+restaurant+Makkah" target="_blank" rel="noopener">Makkah Bengali</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Pakistani+Indian+restaurant+Madinah" target="_blank" rel="noopener">Madinah Desi</a></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="food-safe-items" />Safe food habit</label>
+              <span class="visit-tag">Health</span>
+              <strong>Food safety reminder</strong>
+              <p>Heat-e uncovered food avoid, sealed water, light meal, ORS/electrolyte, medicine timing maintain করুন। Stomach issue হলে spicy/heavy food কমান।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#healthGuide" type="button">Health Checklist</button><span class="fee-note">Keep it light</span></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="food-free-check" />Free food/water checked</label>
+              <span class="visit-tag">Free</span>
+              <strong>Free water / iftar / charity food</strong>
+              <p>Zamzam water, mosque area charity distribution, Ramadan/iftar season-এর free food থাকতে পারে। Line, cleanliness, local rule ও crowd respect করুন।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#freeGuide" type="button">Free Guide</button><span class="fee-note">Seasonভেদে</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel full-row" id="gateGuide">
+          <div class="panel-head">
+            <div>
+              <h2>Gate & Meeting Point Tracker</h2>
+              <p>Haram/Nabawi gate, hotel route, family meeting point ও lost-person safety card এক জায়গায় রাখুন।</p>
+            </div>
+          </div>
+          <div class="visit-grid">
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="gate-haram-pin" />Haram gate saved</label>
+              <span class="visit-tag">Makkah</span>
+              <strong>Masjid al-Haram gate plan</strong>
+              <p>Hotel থেকে কোন gate closest, prayer শেষে কোন exit, family কোথায় দাঁড়াবে, wheelchair route কোথায় - এগুলো screenshot/map pin করে রাখুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al-Haram+gates+Makkah" target="_blank" rel="noopener">Haram Gates</a><button class="secondary" data-jump="#smartTools" type="button">Safety Card</button></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="gate-nabawi-pin" />Nabawi gate saved</label>
+              <span class="visit-tag">Madinah</span>
+              <strong>Masjid an-Nabawi gate plan</strong>
+              <p>Women entrance, Rawdah access, hotel side, Baqi side, after-prayer meeting spot আলাদা করে note করুন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+an-Nabawi+gates+Madinah" target="_blank" rel="noopener">Nabawi Gates</a><button class="secondary" data-jump="#tripExtras" type="button">Trip Card</button></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="gate-hotel-route" />Hotel route tested</label>
+              <span class="visit-tag">Route</span>
+              <strong>Hotel to mosque route test</strong>
+              <p>First day daylight-e route test করুন। Landmark, pharmacy, food shop, shuttle stop, taxi pickup point identify করুন।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#hotelGuide" type="button">Hotel Guide</button><button class="secondary" data-jump="#transportGuide" type="button">Transport</button></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="gate-family-meeting" />Family meeting point set</label>
+              <span class="visit-tag">Family</span>
+              <strong>Meeting point rule</strong>
+              <p>একটা main meeting point + backup meeting point রাখুন। "Prayer শেষের 20 minute পর same gate outside" টাইপ simple rule ভালো।</p>
+              <div class="visit-actions"><span class="fee-note">Main + backup point</span></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="gate-offline-map" />Offline map saved</label>
+              <span class="visit-tag">Offline</span>
+              <strong>Offline map + screenshots</strong>
+              <p>Internet না থাকলেও hotel, gate, meeting point, transport pickup যেন দেখা যায়। Offline map, screenshots, WhatsApp pinned note রাখুন।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#smartTools" type="button">Offline Checklist</button><span class="fee-note">Before travel</span></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="gate-lost-card" />Lost card ready</label>
+              <span class="visit-tag">Safety</span>
+              <strong>Lost-person mini card</strong>
+              <p>Hotel name, room, group leader phone, gate, meeting point Bangla/English দুইভাবে লিখে elderly/children-এর কাছে রাখুন।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#smartTools" type="button">Emergency Card</button><span class="fee-note">Screenshot too</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel full-row" id="healthGuide">
+          <div class="panel-head">
+            <div>
+              <h2>Medicine & Health Checklist</h2>
+              <p>Long walk, heat, crowd, dehydration ও regular medicine manage করার জন্য quick checklist। Medical advice লাগলে doctor/pharmacist follow করুন।</p>
+            </div>
+          </div>
+          <div class="visit-grid">
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="health-prescription" />Prescription packed</label>
+              <span class="visit-tag">Must</span>
+              <strong>Regular medicine + prescription</strong>
+              <p>Diabetes, pressure, asthma, allergy বা অন্য regular medicine original strip + prescription + schedule note নিয়ে যান।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#docsGuide" type="button">Docs</button><button class="secondary" data-jump="#smartTools" type="button">Medicine Note</button></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="health-ors" />ORS/electrolyte ready</label>
+              <span class="visit-tag">Heat</span>
+              <strong>Hydration + ORS</strong>
+              <p>Heat/walking day-e water, ORS/electrolyte, light snack রাখুন। Dark urine, dizziness, severe weakness হলে rest + medical help নিন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=pharmacy+near+Masjid+al-Haram" target="_blank" rel="noopener">Makkah pharmacy</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=pharmacy+near+Masjid+Nabawi" target="_blank" rel="noopener">Madinah pharmacy</a></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="health-foot-care" />Foot care ready</label>
+              <span class="visit-tag">Walking</span>
+              <strong>Foot care kit</strong>
+              <p>Soft sandal/shoe, blister plaster, small towel, balm, extra socks. New shoe সরাসরি সফরে না নেওয়া ভালো।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#packingGuide" type="button">Packing</button><span class="fee-note">Walking-heavy trip</span></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="health-crowd-mask" />Mask/sanitizer packed</label>
+              <span class="visit-tag">Crowd</span>
+              <strong>Crowd hygiene</strong>
+              <p>Mask, sanitizer, wet wipes, tissue, small soap. Cold/flu হলে crowd etiquette maintain করুন, elderly/family protect করুন।</p>
+              <div class="visit-actions"><span class="fee-note">Small kit</span></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="health-emergency-route" />Clinic route saved</label>
+              <span class="visit-tag">Emergency</span>
+              <strong>Clinic / hospital route</strong>
+              <p>Chest pain, breathing problem, severe dehydration, fainting, uncontrolled sugar/pressure হলে delay না করে emergency service নিন।</p>
+              <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=hospital+near+Masjid+al-Haram+Makkah" target="_blank" rel="noopener">Makkah hospital</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=hospital+near+Masjid+an+Nabawi+Madinah" target="_blank" rel="noopener">Madinah hospital</a></div>
+            </article>
+            <article class="visit-card">
+              <label class="visit-check"><input type="checkbox" data-trip-check="health-rest-plan" />Rest breaks planned</label>
+              <span class="visit-tag">Family</span>
+              <strong>Elderly/family rest plan</strong>
+              <p>Prayer crowd, long walk, ziyarah day, shopping day - সব জায়গায় rest point, wheelchair option, toilet location, water break plan রাখুন।</p>
+              <div class="visit-actions"><button class="secondary" data-jump="#dayPlanGuide" type="button">Day Plan</button><span class="fee-note">Comfort first</span></div>
             </article>
           </div>
         </section>
