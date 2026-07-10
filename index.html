@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-08-trip-guides" />
+    <meta name="app-version" content="2026-07-10-friendly-categories" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -483,6 +483,11 @@
         margin-bottom: 14px;
         overflow-x: auto;
         padding-bottom: 2px;
+        scrollbar-width: none;
+      }
+
+      .section-nav::-webkit-scrollbar {
+        display: none;
       }
 
       .section-nav button {
@@ -501,8 +506,50 @@
         background: #f6ebcf;
       }
 
+      .category-hub {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .category-card {
+        min-height: 104px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        color: var(--green-dark);
+        background: rgba(255, 250, 240, 0.92);
+        box-shadow: 0 10px 26px rgba(33, 39, 28, 0.08);
+        text-align: left;
+      }
+
+      .category-card:hover {
+        border-color: var(--gold);
+        background: #f8efd9;
+        transform: translateY(-1px);
+      }
+
+      .category-card span,
+      .category-card small {
+        display: block;
+      }
+
+      .category-card span {
+        margin-bottom: 4px;
+        font-size: 16px;
+        font-weight: 900;
+      }
+
+      .category-card small {
+        color: var(--muted);
+        font-weight: 700;
+        line-height: 1.35;
+      }
+
       .section-nav button.is-active,
       .side-menu-nav button.is-active,
+      .category-card.is-active,
       .bottom-nav button.is-active {
         border-color: var(--gold);
         color: #fffdf2;
@@ -528,7 +575,7 @@
       }
 
       .bottom-nav button {
-        flex: 0 0 76px;
+        flex: 1 1 0;
         min-height: 46px;
         border: 1px solid transparent;
         border-radius: 8px;
@@ -536,6 +583,11 @@
         background: transparent;
         font-size: 12px;
         font-weight: 800;
+      }
+
+      .bottom-nav button[data-menu-open] {
+        border-color: var(--line);
+        background: #f3ead4;
       }
 
       .side-overlay {
@@ -765,6 +817,7 @@
       body[data-theme="night"] .app-topbar,
       body[data-theme="night"] .side-menu,
       body[data-theme="night"] .section-nav button,
+      body[data-theme="night"] .category-card,
       body[data-theme="night"] .ledger-item,
       body[data-theme="night"] .chart-wrap,
       body[data-theme="night"] .info-pill,
@@ -781,6 +834,7 @@
       body[data-theme="night"] .star-btn,
       body[data-theme="night"] .side-menu-nav button,
       body[data-theme="night"] .quick-buttons button,
+      body[data-theme="night"] .category-card,
       body[data-theme="night"] .section-nav button {
         border-color: #516257;
         color: #f7f1df;
@@ -788,6 +842,7 @@
       }
 
       body[data-theme="night"] .section-nav button:hover,
+      body[data-theme="night"] .category-card:hover,
       body[data-theme="night"] .side-menu-nav button:hover,
       body[data-theme="night"] .quick-buttons button:hover,
       body[data-theme="night"] .menu-toggle:hover,
@@ -799,6 +854,7 @@
       }
 
       body[data-theme="night"] .section-nav button.is-active,
+      body[data-theme="night"] .category-card.is-active,
       body[data-theme="night"] .city-filter button.is-active,
       body[data-theme="night"] .side-menu-nav button.is-active,
       body[data-theme="night"] .bottom-nav button.is-active {
@@ -812,7 +868,11 @@
       }
 
       body[data-theme="night"] .bottom-nav button {
-        color: var(--ink);
+        color: #f7f1df;
+      }
+
+      body[data-theme="night"] .category-card small {
+        color: #c9d2c7;
       }
 
       body[data-theme="night"] .side-status,
@@ -1313,6 +1373,7 @@
         .bottom-nav,
         .side-menu,
         .side-overlay,
+        .category-hub,
         .section-nav,
         #transactionForm,
         #installmentForm {
@@ -1355,6 +1416,10 @@
         .main-grid,
         .advanced-grid {
           grid-template-columns: 1fr;
+        }
+
+        .category-hub {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
         .metrics,
@@ -1431,6 +1496,34 @@
           line-height: 1.55;
         }
 
+        .section-nav {
+          margin-bottom: 10px;
+        }
+
+        .section-nav button {
+          min-height: 38px;
+          padding: 8px 12px;
+          font-size: 13px;
+        }
+
+        .category-hub {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .category-card {
+          min-height: 82px;
+          padding: 11px;
+        }
+
+        .category-card span {
+          font-size: 14px;
+        }
+
+        .category-card small {
+          font-size: 12px;
+        }
+
         .hero-stats,
         .metrics,
         .summary-row,
@@ -1457,19 +1550,17 @@
         }
 
         .bottom-nav {
-          display: flex;
-          overflow-x: auto;
-          scrollbar-width: none;
+          display: grid;
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+          overflow: visible;
           padding: 6px;
         }
 
-        .bottom-nav::-webkit-scrollbar {
-          display: none;
-        }
-
         .bottom-nav button {
-          flex-basis: 72px;
+          min-width: 0;
           min-height: 44px;
+          padding: 6px 4px;
+          font-size: 11px;
         }
 
         .progress-top,
@@ -1570,6 +1661,29 @@
         <button data-jump="#packingGuide" type="button">Prep</button>
         <button data-jump="#installments" type="button">Due</button>
       </nav>
+
+      <section class="category-hub" aria-label="Main category shortcuts">
+        <button class="category-card" data-jump="#overview" type="button">
+          <span>Core</span>
+          <small>Home, add entry, ledger</small>
+        </button>
+        <button class="category-card" data-jump="#analysis" type="button">
+          <span>Money</span>
+          <small>Analysis, budget, installments</small>
+        </button>
+        <button class="category-card" data-jump="#visitGuide" type="button">
+          <span>Guides</span>
+          <small>Visit, free, ride, hotel, food</small>
+        </button>
+        <button class="category-card" data-jump="#dayPlanGuide" type="button">
+          <span>Trip Prep</span>
+          <small>Day plan, gate, packing, health</small>
+        </button>
+        <button class="category-card" data-jump="#travelTools" type="button">
+          <span>Tools</span>
+          <small>Smart tools, trip card, mobile backup</small>
+        </button>
+      </section>
 
       <section class="panel search-panel" id="quickSearchPanel">
         <input id="globalSearch" type="search" placeholder="Search: Rawdah, Zamzam, hotel, SIM, transport..." />
@@ -2929,17 +3043,10 @@
     <nav class="bottom-nav" aria-label="Mobile quick navigation">
       <button data-jump="#overview" type="button">Home</button>
       <button data-jump="#addEntry" type="button">Add</button>
-      <button data-jump="#ledgerPanel" type="button">Ledger</button>
-      <button data-jump="#visitGuide" type="button">Visit</button>
-      <button data-jump="#freeGuide" type="button">Free</button>
-      <button data-jump="#transportGuide" type="button">Ride</button>
-      <button data-jump="#hotelGuide" type="button">Hotel</button>
-      <button data-jump="#packingGuide" type="button">Pack</button>
-      <button data-jump="#travelTools" type="button">Tools</button>
-      <button data-jump="#smartTools" type="button">Smart</button>
-      <button data-jump="#tripExtras" type="button">Extra</button>
-      <button data-jump="#mobileUse" type="button">Mobile</button>
-      <button data-jump="#installments" type="button">Due</button>
+      <button data-jump="#analysis" type="button">Money</button>
+      <button data-jump="#visitGuide" type="button">Guide</button>
+      <button data-jump="#dayPlanGuide" type="button">Prep</button>
+      <button data-menu-open type="button">Menu</button>
     </nav>
     <div class="toast" id="toast">Saved</div>
 
@@ -4307,6 +4414,9 @@
       document.addEventListener("click", (event) => {
         const action = event.target.closest("[data-menu-action]");
         if (action) runMenuAction(action.dataset.menuAction);
+      });
+      document.querySelectorAll("[data-menu-open]").forEach((button) => {
+        button.addEventListener("click", () => setMenu(true));
       });
       document.querySelectorAll("[data-jump]").forEach((button) => {
         button.addEventListener("click", () => {
