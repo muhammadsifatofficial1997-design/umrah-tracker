@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-17-today-setup" />
+    <meta name="app-version" content="2026-07-17-share-print-suggestions" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -650,6 +650,43 @@
         margin-top: 12px;
       }
 
+      .suggestion-list,
+      .print-card-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .suggestion-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .suggestion-item,
+      .print-mini-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+        background: rgba(255, 253, 247, 0.78);
+      }
+
+      .suggestion-item strong,
+      .suggestion-item small,
+      .print-mini-card strong,
+      .print-mini-card small {
+        display: block;
+      }
+
+      .suggestion-item small,
+      .print-mini-card small {
+        margin-top: 4px;
+        color: var(--muted);
+        font-weight: 700;
+        line-height: 1.4;
+      }
+
+      .print-card-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
       .hidden-by-city-mode,
       .hidden-by-pending {
         display: none !important;
@@ -941,6 +978,8 @@
       body[data-theme="night"] .city-filter button,
       body[data-theme="night"] .city-mode-actions button,
       body[data-theme="night"] .setup-step,
+      body[data-theme="night"] .suggestion-item,
+      body[data-theme="night"] .print-mini-card,
       body[data-theme="night"] .star-btn,
       body[data-theme="night"] .side-menu-nav button,
       body[data-theme="night"] .quick-buttons button,
@@ -983,6 +1022,11 @@
       }
 
       body[data-theme="night"] .category-card small {
+        color: #c9d2c7;
+      }
+
+      body[data-theme="night"] .suggestion-item small,
+      body[data-theme="night"] .print-mini-card small {
         color: #c9d2c7;
       }
 
@@ -1546,6 +1590,11 @@
           grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
+        .suggestion-list,
+        .print-card-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         .metrics,
         .summary-row {
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1636,6 +1685,11 @@
         }
 
         .setup-steps {
+          grid-template-columns: 1fr;
+        }
+
+        .suggestion-list,
+        .print-card-grid {
           grid-template-columns: 1fr;
         }
 
@@ -1860,6 +1914,31 @@
           <button class="secondary" data-jump="#healthGuide" type="button">Medicine / health</button>
           <button class="secondary" data-jump="#gateGuide" type="button">Gate / meeting</button>
           <button class="secondary" data-menu-action="export" type="button">Backup now</button>
+        </div>
+      </section>
+
+      <section class="panel" id="smartSuggestions">
+        <div class="panel-head">
+          <div>
+            <h2>Smart Suggestions</h2>
+            <p>Tracker data দেখে important reminder দেখাবে।</p>
+          </div>
+        </div>
+        <div class="suggestion-list" id="suggestionList"></div>
+      </section>
+
+      <section class="panel" id="tripShareMode">
+        <div class="panel-head">
+          <div>
+            <h2>Trip Share Mode</h2>
+            <p>Friend/family কে দেখানোর জন্য expense amount ছাড়া clean summary.</p>
+          </div>
+        </div>
+        <div class="visit-actions">
+          <button class="secondary" id="copyPublicSummaryBtn" type="button">Copy clean summary</button>
+          <button class="secondary" id="sharePublicSummaryBtn" type="button">Share clean summary</button>
+          <button class="secondary" id="printPublicSummaryBtn" type="button">Print cards</button>
+          <span class="mini-result" id="publicShareResult">Ready</span>
         </div>
       </section>
 
@@ -3113,6 +3192,13 @@
               <div class="visit-actions"><button class="secondary" id="printTripCardBtn" type="button">Print trip card</button><button class="secondary" id="copyTripCardBtn" type="button">Copy trip card</button></div>
             </article>
             <article class="visit-card">
+              <span class="visit-tag">Print Pack</span>
+              <strong>Printable cards pack</strong>
+              <p>Emergency, hotel, gate, medicine card আলাদা ছোট card হিসেবে print/share করুন।</p>
+              <div class="print-card-grid" id="printCardsPack"></div>
+              <div class="visit-actions"><button class="secondary" id="copyPrintPackBtn" type="button">Copy pack</button><button class="secondary" id="printCardsPackBtn" type="button">Print pack</button></div>
+            </article>
+            <article class="visit-card">
               <span class="visit-tag">SIM/eSIM</span>
               <strong>SIM/eSIM compare table</strong>
               <p>STC/Mobily/Zain/eSIM price, data, validity, hotspot ও passport requirement compare করে final choice note করুন।</p>
@@ -3289,6 +3375,14 @@
         searchCount: document.querySelector("#searchCount"),
         setupSteps: document.querySelector("#setupSteps"),
         todaySummary: document.querySelector("#todaySummary"),
+        suggestionList: document.querySelector("#suggestionList"),
+        copyPublicSummaryBtn: document.querySelector("#copyPublicSummaryBtn"),
+        sharePublicSummaryBtn: document.querySelector("#sharePublicSummaryBtn"),
+        printPublicSummaryBtn: document.querySelector("#printPublicSummaryBtn"),
+        publicShareResult: document.querySelector("#publicShareResult"),
+        printCardsPack: document.querySelector("#printCardsPack"),
+        copyPrintPackBtn: document.querySelector("#copyPrintPackBtn"),
+        printCardsPackBtn: document.querySelector("#printCardsPackBtn"),
         progressDashboard: document.querySelector("#progressDashboard"),
         priorityList: document.querySelector("#priorityList"),
         tripTimelineNote: document.querySelector("#tripTimelineNote"),
@@ -3541,6 +3635,8 @@
         renderCategoryProgress();
         renderQuickStartSetup();
         renderTodayView();
+        renderSuggestions();
+        renderPrintCards();
       }
 
       function renderQuickStartSetup() {
@@ -3579,6 +3675,105 @@
           <div class="info-pill"><small>Backup health</small><strong class="${backupDays === null || backupDays > 7 ? "bad" : "good"}">${backupDays === null ? "No backup" : `${bn.format(backupDays)} days ago`}</strong></div>
           <div class="info-pill"><small>Saved so far</small><strong>${money(data.saved)}</strong></div>
         `;
+      }
+
+      function buildSuggestions() {
+        const tools = loadTripTools();
+        const unchecked = Array.from(document.querySelectorAll("[data-visit-check], [data-trip-check]")).filter((input) => !input.checked).length;
+        const backupDays = tools.lastBackupAt ? Math.floor((Date.now() - new Date(tools.lastBackupAt).getTime()) / 86400000) : null;
+        const tips = [];
+        if (!state.travelDate) tips.push(["Travel date missing", "Target forecast এবং countdown-এর জন্য travel date set করুন।"]);
+        if (backupDays === null || backupDays > 7) tips.push(["Backup overdue", "Mobile/browser data safe রাখতে backup copy নিন।"]);
+        if (!tools.safetyCard && !tools.tripCardNote) tips.push(["Emergency card empty", "Hotel, room, gate, group leader phone save করুন।"]);
+        if (unchecked > 20) tips.push(["Many pending tasks", `${unchecked}টা checklist pending আছে. Pending only filter দিয়ে finish করুন।`]);
+        if (!tools.medicineNote) tips.push(["Medicine note empty", "Regular medicine, allergy, emergency medicine note রাখুন।"]);
+        if (!tools.hotelCompareNote) tips.push(["Hotel compare missing", "Distance, shuttle, breakfast, cancellation policy compare করুন।"]);
+        if (!tips.length) tips.push(["Looks ready", "Core setup ভালো আছে. Backup আর pending checklist মাঝে মাঝে check করুন।"]);
+        return tips.slice(0, 6);
+      }
+
+      function renderSuggestions() {
+        if (!els.suggestionList) return;
+        els.suggestionList.innerHTML = buildSuggestions()
+          .map(([title, body]) => `<div class="suggestion-item"><strong>${escapeHtml(title)}</strong><small>${escapeHtml(body)}</small></div>`)
+          .join("");
+      }
+
+      function buildPrintCards() {
+        const tools = loadTripTools();
+        return [
+          ["Emergency Card", tools.safetyCard || tools.tripCardNote || "Hotel, room, gate, group leader phone, emergency number fill করুন।"],
+          ["Hotel Card", tools.tripCardNote || tools.hotelCompareNote || "Hotel address, room, reception, shuttle timing fill করুন।"],
+          ["Gate Card", tools.tripCardNote || "Haram/Nabawi gate, meeting point, backup meeting point fill করুন।"],
+          ["Medicine Card", tools.medicineNote || "Regular medicine, allergy, ORS, emergency medicine fill করুন।"],
+        ];
+      }
+
+      function renderPrintCards() {
+        if (!els.printCardsPack) return;
+        els.printCardsPack.innerHTML = buildPrintCards()
+          .map(([title, body]) => `<div class="print-mini-card"><strong>${escapeHtml(title)}</strong><small>${escapeHtml(body).replace(/\n/g, "<br>")}</small></div>`)
+          .join("");
+      }
+
+      function buildPublicSummary() {
+        const tools = loadTripTools();
+        const done = Array.from(document.querySelectorAll("[data-visit-check], [data-trip-check]")).filter((input) => input.checked).length;
+        const total = document.querySelectorAll("[data-visit-check], [data-trip-check]").length;
+        return [
+          "Umrah Trip Public Summary",
+          `Travel date: ${state.travelDate || "Not set"}`,
+          `Checklist progress: ${done}/${total}`,
+          "",
+          "Hotel / Trip card:",
+          tools.tripCardNote || "Not filled yet",
+          "",
+          "Gate / emergency:",
+          tools.safetyCard || "Not filled yet",
+          "",
+          "Day plan:",
+          tools.dayPlanner || "Not filled yet",
+          "",
+          "Medicine:",
+          tools.medicineNote || "Not filled yet",
+          "",
+          "Public link:",
+          PUBLIC_URL
+        ].join("\n");
+      }
+
+      async function copyText(text, successMessage) {
+        try {
+          await navigator.clipboard.writeText(text);
+          markSaved(successMessage);
+          return true;
+        } catch {
+          alert(text);
+          return false;
+        }
+      }
+
+      async function copyPublicSummary() {
+        const ok = await copyText(buildPublicSummary(), "Clean summary copied");
+        if (els.publicShareResult) els.publicShareResult.textContent = ok ? "Copied" : "Copy blocked";
+      }
+
+      async function sharePublicSummary() {
+        const text = buildPublicSummary();
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: "Umrah Trip Summary", text });
+            if (els.publicShareResult) els.publicShareResult.textContent = "Shared";
+            return;
+          } catch {
+            return;
+          }
+        }
+        await copyPublicSummary();
+      }
+
+      function buildPrintPackText() {
+        return buildPrintCards().map(([title, body]) => `${title}\n${body}`).join("\n\n---\n\n");
       }
 
       function cardHasPending(card) {
@@ -4652,6 +4847,11 @@
       els.copyTripSummary?.addEventListener("click", copyTripSummary);
       els.shareTripSummary?.addEventListener("click", shareTripSummary);
       els.printTripSummary?.addEventListener("click", () => window.print());
+      els.copyPublicSummaryBtn?.addEventListener("click", copyPublicSummary);
+      els.sharePublicSummaryBtn?.addEventListener("click", sharePublicSummary);
+      els.printPublicSummaryBtn?.addEventListener("click", () => window.print());
+      els.copyPrintPackBtn?.addEventListener("click", () => copyText(buildPrintPackText(), "Print pack copied"));
+      els.printCardsPackBtn?.addEventListener("click", () => window.print());
       els.printChecklistBtn?.addEventListener("click", () => window.print());
       els.printTripCardBtn?.addEventListener("click", () => window.print());
       els.copyTripCardBtn?.addEventListener("click", copyTripCard);
