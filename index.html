@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-17-smart-navigation" />
+    <meta name="app-version" content="2026-07-17-today-setup" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -291,6 +291,11 @@
       .secondary {
         color: var(--green-dark);
         background: #eadfc6;
+      }
+
+      .secondary.is-active {
+        color: #fffdf2;
+        background: var(--green-dark);
       }
 
       .danger {
@@ -596,7 +601,57 @@
         background: var(--green-dark);
       }
 
-      .hidden-by-city-mode {
+      .setup-strip,
+      .today-view {
+        margin-bottom: 14px;
+      }
+
+      .setup-steps {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .setup-step {
+        min-height: 96px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+        color: var(--green-dark);
+        background: #fffdf7;
+        text-align: left;
+      }
+
+      .setup-step.done {
+        border-color: rgba(67, 117, 73, 0.5);
+        background: #eaf4e9;
+      }
+
+      .setup-step span,
+      .setup-step small {
+        display: block;
+      }
+
+      .setup-step span {
+        font-weight: 900;
+      }
+
+      .setup-step small {
+        margin-top: 4px;
+        color: var(--muted);
+        font-weight: 700;
+        line-height: 1.35;
+      }
+
+      .today-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .hidden-by-city-mode,
+      .hidden-by-pending {
         display: none !important;
       }
 
@@ -885,6 +940,7 @@
       body[data-theme="night"] .menu-close,
       body[data-theme="night"] .city-filter button,
       body[data-theme="night"] .city-mode-actions button,
+      body[data-theme="night"] .setup-step,
       body[data-theme="night"] .star-btn,
       body[data-theme="night"] .side-menu-nav button,
       body[data-theme="night"] .quick-buttons button,
@@ -928,6 +984,10 @@
 
       body[data-theme="night"] .category-card small {
         color: #c9d2c7;
+      }
+
+      body[data-theme="night"] .setup-step.done {
+        background: #1c3329;
       }
 
       body[data-theme="night"] .side-status,
@@ -1482,6 +1542,10 @@
           grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
+        .setup-steps {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
         .metrics,
         .summary-row {
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1569,6 +1633,10 @@
         .category-hub {
           grid-template-columns: repeat(2, minmax(0, 1fr));
           gap: 8px;
+        }
+
+        .setup-steps {
+          grid-template-columns: 1fr;
         }
 
         .category-card {
@@ -1762,10 +1830,37 @@
         </div>
       </section>
 
+      <section class="panel setup-strip" id="quickStartSetup">
+        <div class="panel-head">
+          <div>
+            <h2>Quick Start Setup</h2>
+            <p>প্রথমে এই ৫টা setup complete করলে tracker ব্যবহার অনেক easy হবে।</p>
+          </div>
+        </div>
+        <div class="setup-steps" id="setupSteps"></div>
+      </section>
+
       <section class="panel search-panel" id="quickSearchPanel">
         <input id="globalSearch" type="search" placeholder="Search: Rawdah, Zamzam, hotel, SIM, transport..." />
+        <button class="secondary" id="pendingOnlyBtn" type="button">Pending only</button>
         <button class="secondary" id="clearSearchBtn" type="button">Clear</button>
         <span class="search-count" id="searchCount">All cards</span>
+      </section>
+
+      <section class="panel today-view" id="todayView">
+        <div class="panel-head">
+          <div>
+            <h2>Today View</h2>
+            <p>আজকের budget, due, checklist এবং next action এক জায়গায়।</p>
+          </div>
+        </div>
+        <div class="pill-grid" id="todaySummary"></div>
+        <div class="today-actions">
+          <button class="secondary" data-jump="#addEntry" type="button">Add today expense</button>
+          <button class="secondary" data-jump="#healthGuide" type="button">Medicine / health</button>
+          <button class="secondary" data-jump="#gateGuide" type="button">Gate / meeting</button>
+          <button class="secondary" data-menu-action="export" type="button">Backup now</button>
+        </div>
       </section>
 
       <section class="hero" id="overview">
@@ -3189,8 +3284,11 @@
         copyDuaBtn: document.querySelector("#copyDuaBtn"),
         printDuaBtn: document.querySelector("#printDuaBtn"),
         globalSearch: document.querySelector("#globalSearch"),
+        pendingOnlyBtn: document.querySelector("#pendingOnlyBtn"),
         clearSearchBtn: document.querySelector("#clearSearchBtn"),
         searchCount: document.querySelector("#searchCount"),
+        setupSteps: document.querySelector("#setupSteps"),
+        todaySummary: document.querySelector("#todaySummary"),
         progressDashboard: document.querySelector("#progressDashboard"),
         priorityList: document.querySelector("#priorityList"),
         tripTimelineNote: document.querySelector("#tripTimelineNote"),
@@ -3251,6 +3349,7 @@
 
       const state = load();
       let editingId = null;
+      let pendingOnly = localStorage.getItem("standalone-umrah-pending-only") === "true";
 
       function defaultState() {
         return {
@@ -3319,6 +3418,7 @@
           madinahDuaNote: "",
           familyDuaNote: "",
           personalDuaNote: "",
+          lastBackupAt: "",
           sarRate: 32,
           bag: { limit: "", current: "", gifts: "" },
           split: { total: "", people: "" },
@@ -3439,6 +3539,60 @@
           <div class="info-pill"><small>Budget alert</small><strong class="${dailyLeft >= 0 ? "good" : "bad"}">${dailyLeft >= 0 ? "OK" : "Over"} ${money(Math.abs(dailyLeft))}</strong></div>
         `;
         renderCategoryProgress();
+        renderQuickStartSetup();
+        renderTodayView();
+      }
+
+      function renderQuickStartSetup() {
+        if (!els.setupSteps) return;
+        const tools = loadTripTools();
+        const saved = totalSaved();
+        const steps = [
+          { key: "target", label: "Target", hint: state.target ? `${money(state.target)} set` : "Savings target set করুন", done: Number(state.target || 0) > 0, jump: "#overview" },
+          { key: "date", label: "Travel date", hint: state.travelDate || "Date set করুন", done: Boolean(state.travelDate), jump: "#overview" },
+          { key: "hotel", label: "Hotel / room", hint: tools.tripCardNote || tools.hotelCompareNote ? "Hotel note ready" : "Hotel card fill করুন", done: Boolean(tools.tripCardNote || tools.hotelCompareNote), jump: "#tripExtras" },
+          { key: "emergency", label: "Emergency card", hint: tools.safetyCard ? "Safety card ready" : "Gate, room, phone save করুন", done: Boolean(tools.safetyCard), jump: "#smartTools" },
+          { key: "backup", label: "Backup", hint: tools.lastBackupAt ? `Last: ${tools.lastBackupAt.slice(0, 10)}` : "Backup নিন", done: Boolean(tools.lastBackupAt), action: "export" },
+        ];
+        els.setupSteps.innerHTML = steps.map((step) => `
+          <button class="setup-step ${step.done ? "done" : ""}" ${step.jump ? `data-jump="${step.jump}"` : `data-menu-action="${step.action}"`} type="button">
+            <span>${step.done ? "Done" : "Todo"} · ${step.label}</span>
+            <small>${escapeHtml(step.hint)}</small>
+          </button>
+        `).join("");
+      }
+
+      function renderTodayView() {
+        if (!els.todaySummary) return;
+        const data = totals();
+        const due = dueSummary();
+        const tools = loadTripTools();
+        const dailyLeft = Number(state.dailyBudget || 0) - todayPersonalSpent();
+        const unchecked = Array.from(document.querySelectorAll("[data-visit-check], [data-trip-check]")).filter((input) => !input.checked).length;
+        const daysLeft = state.travelDate ? daysFromToday(state.travelDate) : null;
+        const backupDays = tools.lastBackupAt ? Math.floor((Date.now() - new Date(tools.lastBackupAt).getTime()) / 86400000) : null;
+        els.todaySummary.innerHTML = `
+          <div class="info-pill"><small>Today budget left</small><strong class="${dailyLeft >= 0 ? "good" : "bad"}">${money(dailyLeft)}</strong></div>
+          <div class="info-pill"><small>Next due</small><strong>${due.nextLabel}</strong></div>
+          <div class="info-pill"><small>Pending checklist</small><strong>${unchecked}</strong></div>
+          <div class="info-pill"><small>Trip countdown</small><strong>${daysLeft === null ? "Set date" : `${bn.format(Math.max(daysLeft, 0))} days`}</strong></div>
+          <div class="info-pill"><small>Backup health</small><strong class="${backupDays === null || backupDays > 7 ? "bad" : "good"}">${backupDays === null ? "No backup" : `${bn.format(backupDays)} days ago`}</strong></div>
+          <div class="info-pill"><small>Saved so far</small><strong>${money(data.saved)}</strong></div>
+        `;
+      }
+
+      function cardHasPending(card) {
+        const inputs = Array.from(card.querySelectorAll("[data-visit-check], [data-trip-check]"));
+        return inputs.length ? inputs.some((input) => !input.checked) : false;
+      }
+
+      function applyPendingFilter() {
+        localStorage.setItem("standalone-umrah-pending-only", String(pendingOnly));
+        els.pendingOnlyBtn?.classList.toggle("is-active", pendingOnly);
+        els.pendingOnlyBtn && (els.pendingOnlyBtn.textContent = pendingOnly ? "Showing pending" : "Pending only");
+        document.querySelectorAll(".visit-card").forEach((card) => {
+          card.classList.toggle("hidden-by-pending", pendingOnly && !cardHasPending(card));
+        });
       }
 
       function runGlobalSearch() {
@@ -3451,6 +3605,7 @@
           if (match) shown += 1;
         });
         if (els.searchCount) els.searchCount.textContent = query ? `${shown} match` : "All cards";
+        applyPendingFilter();
       }
 
       function inferCardCity(card) {
@@ -4348,6 +4503,7 @@
       });
 
       document.querySelector("#exportBtn").addEventListener("click", async () => {
+        saveTripTools({ lastBackupAt: new Date().toISOString() });
         const data = JSON.stringify({ exportedAt: new Date().toISOString(), umrah: state, visitChecklist: Array.from(loadVisitChecklist()), tripTools: loadTripTools() }, null, 2);
         const blob = new Blob([data], { type: "application/json" });
         const link = document.createElement("a");
@@ -4361,6 +4517,7 @@
         } catch {
           markSaved("Backup downloaded");
         }
+        renderProgressDashboard();
       });
 
       document.querySelector("#printBtn").addEventListener("click", () => window.print());
@@ -4501,6 +4658,11 @@
       els.copyDuaBtn?.addEventListener("click", copyDuaNotes);
       els.printDuaBtn?.addEventListener("click", () => window.print());
       els.globalSearch?.addEventListener("input", runGlobalSearch);
+      els.pendingOnlyBtn?.addEventListener("click", () => {
+        pendingOnly = !pendingOnly;
+        runGlobalSearch();
+        markSaved(pendingOnly ? "Pending only on" : "Pending only off");
+      });
       els.clearSearchBtn?.addEventListener("click", () => {
         els.globalSearch.value = "";
         runGlobalSearch();
@@ -4552,6 +4714,11 @@
       document.addEventListener("click", (event) => {
         const action = event.target.closest("[data-menu-action]");
         if (action) runMenuAction(action.dataset.menuAction);
+        const jump = event.target.closest("[data-jump]");
+        if (jump && jump.closest("#setupSteps")) {
+          document.querySelector(jump.dataset.jump)?.scrollIntoView({ behavior: "smooth", block: "start" });
+          setActiveSection(jump.dataset.jump);
+        }
       });
       document.querySelectorAll("[data-menu-open]").forEach((button) => {
         button.addEventListener("click", () => setMenu(true));
