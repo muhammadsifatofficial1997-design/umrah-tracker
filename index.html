@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-10-friendly-categories" />
+    <meta name="app-version" content="2026-07-17-smart-navigation" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -547,6 +547,59 @@
         line-height: 1.35;
       }
 
+      .category-progress {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        margin-top: 10px;
+        border-radius: 999px;
+        padding: 4px 8px;
+        color: #101a15;
+        background: var(--gold);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .city-mode-panel {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 14px;
+        padding: 10px;
+      }
+
+      .city-mode-panel strong,
+      .city-mode-panel small {
+        display: block;
+      }
+
+      .city-mode-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .city-mode-actions button {
+        min-height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 14px;
+        color: var(--green-dark);
+        background: #fffdf7;
+        font-weight: 900;
+      }
+
+      .city-mode-actions button.is-active {
+        border-color: var(--gold);
+        color: #fffdf2;
+        background: var(--green-dark);
+      }
+
+      .hidden-by-city-mode {
+        display: none !important;
+      }
+
       .section-nav button.is-active,
       .side-menu-nav button.is-active,
       .category-card.is-active,
@@ -831,6 +884,7 @@
       body[data-theme="night"] .menu-toggle,
       body[data-theme="night"] .menu-close,
       body[data-theme="night"] .city-filter button,
+      body[data-theme="night"] .city-mode-actions button,
       body[data-theme="night"] .star-btn,
       body[data-theme="night"] .side-menu-nav button,
       body[data-theme="night"] .quick-buttons button,
@@ -856,6 +910,7 @@
       body[data-theme="night"] .section-nav button.is-active,
       body[data-theme="night"] .category-card.is-active,
       body[data-theme="night"] .city-filter button.is-active,
+      body[data-theme="night"] .city-mode-actions button.is-active,
       body[data-theme="night"] .side-menu-nav button.is-active,
       body[data-theme="night"] .bottom-nav button.is-active {
         border-color: var(--gold);
@@ -1246,11 +1301,16 @@
         align-items: center;
         justify-content: space-between;
         gap: 8px;
+        width: 100%;
         padding: 10px;
         border: 1px solid var(--line);
         border-radius: 8px;
+        color: var(--green-dark);
         background: rgba(255, 253, 247, 0.76);
+        font: inherit;
         font-weight: 800;
+        text-align: left;
+        cursor: pointer;
       }
 
       .qr-img {
@@ -1663,26 +1723,43 @@
       </nav>
 
       <section class="category-hub" aria-label="Main category shortcuts">
-        <button class="category-card" data-jump="#overview" type="button">
+        <button class="category-card" data-category-card="core" data-jump="#overview" type="button">
           <span>Core</span>
           <small>Home, add entry, ledger</small>
+          <small class="category-progress" data-category-progress="core">Ready</small>
         </button>
-        <button class="category-card" data-jump="#analysis" type="button">
+        <button class="category-card" data-category-card="money" data-jump="#analysis" type="button">
           <span>Money</span>
           <small>Analysis, budget, installments</small>
+          <small class="category-progress" data-category-progress="money">৳0</small>
         </button>
-        <button class="category-card" data-jump="#visitGuide" type="button">
+        <button class="category-card" data-category-card="guides" data-jump="#visitGuide" type="button">
           <span>Guides</span>
           <small>Visit, free, ride, hotel, food</small>
+          <small class="category-progress" data-category-progress="guides">0/0</small>
         </button>
-        <button class="category-card" data-jump="#dayPlanGuide" type="button">
+        <button class="category-card" data-category-card="prep" data-jump="#dayPlanGuide" type="button">
           <span>Trip Prep</span>
           <small>Day plan, gate, packing, health</small>
+          <small class="category-progress" data-category-progress="prep">0/0</small>
         </button>
-        <button class="category-card" data-jump="#travelTools" type="button">
+        <button class="category-card" data-category-card="tools" data-jump="#travelTools" type="button">
           <span>Tools</span>
           <small>Smart tools, trip card, mobile backup</small>
+          <small class="category-progress" data-category-progress="tools">0 pinned</small>
         </button>
+      </section>
+
+      <section class="panel city-mode-panel" aria-label="City mode">
+        <div>
+          <strong>City Mode</strong>
+          <small>Makkah/Madinah select করলে guide cards focus হবে</small>
+        </div>
+        <div class="city-mode-actions">
+          <button class="is-active" data-city-mode="all" type="button">All</button>
+          <button data-city-mode="makkah" type="button">Makkah</button>
+          <button data-city-mode="madinah" type="button">Madinah</button>
+        </div>
       </section>
 
       <section class="panel search-panel" id="quickSearchPanel">
@@ -3314,8 +3391,30 @@
         });
         const items = Array.from(document.querySelectorAll(".visit-card"))
           .filter((card) => favorites.has(card.dataset.favoriteKey))
-          .map((card) => `<div class="priority-item"><span>${cardTitle(card)}</span><small>${card.querySelector(".visit-tag")?.textContent || ""}</small></div>`);
+          .map((card) => `<button class="priority-item" data-priority-target="${escapeHtml(card.dataset.favoriteKey)}" type="button"><span>${cardTitle(card)}</span><small>${card.querySelector(".visit-tag")?.textContent || ""}</small></button>`);
         if (els.priorityList) els.priorityList.innerHTML = items.join("") || `<div class="priority-item"><span>No priority yet</span><small>Tap ☆ on any card</small></div>`;
+      }
+
+      function countChecks(selectors) {
+        const inputs = selectors.flatMap((selector) => Array.from(document.querySelectorAll(`${selector} [data-visit-check], ${selector} [data-trip-check]`)));
+        return { done: inputs.filter((input) => input.checked).length, total: inputs.length };
+      }
+
+      function setCategoryProgress(key, value) {
+        document.querySelector(`[data-category-progress="${key}"]`)?.replaceChildren(document.createTextNode(value));
+      }
+
+      function renderCategoryProgress() {
+        const saved = totalSaved();
+        const remaining = Math.max(Number(state.target || 0) - saved, 0);
+        const guides = countChecks(["#visitGuide", "#freeGuide", "#transportGuide", "#hotelGuide", "#foodGuide"]);
+        const prep = countChecks(["#dayPlanGuide", "#gateGuide", "#packingGuide", "#healthGuide", "#amalGuide", "#docsGuide"]);
+        const tools = countChecks(["#travelTools", "#smartTools", "#tripExtras", "#mobileUse"]);
+        setCategoryProgress("core", `${state.transactions.length} entries`);
+        setCategoryProgress("money", `${money(remaining)} left`);
+        setCategoryProgress("guides", `${guides.done}/${guides.total || 0} done`);
+        setCategoryProgress("prep", `${prep.done}/${prep.total || 0} done`);
+        setCategoryProgress("tools", `${tools.done}/${tools.total || 0} done · ${loadFavorites().size} pinned`);
       }
 
       function todayPersonalSpent() {
@@ -3339,6 +3438,7 @@
           <div class="info-pill"><small>Priority saved</small><strong>${favorites}</strong></div>
           <div class="info-pill"><small>Budget alert</small><strong class="${dailyLeft >= 0 ? "good" : "bad"}">${dailyLeft >= 0 ? "OK" : "Over"} ${money(Math.abs(dailyLeft))}</strong></div>
         `;
+        renderCategoryProgress();
       }
 
       function runGlobalSearch() {
@@ -3351,6 +3451,32 @@
           if (match) shown += 1;
         });
         if (els.searchCount) els.searchCount.textContent = query ? `${shown} match` : "All cards";
+      }
+
+      function inferCardCity(card) {
+        const explicit = card.dataset.guideCity || card.dataset.citySection || "";
+        if (explicit) return explicit;
+        const text = card.textContent.toLowerCase();
+        const hasMakkah = text.includes("makkah") || text.includes("haram") || text.includes("kaaba") || text.includes("মক্কা");
+        const hasMadinah = text.includes("madinah") || text.includes("nabawi") || text.includes("মদিনা");
+        if (hasMakkah && !hasMadinah) return "makkah";
+        if (hasMadinah && !hasMakkah) return "madinah";
+        return "both";
+      }
+
+      function setCityMode(mode = localStorage.getItem("standalone-umrah-city-mode") || "all") {
+        const next = ["all", "makkah", "madinah"].includes(mode) ? mode : "all";
+        localStorage.setItem("standalone-umrah-city-mode", next);
+        document.querySelectorAll("[data-city-mode]").forEach((button) => {
+          button.classList.toggle("is-active", button.dataset.cityMode === next);
+        });
+        document.querySelectorAll(".visit-card").forEach((card) => {
+          const city = inferCardCity(card);
+          const visible = next === "all" || city === next || city === "both";
+          card.classList.toggle("hidden-by-city-mode", !visible);
+        });
+        if (next !== "all") setCityFilter(next);
+        runGlobalSearch();
       }
 
       function cardGuideCity(card) {
@@ -4382,6 +4508,18 @@
       document.querySelectorAll("[data-guide-filter-for] [data-guide-filter]").forEach((button) => {
         button.addEventListener("click", () => setGuideFilter(button.closest("[data-guide-filter-for]").dataset.guideFilterFor, button.dataset.guideFilter));
       });
+      document.querySelectorAll("[data-city-mode]").forEach((button) => {
+        button.addEventListener("click", () => {
+          setCityMode(button.dataset.cityMode);
+          markSaved(`${button.textContent} mode`);
+        });
+      });
+      els.priorityList?.addEventListener("click", (event) => {
+        const item = event.target.closest("[data-priority-target]");
+        if (!item) return;
+        const card = document.querySelector(`.visit-card[data-favorite-key="${CSS.escape(item.dataset.priorityTarget)}"]`);
+        card?.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
       els.copyPublicLinkBtn?.addEventListener("click", async () => {
         try {
           await navigator.clipboard.writeText(PUBLIC_URL);
@@ -4443,6 +4581,7 @@
       renderTripTools();
       renderFavorites();
       renderProgressDashboard();
+      setCityMode();
       renderExpenseInsights();
       runGlobalSearch();
       els.date.value = today();
