@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-20-editable-plan-users" />
+    <meta name="app-version" content="2026-07-20-cost-split-speed" />
     <meta name="theme-color" content="#0f3a1f" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -1795,6 +1795,20 @@
         background: #e6bd54;
       }
 
+      .panel,
+      .visit-card,
+      .card {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 260px;
+      }
+
+      .cost-average-note {
+        display: block;
+        margin-top: 6px;
+        color: rgba(255, 248, 223, 0.82);
+        font-weight: 800;
+      }
+
       body[data-theme="night"] {
         --bg: #0b2414;
         --surface: #c8df1e;
@@ -2419,7 +2433,7 @@
           </div>
         </div>
         <div class="poster">
-          <img src="assets/umrah-madinah-hero.png" alt="Madinah green dome and minaret" />
+          <img src="assets/umrah-madinah-hero.png" alt="Madinah green dome and minaret" loading="lazy" decoding="async" />
         </div>
       </section>
 
@@ -2488,6 +2502,28 @@
                 <option value="emergencyFund">Emergency Fund</option>
                 <option value="shoppingFund">Gift/Shopping Fund</option>
               </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Cost owner
+              <select id="costOwner">
+                <option value="sifat">sifat</option>
+                <option value="shahabuddin">shahabuddin</option>
+              </select>
+            </label>
+            <label>Cost split
+              <select id="costScope">
+                <option value="personal">Personal cost</option>
+                <option value="group">Group cost average</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label>Group people
+              <input id="groupPeople" type="number" min="1" step="1" value="2" />
+            </label>
+            <label>Average preview
+              <input id="averagePreview" type="text" readonly value="Personal cost" />
             </label>
           </div>
           <div class="field-row">
@@ -3919,6 +3955,10 @@
         currency: document.querySelector("#currency"),
         category: document.querySelector("#category"),
         envelope: document.querySelector("#envelope"),
+        costOwner: document.querySelector("#costOwner"),
+        costScope: document.querySelector("#costScope"),
+        groupPeople: document.querySelector("#groupPeople"),
+        averagePreview: document.querySelector("#averagePreview"),
         date: document.querySelector("#date"),
         note: document.querySelector("#note"),
         receipt: document.querySelector("#receipt"),
@@ -3949,6 +3989,7 @@
       const state = load();
       let editingId = null;
       let pendingOnly = localStorage.getItem("standalone-umrah-pending-only") === "true";
+      let searchTimer = null;
 
       function defaultState() {
         return {
@@ -4708,6 +4749,18 @@
         if (!els.expenseInsights) return;
         const expenseRows = state.transactions.filter((item) => item.type !== "saving");
         const personalRows = state.transactions.filter((item) => item.type === "personal");
+        const userTotals = Object.keys(USERS).map((user) => {
+          const personal = expenseRows
+            .filter((item) => item.costScope !== "group" && costOwnerOf(item) === user)
+            .reduce((total, item) => total + amountBdt(item), 0);
+          const groupShare = expenseRows
+            .filter((item) => item.costScope === "group")
+            .reduce((total, item) => total + sharedAmountBdt(item), 0);
+          return { user, personal, groupShare, total: personal + groupShare };
+        });
+        const groupRows = expenseRows.filter((item) => item.costScope === "group");
+        const groupTotal = groupRows.reduce((total, item) => total + amountBdt(item), 0);
+        const groupAverage = groupRows.reduce((total, item) => total + sharedAmountBdt(item), 0);
         const uniqueDays = new Set(personalRows.map((item) => item.date)).size || 1;
         const personalTotal = personalRows.reduce((total, item) => total + amountBdt(item), 0);
         const perDay = personalTotal / uniqueDays;
@@ -4720,6 +4773,8 @@
         els.expenseInsights.innerHTML = `
           <div class="info-pill"><small>Personal/day avg</small><strong>${money(perDay)}</strong></div>
           <div class="info-pill"><small>Biggest expense</small><strong class="bad">${biggest ? `${money(amountBdt(biggest))} · ${escapeHtml(biggest.category || "Other")}` : "None"}</strong></div>
+          <div class="info-pill"><small>Group total</small><strong class="bad">${money(groupTotal)}</strong><small>Average/share total: ${money(groupAverage)}</small></div>
+          ${userTotals.map((item) => `<div class="info-pill"><small>${escapeHtml(item.user)} total</small><strong>${money(item.total)}</strong><small>Personal ${money(item.personal)} · Group share ${money(item.groupShare)}</small></div>`).join("")}
           <div class="info-pill"><small>Food budget left</small><strong class="${foodCap - foodSpent >= 0 ? "good" : "bad"}">${personalBudget ? money(foodCap - foodSpent) : "Set budget"}</strong></div>
           <div class="info-pill"><small>Shopping budget left</small><strong class="${shoppingCap - shoppingSpent >= 0 ? "good" : "bad"}">${personalBudget ? money(shoppingCap - shoppingSpent) : "Set budget"}</strong></div>
         `;
@@ -4876,6 +4931,21 @@
         return item.currency === "SAR" ? amount * Number(state.sarRate || 1) : amount;
       }
 
+      function sharedAmountBdt(item) {
+        const total = amountBdt(item);
+        if (item.costScope !== "group") return total;
+        return total / Math.max(Number(item.groupPeople || 2), 1);
+      }
+
+      function costOwnerOf(item) {
+        return item.costOwner || activeUser() || "sifat";
+      }
+
+      function costScopeLabel(item) {
+        if (item.costScope !== "group") return `${costOwnerOf(item)} personal`;
+        return `group avg ${money(sharedAmountBdt(item))} x ${Math.max(Number(item.groupPeople || 2), 1)}`;
+      }
+
       function setText(id, value) {
         document.querySelector(`#${id}`).textContent = value;
       }
@@ -4965,6 +5035,17 @@
         const amount = Number(els.amount.value || 0);
         const converted = els.currency.value === "SAR" ? amount * Number(state.sarRate || 1) : amount;
         els.conversionHint.textContent = els.currency.value === "SAR" ? `${sar(amount)} = ${money(converted)} হিসেবে হিসাব হবে` : `${money(amount)} হিসেবে হিসাব হবে`;
+        updateAveragePreview();
+      }
+
+      function updateAveragePreview() {
+        if (!els.averagePreview) return;
+        const amount = Number(els.amount?.value || 0);
+        const converted = els.currency?.value === "SAR" ? amount * Number(state.sarRate || 1) : amount;
+        const people = Math.max(Number(els.groupPeople?.value || 2), 1);
+        els.averagePreview.value = els.costScope?.value === "group"
+          ? `${money(converted / people)} per person (${people} people)`
+          : `${els.costOwner?.value || activeUser() || "sifat"} personal`;
       }
 
       function envelopeTotals() {
@@ -5079,6 +5160,8 @@
         els.sarRate.value = state.sarRate || "";
         els.dailyBudget.value = state.dailyBudget || "";
         els.date.value ||= today();
+        if (els.costOwner && !editingId) els.costOwner.value = activeUser() || els.costOwner.value || "sifat";
+        if (els.groupPeople && !els.groupPeople.value) els.groupPeople.value = "2";
         renderCategoryOptions();
         updateConversionHint();
 
@@ -5170,7 +5253,7 @@
                   <strong class="${item.type === "saving" ? "good" : "bad"}">${item.type === "saving" ? "+" : "-"}${money(amountBdt(item))}</strong>
                 </div>
                 <div class="item-line">
-                  <small>${escapeHtml(item.date)} · ${escapeHtml(item.category || "Other")} · ${escapeHtml(item.envelope || "packageFund")} · ${escapeHtml(item.note || "নোট নেই")} ${item.receipt?.data ? `· <a class="receipt-link" href="${item.receipt.data}" target="_blank" rel="noopener">Receipt</a>` : ""}</small>
+                  <small>${escapeHtml(item.date)} · ${escapeHtml(item.category || "Other")} · ${escapeHtml(item.envelope || "packageFund")} · ${escapeHtml(costScopeLabel(item))} · ${escapeHtml(item.note || "নোট নেই")} ${item.receipt?.data ? `· <a class="receipt-link" href="${item.receipt.data}" target="_blank" rel="noopener">Receipt</a>` : ""}</small>
                   <div class="ledger-actions">
                     <button class="secondary" data-edit="${item.id}" type="button">এডিট</button>
                     <button class="danger" data-delete="${item.id}" type="button">ডিলিট</button>
@@ -5230,6 +5313,9 @@
           currency: els.currency.value,
           category: els.category.value,
           envelope: els.envelope.value,
+          costOwner: els.costOwner?.value || activeUser() || "sifat",
+          costScope: els.costScope?.value || "personal",
+          groupPeople: Math.max(Number(els.groupPeople?.value || 2), 1),
           date: els.date.value,
           note: els.note.value.trim(),
         };
@@ -5270,6 +5356,9 @@
           els.envelope.value = "personalFund";
           els.currency.value = "BDT";
           els.amount.value = preset.dataset.amount || "";
+          els.costOwner.value = activeUser() || els.costOwner.value || "sifat";
+          els.costScope.value = "personal";
+          els.groupPeople.value = "2";
           els.note.value = preset.dataset.expensePreset;
           updateConversionHint();
           els.amount.focus();
@@ -5285,6 +5374,9 @@
           els.currency.value = item.currency || "BDT";
           els.category.value = item.category || categoryOptions(item.type)[0];
           els.envelope.value = item.envelope || "packageFund";
+          els.costOwner.value = item.costOwner || activeUser() || "sifat";
+          els.costScope.value = item.costScope || "personal";
+          els.groupPeople.value = item.groupPeople || 2;
           els.date.value = item.date;
           els.note.value = item.note || "";
           els.amount.focus();
@@ -5399,7 +5491,13 @@
       });
       els.amount.addEventListener("input", updateConversionHint);
       els.currency.addEventListener("change", updateConversionHint);
-      els.ledgerSearch.addEventListener("input", render);
+      els.costOwner?.addEventListener("change", updateAveragePreview);
+      els.costScope?.addEventListener("change", updateAveragePreview);
+      els.groupPeople?.addEventListener("input", updateAveragePreview);
+      els.ledgerSearch.addEventListener("input", () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(render, 120);
+      });
       els.ledgerTypeFilter.addEventListener("change", render);
       document.querySelectorAll("[data-visit-check]").forEach((input) => {
         input.addEventListener("change", () => {
@@ -5520,13 +5618,18 @@
         els.loginPassword.value = "";
         els.loginError.textContent = "";
         updateAuthUi();
+        if (els.costOwner) els.costOwner.value = user;
+        updateAveragePreview();
         markSaved(`Logged in: ${user}`);
       });
       els.logoutBtn?.addEventListener("click", () => {
         localStorage.removeItem(AUTH_KEY);
         updateAuthUi();
       });
-      els.globalSearch?.addEventListener("input", runGlobalSearch);
+      els.globalSearch?.addEventListener("input", () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(runGlobalSearch, 120);
+      });
       els.pendingOnlyBtn?.addEventListener("click", () => {
         pendingOnly = !pendingOnly;
         runGlobalSearch();
