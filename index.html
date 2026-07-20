@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-17-share-print-suggestions" />
+    <meta name="app-version" content="2026-07-20-saudi-plan-2026" />
     <meta name="theme-color" content="#102017" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -1790,6 +1790,7 @@
         <div class="menu-group">
           <span class="menu-group-title">Trip Prep</span>
           <div class="menu-group-actions">
+            <button data-jump="#saudiPlan2026" type="button">Saudi Plan 2026</button>
             <button data-jump="#dayPlanGuide" type="button">Day Plan</button>
             <button data-jump="#gateGuide" type="button">Gate & Meeting</button>
             <button data-jump="#packingGuide" type="button">Packing</button>
@@ -1837,6 +1838,7 @@
         <button data-jump="#overview" type="button">Overview</button>
         <button data-jump="#addEntry" type="button">Add</button>
         <button data-jump="#analysis" type="button">Money</button>
+        <button data-jump="#saudiPlan2026" type="button">Plan</button>
         <button data-jump="#visitGuide" type="button">Visit</button>
         <button data-jump="#freeGuide" type="button">Guides</button>
         <button data-jump="#travelTools" type="button">Tools</button>
@@ -1859,6 +1861,11 @@
           <span>Guides</span>
           <small>Visit, free, ride, hotel, food</small>
           <small class="category-progress" data-category-progress="guides">0/0</small>
+        </button>
+        <button class="category-card" data-category-card="plan" data-jump="#saudiPlan2026" type="button">
+          <span>Saudi Plan</span>
+          <small>Aug 15 route, Taif, Madinah, AlUla</small>
+          <small class="category-progress" data-category-progress="plan">0/0 done</small>
         </button>
         <button class="category-card" data-category-card="prep" data-jump="#dayPlanGuide" type="button">
           <span>Trip Prep</span>
@@ -1914,6 +1921,111 @@
           <button class="secondary" data-jump="#healthGuide" type="button">Medicine / health</button>
           <button class="secondary" data-jump="#gateGuide" type="button">Gate / meeting</button>
           <button class="secondary" data-menu-action="export" type="button">Backup now</button>
+        </div>
+      </section>
+
+      <section class="panel full-row" id="saudiPlan2026">
+        <div class="panel-head">
+          <div>
+            <h2>Saudi Arabia Plan 2026</h2>
+            <p>PDF plan অনুযায়ী Makkah, Taif, Madinah ও AlUla route, cost, transport, hotel shortlist এবং day checklist।</p>
+          </div>
+          <div class="toolbar">
+            <button class="secondary" data-jump="#transportGuide" type="button">Transport</button>
+            <button class="secondary" data-jump="#hotelGuide" type="button">Hotel</button>
+          </div>
+        </div>
+        <div class="city-filter" data-guide-filter-for="saudiPlan2026">
+          <button class="is-active" data-guide-filter="all" type="button">All</button>
+          <button data-guide-filter="makkah" type="button">Makkah</button>
+          <button data-guide-filter="madinah" type="button">Madinah</button>
+          <button data-guide-filter="both" type="button">Taif / AlUla / Intercity</button>
+        </div>
+        <div class="visit-grid">
+          <article class="visit-card" data-city="both">
+            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day1-jed-makkah" />Day 1 ready</label>
+            <span class="visit-tag">Aug 15</span>
+            <strong>Jeddah Airport to Makkah + Umrah</strong>
+            <p>JED থেকে Haramain train ~54 min, PDF budget ~75 SAR/17.5 EUR pp. Makkah station থেকে hotel shuttle থাকলে free, না হলে Uber/Careem approx 20 SAR. Hotel check-in, Ihram, তারপর Masjid al-Haram-এ Umrah.</p>
+            <div class="visit-actions"><a class="map-link" href="https://sar.hhr.sa/web/portal/home#" target="_blank" rel="noopener">Train Ticket</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Jeddah+Airport+Haramain+Train+Station" target="_blank" rel="noopener">JED Station</a><span class="fee-note">Night: Makkah</span></div>
+          </article>
+          <article class="visit-card" data-city="makkah">
+            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day2-makkah-ziyarah" />Day 2 planned</label>
+            <span class="visit-tag">Makkah</span>
+            <strong>Makkah Ziyarat + Khandamah sunset</strong>
+            <p>Morning Haram prayers. Mount Arafat, Mina, Muzdalifah, Jabal al-Nour/Cave Hira viewing. Local driver 3-4 hours approx 150-200 SAR. Sunset-এর আগে Jabal Khandamah viewpoint ride approx 25 SAR.</p>
+            <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Mount+Arafat+Mina+Muzdalifah+Jabal+al+Nour+Makkah" target="_blank" rel="noopener">Ziyarat Map</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Jabal+Khandamah+Viewpoint+Makkah" target="_blank" rel="noopener">Khandamah</a><span class="fee-note">Taxi: 150-200 SAR</span></div>
+          </article>
+          <article class="visit-card" data-city="both">
+            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day3-taif-transit" />Day 3 option chosen</label>
+            <span class="visit-tag">Taif</span>
+            <strong>Makkah to Taif / Al-Hada option</strong>
+            <p>Morning Haram. Afternoon Taif transfer: budget option Makkah SAPTCO/NW bus ~1.5h, ~35 SAR. Convenience Uber/Careem/private taxi ~250-300 SAR. Round trip with waiting may be ~400-500 SAR.</p>
+            <div class="visit-actions"><a class="map-link" href="https://booking.nwbus.sa/online/search" target="_blank" rel="noopener">NW Bus</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Makkah+SAPTCO+bus+station" target="_blank" rel="noopener">Bus Station</a><span class="fee-note">Stay/round trip decide</span></div>
+          </article>
+          <article class="visit-card" data-city="both">
+            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day4-taif-return" />Day 4 checked</label>
+            <span class="visit-tag">Taif</span>
+            <strong>Taif exploration + return to Makkah</strong>
+            <p>Al Hada Mountain, Telefric Al Hada cable car approx 85 SAR round trip, Shubra Palace entry approx 20 SAR, Taif rose water factory. Central Taif to Al Hada ride approx 40-70 SAR one way. Return bus to Makkah approx 30 SAR or taxi 200-300 SAR.</p>
+            <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Telefric+Al+Hada+Taif" target="_blank" rel="noopener">Al Hada</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Shubra+Palace+Taif" target="_blank" rel="noopener">Shubra Palace</a><span class="fee-note">Cable: ~85 SAR</span></div>
+          </article>
+          <article class="visit-card" data-city="both">
+            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day5-makkah-madinah" />Day 5 booked</label>
+            <span class="visit-tag">Makkah to Madinah</span>
+            <strong>Farewell Tawaf + Haramain train to Madinah</strong>
+            <p>Morning Tawaf al-Wida. Hotel to Makkah Haramain station approx 20 SAR. Train to Madinah approx 2h 15m, PDF economy estimate ~186 SAR. Madinah hotel check-in, Nabawi courtyard, Rawdah permit via Nusuk, Jannatul Baqi visit.</p>
+            <div class="visit-actions"><a class="map-link" href="https://sar.hhr.sa/web/portal/home#" target="_blank" rel="noopener">Train Ticket</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Al+Madinah+Haramain+Train+Station" target="_blank" rel="noopener">Madinah Station</a><span class="fee-note">Night: Madinah</span></div>
+          </article>
+          <article class="visit-card" data-city="madinah">
+            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day6-madinah-bus" />Day 6 ticket checked</label>
+            <span class="visit-tag">Madinah</span>
+            <strong>Madinah Hop-On Hop-Off Ziyarat</strong>
+            <p>City Sightseeing Madinah bus দিয়ে Nabawi, Jannatul Baqi, Salam Gate, Uhud, Qiblatain, Trench, Quba, Hijaz Railway Station, Quba Square cover. 24-hour adult pass PDF estimate 90 SAR; al-Jumah Mosque Quba stop থেকে 600-900m walk.</p>
+            <div class="visit-actions"><a class="map-link" href="https://csmadinah.com/" target="_blank" rel="noopener">Bus Booking</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=City+Sightseeing+Madinah+bus+Quba+Mosque+stop" target="_blank" rel="noopener">Quba Stop</a><span class="fee-note">Pass: ~90 SAR</span></div>
+          </article>
+          <article class="visit-card" data-city="madinah">
+            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day7-madinah-wadi-jinn" />Day 7 option saved</label>
+            <span class="visit-tag">Madinah</span>
+            <strong>Extra Madinah day / Wadi Jinn option</strong>
+            <p>একটা extra full day Madinah রাখা হয়েছে। শান্তভাবে Nabawi time, rest, shopping বা Wadi Jinn trip. Standard sedan up to 4 passengers PDF estimate 200-300 SAR total.</p>
+            <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Wadi+Jinn+Madinah" target="_blank" rel="noopener">Wadi Jinn</a><button class="secondary" data-jump="#foodGuide" type="button">Food/Rest</button><span class="fee-note">Taxi: 200-300 SAR</span></div>
+          </article>
+          <article class="visit-card" data-city="both">
+            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day7-alula" />AlUla route saved</label>
+            <span class="visit-tag">AlUla</span>
+            <strong>Madinah to AlUla desert road trip</strong>
+            <p>NW Bus route NW14 from Madinah Jabal Ohud Station to AlUla: PDF says depart 08:00, arrive around 14:16, price ~126 SAR. Late afternoon Elephant Rock/Jabal Al Fil sunset and Shalal Cafe dinner.</p>
+            <div class="visit-actions"><a class="map-link" href="https://booking.nwbus.sa/online/search" target="_blank" rel="noopener">NW Bus</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Elephant+Rock+AlUla" target="_blank" rel="noopener">Elephant Rock</a><span class="fee-note">Bus: ~126 SAR</span></div>
+          </article>
+          <article class="visit-card" data-city="both">
+            <label class="visit-check"><input type="checkbox" data-trip-check="plan-alt-umluj" />Alternative noted</label>
+            <span class="visit-tag">Alt route</span>
+            <strong>Makkah to Umluj to Madinah note</strong>
+            <p>PDF note: plan later change হতে পারে; Makkah to Madinah-এর বদলে Makkah to Umluj, তারপর Umluj to Madinah হতে পারে। Day plan same রাখুন, কিন্তু transport/hotel booking flexible cancellation দিয়ে করুন।</p>
+            <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Umluj+Saudi+Arabia" target="_blank" rel="noopener">Umluj Map</a><span class="fee-note">Flexible booking</span></div>
+          </article>
+          <article class="visit-card" data-city="makkah">
+            <label class="visit-check"><input type="checkbox" data-trip-check="plan-makkah-hotel-link" />Makkah hotel checked</label>
+            <span class="visit-tag">Hotel</span>
+            <strong>Makkah budget hotel shortlist</strong>
+            <p>PDF estimate: 2 person 50-60 EUR if 0.6-1 km from Haram, 15-30 EUR if 1-2 km. Linked option: Atyaf Alkhir. Verify distance, shuttle, cancellation, taxes, lift and walking slope before booking.</p>
+            <div class="visit-actions"><a class="map-link" href="https://www.booking.com/hotel/sa/atyaf-alkhir.html" target="_blank" rel="noopener">Atyaf Alkhir</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Atyaf+Alkhir+Hotel+Makkah" target="_blank" rel="noopener">Map</a><span class="fee-note">Budget check</span></div>
+          </article>
+          <article class="visit-card" data-city="madinah">
+            <label class="visit-check"><input type="checkbox" data-trip-check="plan-madinah-hotel-link" />Madinah hotel checked</label>
+            <span class="visit-tag">Hotel</span>
+            <strong>Madinah budget hotel shortlist</strong>
+            <p>PDF estimate: 2 person 40-55 EUR if 0.8-1 km, 20-30 EUR if 1-2 km. Linked options: Qamar Al Madina and Nazl Al Wyy. Verify Nabawi gate side, women entrance, breakfast and reviews.</p>
+            <div class="visit-actions"><a class="map-link" href="https://www.booking.com/hotel/sa/qamar-al-madina-fndq-qmr-lmdyn.html" target="_blank" rel="noopener">Qamar Al Madina</a><a class="map-link" href="https://www.booking.com/hotel/sa/nzl-lwy-l-lmdyn-lmnwr.html" target="_blank" rel="noopener">Nazl Al Wyy</a><span class="fee-note">Gate-side check</span></div>
+          </article>
+          <article class="visit-card" data-city="both">
+            <label class="visit-check"><input type="checkbox" data-trip-check="plan-booking-safety" />Booking safety done</label>
+            <span class="visit-tag">Before pay</span>
+            <strong>Plan booking safety checklist</strong>
+            <p>Train/bus ticket, hotel cancellation, Rawdah Nusuk permit, taxi estimate, offline map, hotel pins, emergency card and backup JSON finish করুন। Prices PDF estimate, booking-এর আগে latest fare official site/app-এ confirm করুন।</p>
+            <div class="visit-actions"><button class="secondary" data-jump="#smartTools" type="button">Smart Tools</button><button class="secondary" data-menu-action="export" type="button">Backup</button><span class="fee-note">Confirm live price</span></div>
+          </article>
         </div>
       </section>
 
@@ -3601,11 +3713,13 @@
       function renderCategoryProgress() {
         const saved = totalSaved();
         const remaining = Math.max(Number(state.target || 0) - saved, 0);
+        const plan = countChecks(["#saudiPlan2026"]);
         const guides = countChecks(["#visitGuide", "#freeGuide", "#transportGuide", "#hotelGuide", "#foodGuide"]);
         const prep = countChecks(["#dayPlanGuide", "#gateGuide", "#packingGuide", "#healthGuide", "#amalGuide", "#docsGuide"]);
         const tools = countChecks(["#travelTools", "#smartTools", "#tripExtras", "#mobileUse"]);
         setCategoryProgress("core", `${state.transactions.length} entries`);
         setCategoryProgress("money", `${money(remaining)} left`);
+        setCategoryProgress("plan", `${plan.done}/${plan.total || 0} done`);
         setCategoryProgress("guides", `${guides.done}/${guides.total || 0} done`);
         setCategoryProgress("prep", `${prep.done}/${prep.total || 0} done`);
         setCategoryProgress("tools", `${tools.done}/${tools.total || 0} done · ${loadFavorites().size} pinned`);
