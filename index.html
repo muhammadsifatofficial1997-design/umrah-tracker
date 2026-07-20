@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-20-saudi-plan-2026" />
-    <meta name="theme-color" content="#102017" />
+    <meta name="app-version" content="2026-07-20-saudi-award-ui" />
+    <meta name="theme-color" content="#0f3a1f" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
     <meta property="og:description" content="Savings, expenses, visit guide, hotel compare, free services, transport and trip checklist in one mobile-friendly app." />
@@ -1526,6 +1526,295 @@
       .receipt-link {
         color: var(--green-dark);
         font-weight: 800;
+      }
+
+      /* Saudi award-inspired visual refresh */
+      :root {
+        --bg: #164f25;
+        --surface: #f6c634;
+        --surface-2: #c4df18;
+        --ink: #102316;
+        --muted: #d9e4bd;
+        --line: rgba(239, 206, 104, 0.38);
+        --green: #2f742f;
+        --green-dark: #082414;
+        --gold: #e6bd54;
+        --good: #b9dd1f;
+        --bad: #e86b55;
+        --shadow: 0 24px 72px rgba(2, 20, 10, 0.34);
+      }
+
+      body {
+        color: #f8f3db;
+        background:
+          radial-gradient(circle at 50% -8%, rgba(215, 194, 74, 0.22), transparent 34%),
+          linear-gradient(180deg, #1d632d 0%, #164f25 34%, #0c351b 100%);
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background:
+          linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent),
+          repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 44px);
+        opacity: 0.32;
+        pointer-events: none;
+      }
+
+      .app-topbar,
+      .side-menu,
+      .bottom-nav {
+        border-color: rgba(229, 190, 82, 0.48);
+        background: rgba(6, 31, 17, 0.9);
+        color: #fff8df;
+      }
+
+      .app-topbar {
+        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
+      }
+
+      .app-topbar small,
+      .side-menu small,
+      .panel-head p,
+      .card p,
+      .visit-card p,
+      .category-card small,
+      .setup-step small,
+      .search-count,
+      small {
+        color: rgba(255, 248, 223, 0.78);
+      }
+
+      .panel,
+      .card {
+        border-color: rgba(235, 202, 89, 0.34);
+        background:
+          linear-gradient(180deg, rgba(17, 75, 32, 0.92), rgba(7, 39, 20, 0.92));
+        color: #fff8df;
+        box-shadow: 0 20px 56px rgba(2, 20, 10, 0.32);
+      }
+
+      .panel-head {
+        align-items: center;
+        margin: -4px 0 16px;
+        padding: 9px 14px;
+        border: 1px solid rgba(235, 202, 89, 0.36);
+        border-radius: 8px;
+        background: #082414;
+      }
+
+      .panel-head h2 {
+        color: #fff8df;
+        letter-spacing: 0;
+      }
+
+      .hero {
+        border-color: rgba(235, 202, 89, 0.46);
+        background: #082414;
+      }
+
+      .hero-copy {
+        background:
+          linear-gradient(90deg, rgba(6, 31, 17, 0.96), rgba(18, 74, 30, 0.8), rgba(18, 74, 30, 0.1));
+      }
+
+      .kicker,
+      .visit-tag,
+      .category-progress {
+        color: #082414;
+        background: #e6bd54;
+      }
+
+      .hero-stats div,
+      .summary-row div,
+      .mini-grid div,
+      .info-pill,
+      .milestone,
+      .week-card,
+      .ledger-item,
+      .suggestion-item,
+      .print-mini-card,
+      .city-heading,
+      .counter-box,
+      .compact-table th {
+        border-color: rgba(235, 202, 89, 0.34);
+        background: rgba(4, 32, 16, 0.56);
+        color: #fff8df;
+      }
+
+      .visit-card,
+      .category-card,
+      .setup-step {
+        border: 1px solid rgba(245, 220, 75, 0.5);
+        background: linear-gradient(180deg, #c8df1e, #b9d818);
+        color: #102316;
+        box-shadow: 0 14px 30px rgba(2, 20, 10, 0.22);
+      }
+
+      .visit-card p,
+      .visit-card small,
+      .category-card small,
+      .setup-step small {
+        color: rgba(16, 35, 22, 0.72);
+      }
+
+      .visit-card strong,
+      .category-card span,
+      .setup-step span,
+      .info-pill strong,
+      .card strong,
+      .summary-row strong,
+      .mini-grid strong {
+        color: inherit;
+      }
+
+      .visit-card.done,
+      .setup-step.done,
+      .milestone.done,
+      .week-card.done,
+      .ledger-item.installment-paid {
+        border-color: rgba(255, 244, 159, 0.82);
+        background: linear-gradient(180deg, #d9eb38, #b9dd1f);
+      }
+
+      .category-card:hover,
+      .setup-step:hover,
+      .visit-card:hover {
+        border-color: #fff09b;
+        transform: translateY(-2px);
+      }
+
+      input,
+      select,
+      textarea,
+      .chart-wrap,
+      .empty,
+      .priority-item {
+        border-color: rgba(235, 202, 89, 0.34);
+        color: #fff8df;
+        background: rgba(4, 26, 14, 0.82);
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: rgba(255, 248, 223, 0.52);
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: #e6bd54;
+        box-shadow: 0 0 0 3px rgba(230, 189, 84, 0.22);
+      }
+
+      .primary,
+      .map-link,
+      .section-nav button.is-active,
+      .side-menu-nav button.is-active,
+      .category-card.is-active,
+      .bottom-nav button.is-active,
+      .city-filter button.is-active,
+      .city-mode-actions button.is-active {
+        color: #fff8df;
+        background: #082414;
+      }
+
+      .secondary,
+      .menu-toggle,
+      .menu-close,
+      .side-menu-nav button,
+      .section-nav button,
+      .city-filter button,
+      .city-mode-actions button,
+      .quick-buttons button,
+      .bottom-nav button[data-menu-open],
+      .fee-note,
+      .type-pill,
+      .star-btn {
+        border-color: rgba(230, 189, 84, 0.38);
+        color: #102316;
+        background: #e6bd54;
+      }
+
+      .section-nav button {
+        min-height: 46px;
+        border-radius: 8px;
+        text-transform: none;
+      }
+
+      .section-nav {
+        padding: 8px;
+        border: 1px solid rgba(235, 202, 89, 0.24);
+        border-radius: 8px;
+        background: rgba(6, 31, 17, 0.56);
+      }
+
+      .city-filter,
+      .city-mode-actions {
+        padding: 8px;
+        border-radius: 8px;
+        background: rgba(6, 31, 17, 0.32);
+      }
+
+      .card-icon {
+        color: #082414;
+        background: #e6bd54;
+      }
+
+      .progress-track {
+        background: rgba(4, 26, 14, 0.82);
+      }
+
+      .progress-track span {
+        background: linear-gradient(90deg, #c7e51e, #e6bd54);
+      }
+
+      .side-status,
+      .due-badge,
+      .mini-result,
+      .edit-banner {
+        border-color: rgba(230, 189, 84, 0.42);
+        color: #102316;
+        background: #e6bd54;
+      }
+
+      .compact-table td {
+        border-color: rgba(16, 35, 22, 0.28);
+      }
+
+      .visit-card .compact-table th,
+      .visit-card .compact-table td {
+        color: #102316;
+        background: rgba(255, 248, 223, 0.28);
+      }
+
+      .floating-add {
+        color: #082414;
+        background: #e6bd54;
+      }
+
+      body[data-theme="night"] {
+        --bg: #0b2414;
+        --surface: #c8df1e;
+        --surface-2: #e6bd54;
+        --ink: #fff8df;
+        --muted: rgba(255, 248, 223, 0.72);
+        --line: rgba(235, 202, 89, 0.36);
+        background:
+          radial-gradient(circle at 50% -8%, rgba(215, 194, 74, 0.18), transparent 34%),
+          linear-gradient(180deg, #123d20 0%, #0b2414 100%);
+      }
+
+      body[data-theme="night"] .section-nav button.is-active,
+      body[data-theme="night"] .category-card.is-active,
+      body[data-theme="night"] .city-filter button.is-active,
+      body[data-theme="night"] .city-mode-actions button.is-active,
+      body[data-theme="night"] .side-menu-nav button.is-active,
+      body[data-theme="night"] .bottom-nav button.is-active {
+        color: #fff8df;
+        background: #082414;
       }
 
       @media print {
