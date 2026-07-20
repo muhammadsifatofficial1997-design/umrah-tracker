@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-20-cost-split-speed" />
+    <meta name="app-version" content="2026-07-21-theme-polish" />
     <meta name="theme-color" content="#0f3a1f" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -1913,6 +1913,211 @@
 
       .plan-editor-full {
         grid-column: 1 / -1;
+      }
+
+      /* Final day/night palette polish */
+      body:not([data-theme="night"]) {
+        --bg: #f4efe1;
+        --surface: #fff8e7;
+        --surface-2: #efe2bd;
+        --ink: #102316;
+        --muted: #5f6758;
+        --line: #d8c891;
+        --green: #1f6d3c;
+        --green-dark: #082414;
+        --gold: #d9a72f;
+        --good: #19744c;
+        --bad: #b34b3f;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 50% -10%, rgba(217, 167, 47, 0.18), transparent 34%),
+          linear-gradient(180deg, #fff8e7 0%, #f4efe1 48%, #e7dab8 100%);
+      }
+
+      body:not([data-theme="night"]) .app-topbar,
+      body:not([data-theme="night"]) .side-menu,
+      body:not([data-theme="night"]) .bottom-nav {
+        border-color: rgba(31, 109, 60, 0.22);
+        color: var(--ink);
+        background: rgba(255, 248, 231, 0.94);
+      }
+
+      body:not([data-theme="night"]) .panel,
+      body:not([data-theme="night"]) .card {
+        border-color: rgba(31, 109, 60, 0.18);
+        color: var(--ink);
+        background: rgba(255, 248, 231, 0.96);
+        box-shadow: 0 18px 48px rgba(55, 45, 20, 0.14);
+      }
+
+      body:not([data-theme="night"]) .panel-head {
+        border-color: rgba(31, 109, 60, 0.2);
+        background: #0f3a21;
+      }
+
+      body:not([data-theme="night"]) .panel-head h2,
+      body:not([data-theme="night"]) .panel-head p {
+        color: #fff8e7;
+      }
+
+      body:not([data-theme="night"]) .visit-card,
+      body:not([data-theme="night"]) .category-card,
+      body:not([data-theme="night"]) .setup-step {
+        border-color: rgba(31, 109, 60, 0.2);
+        color: var(--ink);
+        background: linear-gradient(180deg, #fffdf3, #f2e4bd);
+      }
+
+      body:not([data-theme="night"]) .visit-card p,
+      body:not([data-theme="night"]) .visit-card small,
+      body:not([data-theme="night"]) .category-card small,
+      body:not([data-theme="night"]) .setup-step small,
+      body:not([data-theme="night"]) .card p,
+      body:not([data-theme="night"]) small {
+        color: var(--muted);
+      }
+
+      body:not([data-theme="night"]) input,
+      body:not([data-theme="night"]) select,
+      body:not([data-theme="night"]) textarea,
+      body:not([data-theme="night"]) .chart-wrap,
+      body:not([data-theme="night"]) .empty,
+      body:not([data-theme="night"]) .priority-item {
+        border-color: rgba(31, 109, 60, 0.22);
+        color: var(--ink);
+        background: #fffef8;
+      }
+
+      body:not([data-theme="night"]) .secondary,
+      body:not([data-theme="night"]) .menu-toggle,
+      body:not([data-theme="night"]) .menu-close,
+      body:not([data-theme="night"]) .side-menu-nav button,
+      body:not([data-theme="night"]) .section-nav button,
+      body:not([data-theme="night"]) .city-filter button,
+      body:not([data-theme="night"]) .city-mode-actions button,
+      body:not([data-theme="night"]) .quick-buttons button,
+      body:not([data-theme="night"]) .fee-note,
+      body:not([data-theme="night"]) .type-pill,
+      body:not([data-theme="night"]) .star-btn,
+      body:not([data-theme="night"]) .user-chip {
+        border-color: rgba(217, 167, 47, 0.34);
+        color: #102316;
+        background: #ecd27d;
+      }
+
+      body:not([data-theme="night"]) .primary,
+      body:not([data-theme="night"]) .map-link,
+      body:not([data-theme="night"]) .section-nav button.is-active,
+      body:not([data-theme="night"]) .side-menu-nav button.is-active,
+      body:not([data-theme="night"]) .category-card.is-active,
+      body:not([data-theme="night"]) .bottom-nav button.is-active,
+      body:not([data-theme="night"]) .city-filter button.is-active,
+      body:not([data-theme="night"]) .city-mode-actions button.is-active {
+        border-color: #0f3a21;
+        color: #fff8e7;
+        background: #0f3a21;
+      }
+
+      body[data-theme="night"] {
+        --bg: #06190f;
+        --surface: #102a1c;
+        --surface-2: #173824;
+        --ink: #fff6d8;
+        --muted: #c9d8bf;
+        --line: rgba(231, 190, 83, 0.3);
+        --green: #4f9a5c;
+        --green-dark: #06190f;
+        --gold: #e7be53;
+        --good: #b8df6a;
+        --bad: #ff9a85;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 50% -10%, rgba(231, 190, 83, 0.16), transparent 32%),
+          linear-gradient(180deg, #123f22 0%, #082414 48%, #04130b 100%);
+      }
+
+      body[data-theme="night"] .app-topbar,
+      body[data-theme="night"] .side-menu,
+      body[data-theme="night"] .bottom-nav,
+      body[data-theme="night"] .panel,
+      body[data-theme="night"] .card {
+        border-color: var(--line);
+        color: var(--ink);
+        background: rgba(8, 36, 20, 0.94);
+      }
+
+      body[data-theme="night"] .visit-card,
+      body[data-theme="night"] .category-card,
+      body[data-theme="night"] .setup-step,
+      body[data-theme="night"] .ledger-item,
+      body[data-theme="night"] .info-pill,
+      body[data-theme="night"] .milestone,
+      body[data-theme="night"] .week-card,
+      body[data-theme="night"] .suggestion-item,
+      body[data-theme="night"] .print-mini-card {
+        border-color: rgba(231, 190, 83, 0.26);
+        color: var(--ink);
+        background: #102a1c;
+      }
+
+      body[data-theme="night"] .visit-card p,
+      body[data-theme="night"] .visit-card small,
+      body[data-theme="night"] .category-card small,
+      body[data-theme="night"] .setup-step small,
+      body[data-theme="night"] .panel-head p,
+      body[data-theme="night"] .card p,
+      body[data-theme="night"] small {
+        color: var(--muted);
+      }
+
+      body[data-theme="night"] input,
+      body[data-theme="night"] select,
+      body[data-theme="night"] textarea,
+      body[data-theme="night"] .chart-wrap,
+      body[data-theme="night"] .empty,
+      body[data-theme="night"] .priority-item {
+        border-color: rgba(231, 190, 83, 0.3);
+        color: var(--ink);
+        background: #06190f;
+      }
+
+      body[data-theme="night"] .secondary,
+      body[data-theme="night"] .menu-toggle,
+      body[data-theme="night"] .menu-close,
+      body[data-theme="night"] .side-menu-nav button,
+      body[data-theme="night"] .section-nav button,
+      body[data-theme="night"] .city-filter button,
+      body[data-theme="night"] .city-mode-actions button,
+      body[data-theme="night"] .quick-buttons button,
+      body[data-theme="night"] .fee-note,
+      body[data-theme="night"] .type-pill,
+      body[data-theme="night"] .star-btn,
+      body[data-theme="night"] .user-chip {
+        border-color: rgba(231, 190, 83, 0.32);
+        color: #06190f;
+        background: #e7be53;
+      }
+
+      body[data-theme="night"] .primary,
+      body[data-theme="night"] .map-link,
+      body[data-theme="night"] .section-nav button.is-active,
+      body[data-theme="night"] .side-menu-nav button.is-active,
+      body[data-theme="night"] .category-card.is-active,
+      body[data-theme="night"] .bottom-nav button.is-active,
+      body[data-theme="night"] .city-filter button.is-active,
+      body[data-theme="night"] .city-mode-actions button.is-active {
+        border-color: #e7be53;
+        color: #06190f;
+        background: #e7be53;
+      }
+
+      body[data-theme="night"] .panel-head {
+        border-color: rgba(231, 190, 83, 0.3);
+        background: #06190f;
+      }
+
+      body[data-theme="night"] .panel-head h2 {
+        color: var(--ink);
       }
 
       @media print {
