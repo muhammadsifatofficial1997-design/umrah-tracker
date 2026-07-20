@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-20-saudi-award-ui" />
+    <meta name="app-version" content="2026-07-20-editable-plan-users" />
     <meta name="theme-color" content="#0f3a1f" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -1817,6 +1817,90 @@
         background: #082414;
       }
 
+      .login-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 120;
+        display: grid;
+        place-items: center;
+        padding: 18px;
+        background:
+          radial-gradient(circle at 50% 0%, rgba(230, 189, 84, 0.22), transparent 36%),
+          linear-gradient(180deg, #1d632d, #082414);
+      }
+
+      .login-screen.is-hidden {
+        display: none;
+      }
+
+      .login-card {
+        width: min(440px, 100%);
+        padding: 20px;
+        border: 1px solid rgba(230, 189, 84, 0.48);
+        border-radius: 8px;
+        color: #fff8df;
+        background: rgba(6, 31, 17, 0.92);
+        box-shadow: var(--shadow);
+      }
+
+      .login-card h1 {
+        margin-bottom: 8px;
+        font-size: 34px;
+      }
+
+      .login-card p {
+        color: rgba(255, 248, 223, 0.78);
+      }
+
+      .login-error {
+        min-height: 24px;
+        margin: 0;
+        color: #ffb7aa;
+        font-weight: 800;
+      }
+
+      .user-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 40px;
+        border: 1px solid rgba(230, 189, 84, 0.38);
+        border-radius: 8px;
+        padding: 8px 10px;
+        color: #102316;
+        background: #e6bd54;
+        font-weight: 900;
+      }
+
+      .plan-editor {
+        display: grid;
+        gap: 12px;
+        margin: 0 0 14px;
+        padding: 14px;
+        border: 1px solid rgba(235, 202, 89, 0.34);
+        border-radius: 8px;
+        background: rgba(4, 32, 16, 0.48);
+      }
+
+      .plan-editor summary {
+        cursor: pointer;
+        color: #fff8df;
+        font-weight: 900;
+      }
+
+      .plan-editor-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .plan-editor textarea {
+        min-height: 120px;
+      }
+
+      .plan-editor-full {
+        grid-column: 1 / -1;
+      }
+
       @media print {
         .quick-grid,
         .toolbar,
@@ -2009,6 +2093,10 @@
           grid-template-columns: 1fr;
         }
 
+        .plan-editor-grid {
+          grid-template-columns: 1fr;
+        }
+
         .poster,
         .poster img {
           min-height: 390px;
@@ -2042,6 +2130,24 @@
     </style>
   </head>
   <body>
+    <section class="login-screen" id="loginScreen" aria-label="Login">
+      <form class="login-card" id="loginForm">
+        <span class="kicker">Private Umrah Plan</span>
+        <h1>Login</h1>
+        <p>Plan edit ও tracker ব্যবহার করার জন্য user select করে password দিন।</p>
+        <label>User
+          <select id="loginUser">
+            <option value="sifat">sifat</option>
+            <option value="shahabuddin">shahabuddin</option>
+          </select>
+        </label>
+        <label>Password
+          <input id="loginPassword" type="password" autocomplete="current-password" placeholder="name + 123" required />
+        </label>
+        <button class="primary" type="submit">Login</button>
+        <p class="login-error" id="loginError"></p>
+      </form>
+    </section>
     <aside class="side-menu" id="sideMenu" aria-label="Tracker menu" aria-hidden="true">
       <div class="side-menu-head">
         <div>
@@ -2117,9 +2223,11 @@
           <small id="saveStatus">Ready</small>
         </div>
         <div class="toolbar">
+          <span class="user-chip" id="activeUserChip">Guest</span>
           <span class="due-badge" id="dueBadge">0 due</span>
           <button class="secondary" id="themeBtn" type="button">Night</button>
           <button class="secondary" id="scrollLedgerBtn" type="button">Ledger</button>
+          <button class="secondary" id="logoutBtn" type="button">Logout</button>
         </div>
       </header>
 
@@ -2224,98 +2332,54 @@
             <button class="secondary" data-jump="#hotelGuide" type="button">Hotel</button>
           </div>
         </div>
+        <details class="plan-editor" id="planEditor">
+          <summary>Edit Saudi Plan cards</summary>
+          <div class="plan-editor-grid">
+            <label>Plan card
+              <select id="planEditSelect"></select>
+            </label>
+            <label>City/type
+              <select id="planEditCity">
+                <option value="makkah">Makkah</option>
+                <option value="madinah">Madinah</option>
+                <option value="both">Taif / AlUla / Intercity</option>
+              </select>
+            </label>
+            <label>Checklist label
+              <input id="planEditCheck" type="text" />
+            </label>
+            <label>Tag
+              <input id="planEditTag" type="text" />
+            </label>
+            <label class="plan-editor-full">Title
+              <input id="planEditTitle" type="text" />
+            </label>
+            <label class="plan-editor-full">Details
+              <textarea id="planEditBody" rows="5"></textarea>
+            </label>
+            <label>Primary link label
+              <input id="planEditLinkLabel" type="text" />
+            </label>
+            <label>Primary link URL
+              <input id="planEditLinkUrl" type="url" />
+            </label>
+            <label>Cost/note
+              <input id="planEditFee" type="text" />
+            </label>
+          </div>
+          <div class="visit-actions">
+            <button class="primary" id="savePlanCardBtn" type="button">Save card</button>
+            <button class="secondary" id="addPlanCardBtn" type="button">Add new card</button>
+            <button class="secondary" id="resetPlanCardsBtn" type="button">Reset PDF plan</button>
+          </div>
+        </details>
         <div class="city-filter" data-guide-filter-for="saudiPlan2026">
           <button class="is-active" data-guide-filter="all" type="button">All</button>
           <button data-guide-filter="makkah" type="button">Makkah</button>
           <button data-guide-filter="madinah" type="button">Madinah</button>
           <button data-guide-filter="both" type="button">Taif / AlUla / Intercity</button>
         </div>
-        <div class="visit-grid">
-          <article class="visit-card" data-city="both">
-            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day1-jed-makkah" />Day 1 ready</label>
-            <span class="visit-tag">Aug 15</span>
-            <strong>Jeddah Airport to Makkah + Umrah</strong>
-            <p>JED থেকে Haramain train ~54 min, PDF budget ~75 SAR/17.5 EUR pp. Makkah station থেকে hotel shuttle থাকলে free, না হলে Uber/Careem approx 20 SAR. Hotel check-in, Ihram, তারপর Masjid al-Haram-এ Umrah.</p>
-            <div class="visit-actions"><a class="map-link" href="https://sar.hhr.sa/web/portal/home#" target="_blank" rel="noopener">Train Ticket</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Jeddah+Airport+Haramain+Train+Station" target="_blank" rel="noopener">JED Station</a><span class="fee-note">Night: Makkah</span></div>
-          </article>
-          <article class="visit-card" data-city="makkah">
-            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day2-makkah-ziyarah" />Day 2 planned</label>
-            <span class="visit-tag">Makkah</span>
-            <strong>Makkah Ziyarat + Khandamah sunset</strong>
-            <p>Morning Haram prayers. Mount Arafat, Mina, Muzdalifah, Jabal al-Nour/Cave Hira viewing. Local driver 3-4 hours approx 150-200 SAR. Sunset-এর আগে Jabal Khandamah viewpoint ride approx 25 SAR.</p>
-            <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Mount+Arafat+Mina+Muzdalifah+Jabal+al+Nour+Makkah" target="_blank" rel="noopener">Ziyarat Map</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Jabal+Khandamah+Viewpoint+Makkah" target="_blank" rel="noopener">Khandamah</a><span class="fee-note">Taxi: 150-200 SAR</span></div>
-          </article>
-          <article class="visit-card" data-city="both">
-            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day3-taif-transit" />Day 3 option chosen</label>
-            <span class="visit-tag">Taif</span>
-            <strong>Makkah to Taif / Al-Hada option</strong>
-            <p>Morning Haram. Afternoon Taif transfer: budget option Makkah SAPTCO/NW bus ~1.5h, ~35 SAR. Convenience Uber/Careem/private taxi ~250-300 SAR. Round trip with waiting may be ~400-500 SAR.</p>
-            <div class="visit-actions"><a class="map-link" href="https://booking.nwbus.sa/online/search" target="_blank" rel="noopener">NW Bus</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Makkah+SAPTCO+bus+station" target="_blank" rel="noopener">Bus Station</a><span class="fee-note">Stay/round trip decide</span></div>
-          </article>
-          <article class="visit-card" data-city="both">
-            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day4-taif-return" />Day 4 checked</label>
-            <span class="visit-tag">Taif</span>
-            <strong>Taif exploration + return to Makkah</strong>
-            <p>Al Hada Mountain, Telefric Al Hada cable car approx 85 SAR round trip, Shubra Palace entry approx 20 SAR, Taif rose water factory. Central Taif to Al Hada ride approx 40-70 SAR one way. Return bus to Makkah approx 30 SAR or taxi 200-300 SAR.</p>
-            <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Telefric+Al+Hada+Taif" target="_blank" rel="noopener">Al Hada</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Shubra+Palace+Taif" target="_blank" rel="noopener">Shubra Palace</a><span class="fee-note">Cable: ~85 SAR</span></div>
-          </article>
-          <article class="visit-card" data-city="both">
-            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day5-makkah-madinah" />Day 5 booked</label>
-            <span class="visit-tag">Makkah to Madinah</span>
-            <strong>Farewell Tawaf + Haramain train to Madinah</strong>
-            <p>Morning Tawaf al-Wida. Hotel to Makkah Haramain station approx 20 SAR. Train to Madinah approx 2h 15m, PDF economy estimate ~186 SAR. Madinah hotel check-in, Nabawi courtyard, Rawdah permit via Nusuk, Jannatul Baqi visit.</p>
-            <div class="visit-actions"><a class="map-link" href="https://sar.hhr.sa/web/portal/home#" target="_blank" rel="noopener">Train Ticket</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Al+Madinah+Haramain+Train+Station" target="_blank" rel="noopener">Madinah Station</a><span class="fee-note">Night: Madinah</span></div>
-          </article>
-          <article class="visit-card" data-city="madinah">
-            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day6-madinah-bus" />Day 6 ticket checked</label>
-            <span class="visit-tag">Madinah</span>
-            <strong>Madinah Hop-On Hop-Off Ziyarat</strong>
-            <p>City Sightseeing Madinah bus দিয়ে Nabawi, Jannatul Baqi, Salam Gate, Uhud, Qiblatain, Trench, Quba, Hijaz Railway Station, Quba Square cover. 24-hour adult pass PDF estimate 90 SAR; al-Jumah Mosque Quba stop থেকে 600-900m walk.</p>
-            <div class="visit-actions"><a class="map-link" href="https://csmadinah.com/" target="_blank" rel="noopener">Bus Booking</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=City+Sightseeing+Madinah+bus+Quba+Mosque+stop" target="_blank" rel="noopener">Quba Stop</a><span class="fee-note">Pass: ~90 SAR</span></div>
-          </article>
-          <article class="visit-card" data-city="madinah">
-            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day7-madinah-wadi-jinn" />Day 7 option saved</label>
-            <span class="visit-tag">Madinah</span>
-            <strong>Extra Madinah day / Wadi Jinn option</strong>
-            <p>একটা extra full day Madinah রাখা হয়েছে। শান্তভাবে Nabawi time, rest, shopping বা Wadi Jinn trip. Standard sedan up to 4 passengers PDF estimate 200-300 SAR total.</p>
-            <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Wadi+Jinn+Madinah" target="_blank" rel="noopener">Wadi Jinn</a><button class="secondary" data-jump="#foodGuide" type="button">Food/Rest</button><span class="fee-note">Taxi: 200-300 SAR</span></div>
-          </article>
-          <article class="visit-card" data-city="both">
-            <label class="visit-check"><input type="checkbox" data-trip-check="plan-day7-alula" />AlUla route saved</label>
-            <span class="visit-tag">AlUla</span>
-            <strong>Madinah to AlUla desert road trip</strong>
-            <p>NW Bus route NW14 from Madinah Jabal Ohud Station to AlUla: PDF says depart 08:00, arrive around 14:16, price ~126 SAR. Late afternoon Elephant Rock/Jabal Al Fil sunset and Shalal Cafe dinner.</p>
-            <div class="visit-actions"><a class="map-link" href="https://booking.nwbus.sa/online/search" target="_blank" rel="noopener">NW Bus</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Elephant+Rock+AlUla" target="_blank" rel="noopener">Elephant Rock</a><span class="fee-note">Bus: ~126 SAR</span></div>
-          </article>
-          <article class="visit-card" data-city="both">
-            <label class="visit-check"><input type="checkbox" data-trip-check="plan-alt-umluj" />Alternative noted</label>
-            <span class="visit-tag">Alt route</span>
-            <strong>Makkah to Umluj to Madinah note</strong>
-            <p>PDF note: plan later change হতে পারে; Makkah to Madinah-এর বদলে Makkah to Umluj, তারপর Umluj to Madinah হতে পারে। Day plan same রাখুন, কিন্তু transport/hotel booking flexible cancellation দিয়ে করুন।</p>
-            <div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Umluj+Saudi+Arabia" target="_blank" rel="noopener">Umluj Map</a><span class="fee-note">Flexible booking</span></div>
-          </article>
-          <article class="visit-card" data-city="makkah">
-            <label class="visit-check"><input type="checkbox" data-trip-check="plan-makkah-hotel-link" />Makkah hotel checked</label>
-            <span class="visit-tag">Hotel</span>
-            <strong>Makkah budget hotel shortlist</strong>
-            <p>PDF estimate: 2 person 50-60 EUR if 0.6-1 km from Haram, 15-30 EUR if 1-2 km. Linked option: Atyaf Alkhir. Verify distance, shuttle, cancellation, taxes, lift and walking slope before booking.</p>
-            <div class="visit-actions"><a class="map-link" href="https://www.booking.com/hotel/sa/atyaf-alkhir.html" target="_blank" rel="noopener">Atyaf Alkhir</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Atyaf+Alkhir+Hotel+Makkah" target="_blank" rel="noopener">Map</a><span class="fee-note">Budget check</span></div>
-          </article>
-          <article class="visit-card" data-city="madinah">
-            <label class="visit-check"><input type="checkbox" data-trip-check="plan-madinah-hotel-link" />Madinah hotel checked</label>
-            <span class="visit-tag">Hotel</span>
-            <strong>Madinah budget hotel shortlist</strong>
-            <p>PDF estimate: 2 person 40-55 EUR if 0.8-1 km, 20-30 EUR if 1-2 km. Linked options: Qamar Al Madina and Nazl Al Wyy. Verify Nabawi gate side, women entrance, breakfast and reviews.</p>
-            <div class="visit-actions"><a class="map-link" href="https://www.booking.com/hotel/sa/qamar-al-madina-fndq-qmr-lmdyn.html" target="_blank" rel="noopener">Qamar Al Madina</a><a class="map-link" href="https://www.booking.com/hotel/sa/nzl-lwy-l-lmdyn-lmnwr.html" target="_blank" rel="noopener">Nazl Al Wyy</a><span class="fee-note">Gate-side check</span></div>
-          </article>
-          <article class="visit-card" data-city="both">
-            <label class="visit-check"><input type="checkbox" data-trip-check="plan-booking-safety" />Booking safety done</label>
-            <span class="visit-tag">Before pay</span>
-            <strong>Plan booking safety checklist</strong>
-            <p>Train/bus ticket, hotel cancellation, Rawdah Nusuk permit, taxi estimate, offline map, hotel pins, emergency card and backup JSON finish করুন। Prices PDF estimate, booking-এর আগে latest fare official site/app-এ confirm করুন।</p>
-            <div class="visit-actions"><button class="secondary" data-jump="#smartTools" type="button">Smart Tools</button><button class="secondary" data-menu-action="export" type="button">Backup</button><span class="fee-note">Confirm live price</span></div>
-          </article>
-        </div>
+        <div class="visit-grid" id="saudiPlanCards"></div>
       </section>
 
       <section class="panel" id="smartSuggestions">
@@ -3715,9 +3779,36 @@
       const VISIT_KEY = "standalone-umrah-visit-checklist-v1";
       const TRIP_KEY = "standalone-umrah-trip-tools-v1";
       const FAVORITE_KEY = "standalone-umrah-favorites-v1";
+      const PLAN_KEY = "standalone-umrah-saudi-plan-v1";
+      const AUTH_KEY = "standalone-umrah-active-user";
       const PUBLIC_URL = "https://muhammadsifatofficial1997-design.github.io/umrah-tracker/";
+      const USERS = {
+        sifat: "sifat123",
+        shahabuddin: "shahabuddin123"
+      };
+      const DEFAULT_SAUDI_PLAN = [
+        { id: "plan-day1-jed-makkah", city: "both", check: "Day 1 ready", tag: "Aug 15", title: "Jeddah Airport to Makkah + Umrah", body: "JED থেকে Haramain train ~54 min, PDF budget ~75 SAR/17.5 EUR pp. Makkah station থেকে hotel shuttle থাকলে free, না হলে Uber/Careem approx 20 SAR. Hotel check-in, Ihram, তারপর Masjid al-Haram-এ Umrah.", linkLabel: "Train Ticket", linkUrl: "https://sar.hhr.sa/web/portal/home#", fee: "Night: Makkah" },
+        { id: "plan-day2-makkah-ziyarah", city: "makkah", check: "Day 2 planned", tag: "Makkah", title: "Makkah Ziyarat + Khandamah sunset", body: "Morning Haram prayers. Mount Arafat, Mina, Muzdalifah, Jabal al-Nour/Cave Hira viewing. Local driver 3-4 hours approx 150-200 SAR. Sunset-এর আগে Jabal Khandamah viewpoint ride approx 25 SAR.", linkLabel: "Ziyarat Map", linkUrl: "https://www.google.com/maps/search/?api=1&query=Mount+Arafat+Mina+Muzdalifah+Jabal+al+Nour+Makkah", fee: "Taxi: 150-200 SAR" },
+        { id: "plan-day3-taif-transit", city: "both", check: "Day 3 option chosen", tag: "Taif", title: "Makkah to Taif / Al-Hada option", body: "Morning Haram. Afternoon Taif transfer: budget option Makkah SAPTCO/NW bus ~1.5h, ~35 SAR. Convenience Uber/Careem/private taxi ~250-300 SAR. Round trip with waiting may be ~400-500 SAR.", linkLabel: "NW Bus", linkUrl: "https://booking.nwbus.sa/online/search", fee: "Stay/round trip decide" },
+        { id: "plan-day4-taif-return", city: "both", check: "Day 4 checked", tag: "Taif", title: "Taif exploration + return to Makkah", body: "Al Hada Mountain, Telefric Al Hada cable car approx 85 SAR round trip, Shubra Palace entry approx 20 SAR, Taif rose water factory. Central Taif to Al Hada ride approx 40-70 SAR one way. Return bus to Makkah approx 30 SAR or taxi 200-300 SAR.", linkLabel: "Al Hada", linkUrl: "https://www.google.com/maps/search/?api=1&query=Telefric+Al+Hada+Taif", fee: "Cable: ~85 SAR" },
+        { id: "plan-day5-makkah-madinah", city: "both", check: "Day 5 booked", tag: "Makkah to Madinah", title: "Farewell Tawaf + Haramain train to Madinah", body: "Morning Tawaf al-Wida. Hotel to Makkah Haramain station approx 20 SAR. Train to Madinah approx 2h 15m, PDF economy estimate ~186 SAR. Madinah hotel check-in, Nabawi courtyard, Rawdah permit via Nusuk, Jannatul Baqi visit.", linkLabel: "Train Ticket", linkUrl: "https://sar.hhr.sa/web/portal/home#", fee: "Night: Madinah" },
+        { id: "plan-day6-madinah-bus", city: "madinah", check: "Day 6 ticket checked", tag: "Madinah", title: "Madinah Hop-On Hop-Off Ziyarat", body: "City Sightseeing Madinah bus দিয়ে Nabawi, Jannatul Baqi, Salam Gate, Uhud, Qiblatain, Trench, Quba, Hijaz Railway Station, Quba Square cover. 24-hour adult pass PDF estimate 90 SAR; al-Jumah Mosque Quba stop থেকে 600-900m walk.", linkLabel: "Bus Booking", linkUrl: "https://csmadinah.com/", fee: "Pass: ~90 SAR" },
+        { id: "plan-day7-madinah-wadi-jinn", city: "madinah", check: "Day 7 option saved", tag: "Madinah", title: "Extra Madinah day / Wadi Jinn option", body: "একটা extra full day Madinah রাখা হয়েছে। শান্তভাবে Nabawi time, rest, shopping বা Wadi Jinn trip. Standard sedan up to 4 passengers PDF estimate 200-300 SAR total.", linkLabel: "Wadi Jinn", linkUrl: "https://www.google.com/maps/search/?api=1&query=Wadi+Jinn+Madinah", fee: "Taxi: 200-300 SAR" },
+        { id: "plan-day7-alula", city: "both", check: "AlUla route saved", tag: "AlUla", title: "Madinah to AlUla desert road trip", body: "NW Bus route NW14 from Madinah Jabal Ohud Station to AlUla: PDF says depart 08:00, arrive around 14:16, price ~126 SAR. Late afternoon Elephant Rock/Jabal Al Fil sunset and Shalal Cafe dinner.", linkLabel: "NW Bus", linkUrl: "https://booking.nwbus.sa/online/search", fee: "Bus: ~126 SAR" },
+        { id: "plan-alt-umluj", city: "both", check: "Alternative noted", tag: "Alt route", title: "Makkah to Umluj to Madinah note", body: "PDF note: plan later change হতে পারে; Makkah to Madinah-এর বদলে Makkah to Umluj, তারপর Umluj to Madinah হতে পারে। Day plan same রাখুন, কিন্তু transport/hotel booking flexible cancellation দিয়ে করুন।", linkLabel: "Umluj Map", linkUrl: "https://www.google.com/maps/search/?api=1&query=Umluj+Saudi+Arabia", fee: "Flexible booking" },
+        { id: "plan-makkah-hotel-link", city: "makkah", check: "Makkah hotel checked", tag: "Hotel", title: "Makkah budget hotel shortlist", body: "PDF estimate: 2 person 50-60 EUR if 0.6-1 km from Haram, 15-30 EUR if 1-2 km. Linked option: Atyaf Alkhir. Verify distance, shuttle, cancellation, taxes, lift and walking slope before booking.", linkLabel: "Atyaf Alkhir", linkUrl: "https://www.booking.com/hotel/sa/atyaf-alkhir.html", fee: "Budget check" },
+        { id: "plan-madinah-hotel-link", city: "madinah", check: "Madinah hotel checked", tag: "Hotel", title: "Madinah budget hotel shortlist", body: "PDF estimate: 2 person 40-55 EUR if 0.8-1 km, 20-30 EUR if 1-2 km. Linked options: Qamar Al Madina and Nazl Al Wyy. Verify Nabawi gate side, women entrance, breakfast and reviews.", linkLabel: "Qamar Al Madina", linkUrl: "https://www.booking.com/hotel/sa/qamar-al-madina-fndq-qmr-lmdyn.html", fee: "Gate-side check" },
+        { id: "plan-booking-safety", city: "both", check: "Booking safety done", tag: "Before pay", title: "Plan booking safety checklist", body: "Train/bus ticket, hotel cancellation, Rawdah Nusuk permit, taxi estimate, offline map, hotel pins, emergency card and backup JSON finish করুন। Prices PDF estimate, booking-এর আগে latest fare official site/app-এ confirm করুন।", linkLabel: "Smart Tools", linkUrl: "#smartTools", fee: "Confirm live price" }
+      ];
       const bn = new Intl.NumberFormat("bn-BD", { maximumFractionDigits: 0 });
       const els = {
+        loginScreen: document.querySelector("#loginScreen"),
+        loginForm: document.querySelector("#loginForm"),
+        loginUser: document.querySelector("#loginUser"),
+        loginPassword: document.querySelector("#loginPassword"),
+        loginError: document.querySelector("#loginError"),
+        activeUserChip: document.querySelector("#activeUserChip"),
+        logoutBtn: document.querySelector("#logoutBtn"),
         saveStatus: document.querySelector("#saveStatus"),
         sideMenu: document.querySelector("#sideMenu"),
         menuToggleBtn: document.querySelector("#menuToggleBtn"),
@@ -3802,6 +3893,19 @@
         printTripCardBtn: document.querySelector("#printTripCardBtn"),
         copyTripCardBtn: document.querySelector("#copyTripCardBtn"),
         printChecklistBtn: document.querySelector("#printChecklistBtn"),
+        saudiPlanCards: document.querySelector("#saudiPlanCards"),
+        planEditSelect: document.querySelector("#planEditSelect"),
+        planEditCity: document.querySelector("#planEditCity"),
+        planEditCheck: document.querySelector("#planEditCheck"),
+        planEditTag: document.querySelector("#planEditTag"),
+        planEditTitle: document.querySelector("#planEditTitle"),
+        planEditBody: document.querySelector("#planEditBody"),
+        planEditLinkLabel: document.querySelector("#planEditLinkLabel"),
+        planEditLinkUrl: document.querySelector("#planEditLinkUrl"),
+        planEditFee: document.querySelector("#planEditFee"),
+        savePlanCardBtn: document.querySelector("#savePlanCardBtn"),
+        addPlanCardBtn: document.querySelector("#addPlanCardBtn"),
+        resetPlanCardsBtn: document.querySelector("#resetPlanCardsBtn"),
         planForm: document.querySelector("#planForm"),
         transactionForm: document.querySelector("#transactionForm"),
         target: document.querySelector("#target"),
@@ -3932,6 +4036,123 @@
 
       function saveTripTools(next) {
         localStorage.setItem(TRIP_KEY, JSON.stringify({ ...loadTripTools(), ...next }));
+      }
+
+      function loadSaudiPlan() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(PLAN_KEY) || "[]");
+          return Array.isArray(saved) && saved.length ? saved : DEFAULT_SAUDI_PLAN.map((item) => ({ ...item }));
+        } catch {
+          return DEFAULT_SAUDI_PLAN.map((item) => ({ ...item }));
+        }
+      }
+
+      function saveSaudiPlan(items) {
+        localStorage.setItem(PLAN_KEY, JSON.stringify(items));
+      }
+
+      function renderSaudiPlan() {
+        if (!els.saudiPlanCards) return;
+        const done = new Set(loadTripTools().checklist || []);
+        const plan = loadSaudiPlan();
+        els.saudiPlanCards.innerHTML = plan.map((item) => `
+          <article class="visit-card" data-city="${escapeHtml(item.city || "both")}" data-plan-id="${escapeHtml(item.id)}">
+            <label class="visit-check"><input type="checkbox" data-trip-check="${escapeHtml(item.id)}" ${done.has(item.id) ? "checked" : ""} />${escapeHtml(item.check || "Plan checked")}</label>
+            <span class="visit-tag">${escapeHtml(item.tag || "Plan")}</span>
+            <strong>${escapeHtml(item.title || "Untitled plan")}</strong>
+            <p>${escapeHtml(item.body || "").replace(/\n/g, "<br>")}</p>
+            <div class="visit-actions">
+              ${item.linkUrl ? `<a class="map-link" href="${escapeHtml(item.linkUrl)}" target="${item.linkUrl.startsWith("#") ? "_self" : "_blank"}" rel="noopener">${escapeHtml(item.linkLabel || "Open link")}</a>` : ""}
+              <button class="secondary" data-edit-plan="${escapeHtml(item.id)}" type="button">Edit</button>
+              <span class="fee-note">${escapeHtml(item.fee || "No cost note")}</span>
+            </div>
+          </article>
+        `).join("");
+        renderPlanEditorOptions();
+      }
+
+      function renderPlanEditorOptions(selectedId = els.planEditSelect?.value) {
+        if (!els.planEditSelect) return;
+        const plan = loadSaudiPlan();
+        els.planEditSelect.innerHTML = plan.map((item, index) => `<option value="${escapeHtml(item.id)}">${index + 1}. ${escapeHtml(item.title || item.id)}</option>`).join("");
+        if (selectedId && plan.some((item) => item.id === selectedId)) els.planEditSelect.value = selectedId;
+        fillPlanEditor(els.planEditSelect.value);
+      }
+
+      function fillPlanEditor(id) {
+        const item = loadSaudiPlan().find((entry) => entry.id === id) || loadSaudiPlan()[0];
+        if (!item || !els.planEditTitle) return;
+        els.planEditSelect.value = item.id;
+        els.planEditCity.value = item.city || "both";
+        els.planEditCheck.value = item.check || "";
+        els.planEditTag.value = item.tag || "";
+        els.planEditTitle.value = item.title || "";
+        els.planEditBody.value = item.body || "";
+        els.planEditLinkLabel.value = item.linkLabel || "";
+        els.planEditLinkUrl.value = item.linkUrl || "";
+        els.planEditFee.value = item.fee || "";
+      }
+
+      function currentPlanEditorPayload(id = els.planEditSelect?.value || crypto.randomUUID()) {
+        return {
+          id,
+          city: els.planEditCity?.value || "both",
+          check: els.planEditCheck?.value.trim() || "Plan checked",
+          tag: els.planEditTag?.value.trim() || "Plan",
+          title: els.planEditTitle?.value.trim() || "Untitled plan",
+          body: els.planEditBody?.value.trim() || "",
+          linkLabel: els.planEditLinkLabel?.value.trim() || "Open link",
+          linkUrl: els.planEditLinkUrl?.value.trim() || "",
+          fee: els.planEditFee?.value.trim() || ""
+        };
+      }
+
+      function saveCurrentPlanCard() {
+        const plan = loadSaudiPlan();
+        const id = els.planEditSelect?.value;
+        const index = plan.findIndex((item) => item.id === id);
+        if (index < 0) return;
+        plan[index] = currentPlanEditorPayload(id);
+        saveSaudiPlan(plan);
+        renderSaudiPlan();
+        prepareFavoriteButtons();
+        renderTripTools();
+        renderProgressDashboard();
+        markSaved("Plan card saved");
+      }
+
+      function addPlanCard() {
+        const plan = loadSaudiPlan();
+        const id = `custom-plan-${Date.now()}`;
+        plan.push(currentPlanEditorPayload(id));
+        saveSaudiPlan(plan);
+        renderSaudiPlan();
+        renderPlanEditorOptions(id);
+        prepareFavoriteButtons();
+        renderTripTools();
+        renderProgressDashboard();
+        markSaved("New plan card added");
+      }
+
+      function resetPlanCards() {
+        if (!confirm("Reset করলে edited Saudi plan cards original PDF plan-এ ফিরবে। Continue?")) return;
+        localStorage.removeItem(PLAN_KEY);
+        renderSaudiPlan();
+        prepareFavoriteButtons();
+        renderTripTools();
+        renderProgressDashboard();
+        markSaved("Saudi plan reset");
+      }
+
+      function activeUser() {
+        return localStorage.getItem(AUTH_KEY) || "";
+      }
+
+      function updateAuthUi() {
+        const user = activeUser();
+        els.loginScreen?.classList.toggle("is-hidden", Boolean(user));
+        if (els.activeUserChip) els.activeUserChip.textContent = user ? user : "Guest";
+        document.body.classList.toggle("is-locked", !user);
       }
 
       function loadFavorites() {
@@ -4233,6 +4454,7 @@
       }
 
       function cardGuideCity(card) {
+        if (card.dataset.city) return card.dataset.city;
         const text = `${card.querySelector(".visit-tag")?.textContent || ""} ${card.textContent}`.toLowerCase();
         const hasMakkah = text.includes("makkah") || text.includes("haram") || text.includes("aziziyah");
         const hasMadinah = text.includes("madinah") || text.includes("nabawi") || text.includes("rawdah");
@@ -5102,7 +5324,7 @@
 
       document.querySelector("#exportBtn").addEventListener("click", async () => {
         saveTripTools({ lastBackupAt: new Date().toISOString() });
-        const data = JSON.stringify({ exportedAt: new Date().toISOString(), umrah: state, visitChecklist: Array.from(loadVisitChecklist()), tripTools: loadTripTools() }, null, 2);
+        const data = JSON.stringify({ exportedAt: new Date().toISOString(), umrah: state, visitChecklist: Array.from(loadVisitChecklist()), tripTools: loadTripTools(), saudiPlan: loadSaudiPlan() }, null, 2);
         const blob = new Blob([data], { type: "application/json" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -5133,7 +5355,9 @@
           Object.assign(state, defaultState(), imported, { transactions: imported.transactions || [], installments: imported.installments || [] });
           if (Array.isArray(parsed.visitChecklist)) saveVisitChecklist(new Set(parsed.visitChecklist));
           if (parsed.tripTools) saveTripTools(parsed.tripTools);
+          if (Array.isArray(parsed.saudiPlan)) saveSaudiPlan(parsed.saudiPlan);
           save();
+          renderSaudiPlan();
           render();
           renderVisitChecklist();
           renderTripTools();
@@ -5189,6 +5413,7 @@
         });
       });
       document.querySelectorAll("[data-trip-check]").forEach((input) => {
+        input.dataset.boundTripCheck = "true";
         input.addEventListener("change", () => {
           const data = loadTripTools();
           const done = new Set(data.checklist || []);
@@ -5199,6 +5424,18 @@
           renderProgressDashboard();
           markSaved(input.checked ? "Checklist updated" : "Checklist unchecked");
         });
+      });
+      document.body.addEventListener("change", (event) => {
+        const input = event.target.closest("[data-trip-check]");
+        if (!input || input.dataset.boundTripCheck === "true") return;
+        const data = loadTripTools();
+        const done = new Set(data.checklist || []);
+        if (input.checked) done.add(input.dataset.tripCheck);
+        else done.delete(input.dataset.tripCheck);
+        saveTripTools({ checklist: Array.from(done) });
+        renderTripTools();
+        renderProgressDashboard();
+        markSaved(input.checked ? "Checklist updated" : "Checklist unchecked");
       });
       els.groupNotes?.addEventListener("input", () => saveTripTools({ groupNotes: els.groupNotes.value }));
       els.dayPlanner?.addEventListener("input", () => saveTripTools({ dayPlanner: els.dayPlanner.value }));
@@ -5260,6 +5497,35 @@
       els.copyTripCardBtn?.addEventListener("click", copyTripCard);
       els.copyDuaBtn?.addEventListener("click", copyDuaNotes);
       els.printDuaBtn?.addEventListener("click", () => window.print());
+      els.planEditSelect?.addEventListener("change", () => fillPlanEditor(els.planEditSelect.value));
+      els.savePlanCardBtn?.addEventListener("click", saveCurrentPlanCard);
+      els.addPlanCardBtn?.addEventListener("click", addPlanCard);
+      els.resetPlanCardsBtn?.addEventListener("click", resetPlanCards);
+      els.saudiPlanCards?.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-edit-plan]");
+        if (!button) return;
+        fillPlanEditor(button.dataset.editPlan);
+        document.querySelector("#planEditor").open = true;
+        document.querySelector("#planEditor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      els.loginForm?.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const user = els.loginUser.value;
+        const pass = els.loginPassword.value;
+        if (USERS[user] !== pass) {
+          els.loginError.textContent = "Password ঠিক না। উদাহরণ: sifat123 / shahabuddin123";
+          return;
+        }
+        localStorage.setItem(AUTH_KEY, user);
+        els.loginPassword.value = "";
+        els.loginError.textContent = "";
+        updateAuthUi();
+        markSaved(`Logged in: ${user}`);
+      });
+      els.logoutBtn?.addEventListener("click", () => {
+        localStorage.removeItem(AUTH_KEY);
+        updateAuthUi();
+      });
       els.globalSearch?.addEventListener("input", runGlobalSearch);
       els.pendingOnlyBtn?.addEventListener("click", () => {
         pendingOnly = !pendingOnly;
@@ -5344,8 +5610,10 @@
       }
 
       prepareMenuUi();
+      renderSaudiPlan();
       prepareFavoriteButtons();
       applyTheme();
+      updateAuthUi();
       watchActiveSections();
       renderVisitChecklist();
       renderTripTools();
