@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <meta name="app-version" content="2026-07-21-theme-polish" />
+    <meta name="app-version" content="2026-07-30-settlement-map-daycost" />
     <meta name="theme-color" content="#0f3a1f" />
     <meta name="description" content="Umrah savings, expense, hotel, ziyarah, checklist, transport and trip companion tracker." />
     <meta property="og:title" content="Umrah Tracker" />
@@ -2418,6 +2418,7 @@
           <div class="menu-group-actions">
             <button data-jump="#travelTools" type="button">Travel Tools</button>
             <button data-jump="#smartTools" type="button">Smart Tools</button>
+            <button data-jump="#mapHub" type="button">Map Hub</button>
             <button data-jump="#tripExtras" type="button">Trip Extras</button>
             <button data-jump="#mobileUse" type="button">Mobile Use</button>
           </div>
@@ -2458,6 +2459,7 @@
         <button data-jump="#visitGuide" type="button">Visit</button>
         <button data-jump="#freeGuide" type="button">Guides</button>
         <button data-jump="#travelTools" type="button">Tools</button>
+        <button data-jump="#mapHub" type="button">Map</button>
         <button data-jump="#packingGuide" type="button">Prep</button>
         <button data-jump="#installments" type="button">Due</button>
       </nav>
@@ -2620,6 +2622,7 @@
         </div>
         <div class="visit-actions">
           <button class="secondary" id="copyPublicSummaryBtn" type="button">Copy clean summary</button>
+          <button class="secondary" id="copyWhatsAppSummaryBtn" type="button">WhatsApp summary</button>
           <button class="secondary" id="sharePublicSummaryBtn" type="button">Share clean summary</button>
           <button class="secondary" id="printPublicSummaryBtn" type="button">Print cards</button>
           <span class="mini-result" id="publicShareResult">Ready</span>
@@ -2732,6 +2735,16 @@
             </label>
           </div>
           <div class="field-row">
+            <label>Plan day
+              <select id="planDay">
+                <option value="">No plan day</option>
+              </select>
+            </label>
+            <label>Quick note
+              <input id="quickNote" type="text" readonly value="Plan same, cost linked only" />
+            </label>
+          </div>
+          <div class="field-row">
             <label>নোট <input id="note" type="text" placeholder="যেমন: এজেন্সি অগ্রিম, খাবার, হোটেল" /></label>
             <label>Receipt ছবি <input id="receipt" type="file" accept="image/*" /></label>
           </div>
@@ -2808,6 +2821,16 @@
           </div>
           <div class="milestone-row" id="milestones"></div>
           <div class="mini-grid" id="monthlySummary"></div>
+        </section>
+
+        <section class="panel full-row" id="groupSettlement">
+          <div class="panel-head">
+            <div>
+              <h2>Group Settlement</h2>
+              <p>Personal cost আলাদা থাকবে, group cost average অনুযায়ী কে কত paid/share/settle করবে দেখা যাবে।</p>
+            </div>
+          </div>
+          <div class="pill-grid" id="settlementSummary"></div>
         </section>
 
         <section class="panel">
@@ -3564,7 +3587,7 @@
               <span class="visit-tag">Update</span>
               <strong>Refresh latest version</strong>
               <p>Mobile/PWA পুরনো cached page দেখালে latest version আনতে এই button ব্যবহার করুন।</p>
-              <div class="visit-actions"><button class="secondary" id="refreshAppBtn" type="button">Refresh app</button><span class="mini-result" id="refreshResult">Current version ready</span></div>
+              <div class="visit-actions"><button class="secondary" id="installAppBtn" type="button">Install app</button><button class="secondary" id="refreshAppBtn" type="button">Refresh app</button><span class="mini-result" id="refreshResult">Current version ready</span></div>
             </article>
             <article class="visit-card">
               <span class="visit-tag">Offline Map</span>
@@ -3929,6 +3952,23 @@
           </div>
         </section>
 
+        <section class="panel full-row" id="mapHub">
+          <div class="panel-head">
+            <div>
+              <h2>Map Hub: All Important Pins</h2>
+              <p>Makkah, Madinah, Taif, AlUla, transport, food, hospital, hotel search এক জায়গায়।</p>
+            </div>
+          </div>
+          <div class="visit-grid">
+            <article class="visit-card"><span class="visit-tag">Makkah</span><strong>Haram + gates + hotels</strong><p>Main map pins for Makkah stay and prayer route.</p><div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al-Haram+Makkah" target="_blank" rel="noopener">Haram</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+al-Haram+gates+Makkah" target="_blank" rel="noopener">Gates</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=hotels+near+Masjid+al-Haram+Makkah" target="_blank" rel="noopener">Hotels</a></div></article>
+            <article class="visit-card"><span class="visit-tag">Madinah</span><strong>Nabawi + Baqi + hotels</strong><p>Nabawi gate, Baqi, family side and nearby hotels.</p><div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Masjid+an-Nabawi+Madinah" target="_blank" rel="noopener">Nabawi</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Jannatul+Baqi+Madinah" target="_blank" rel="noopener">Baqi</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=hotels+near+Masjid+Nabawi+Madinah" target="_blank" rel="noopener">Hotels</a></div></article>
+            <article class="visit-card"><span class="visit-tag">Ziyarah</span><strong>Makkah / Madinah ziyarah</strong><p>Quick ziyarah map searches.</p><div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Mina+Arafat+Muzdalifah+Makkah" target="_blank" rel="noopener">Mina/Arafat</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Uhud+Quba+Qiblatain+Madinah" target="_blank" rel="noopener">Madinah Ziyarah</a></div></article>
+            <article class="visit-card"><span class="visit-tag">Transport</span><strong>Train / bus / airport</strong><p>Airport, train and bus routes.</p><div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Jeddah+Airport+Haramain+Train+Station" target="_blank" rel="noopener">JED train</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Makkah+Haramain+Train+Station" target="_blank" rel="noopener">Makkah train</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Madinah+Jabal+Ohud+bus+station" target="_blank" rel="noopener">Madinah bus</a></div></article>
+            <article class="visit-card"><span class="visit-tag">Taif / AlUla</span><strong>Highlands + desert route</strong><p>Taif, Al Hada, AlUla route pins.</p><div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Telefric+Al+Hada+Taif" target="_blank" rel="noopener">Al Hada</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Shubra+Palace+Taif" target="_blank" rel="noopener">Shubra</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Elephant+Rock+AlUla" target="_blank" rel="noopener">Elephant Rock</a></div></article>
+            <article class="visit-card"><span class="visit-tag">Food / Health</span><strong>Food, pharmacy, hospital</strong><p>Daily practical searches.</p><div class="visit-actions"><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=cheap+food+near+Masjid+al-Haram" target="_blank" rel="noopener">Makkah food</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=pharmacy+near+Masjid+Nabawi" target="_blank" rel="noopener">Pharmacy</a><a class="map-link" href="https://www.google.com/maps/search/?api=1&query=hospital+near+Masjid+al-Haram+Makkah" target="_blank" rel="noopener">Hospital</a></div></article>
+          </div>
+        </section>
+
         <section class="panel full-row" id="mobileUse">
           <div class="panel-head">
             <div>
@@ -4085,6 +4125,7 @@
         calcSplit: document.querySelector("#calcSplit"),
         splitResult: document.querySelector("#splitResult"),
         refreshAppBtn: document.querySelector("#refreshAppBtn"),
+        installAppBtn: document.querySelector("#installAppBtn"),
         refreshResult: document.querySelector("#refreshResult"),
         taxiKm: document.querySelector("#taxiKm"),
         taxiRate: document.querySelector("#taxiRate"),
@@ -4110,6 +4151,7 @@
         todaySummary: document.querySelector("#todaySummary"),
         suggestionList: document.querySelector("#suggestionList"),
         copyPublicSummaryBtn: document.querySelector("#copyPublicSummaryBtn"),
+        copyWhatsAppSummaryBtn: document.querySelector("#copyWhatsAppSummaryBtn"),
         sharePublicSummaryBtn: document.querySelector("#sharePublicSummaryBtn"),
         printPublicSummaryBtn: document.querySelector("#printPublicSummaryBtn"),
         publicShareResult: document.querySelector("#publicShareResult"),
@@ -4164,6 +4206,8 @@
         costScope: document.querySelector("#costScope"),
         groupPeople: document.querySelector("#groupPeople"),
         averagePreview: document.querySelector("#averagePreview"),
+        planDay: document.querySelector("#planDay"),
+        settlementSummary: document.querySelector("#settlementSummary"),
         date: document.querySelector("#date"),
         note: document.querySelector("#note"),
         receipt: document.querySelector("#receipt"),
@@ -4195,6 +4239,7 @@
       let editingId = null;
       let pendingOnly = localStorage.getItem("standalone-umrah-pending-only") === "true";
       let searchTimer = null;
+      let deferredInstallPrompt = null;
 
       function defaultState() {
         return {
@@ -4297,24 +4342,46 @@
         localStorage.setItem(PLAN_KEY, JSON.stringify(items));
       }
 
+      function renderPlanDayOptions(selected = els.planDay?.value || "") {
+        if (!els.planDay) return;
+        const plan = loadSaudiPlan();
+        els.planDay.innerHTML = `<option value="">No plan day</option>` + plan
+          .map((item, index) => `<option value="${escapeHtml(item.id)}">${index + 1}. ${escapeHtml(item.tag || "Plan")} - ${escapeHtml(item.title || item.id)}</option>`)
+          .join("");
+        if (selected && plan.some((item) => item.id === selected)) els.planDay.value = selected;
+      }
+
+      function planCostSummary(planId) {
+        const rows = state.transactions.filter((item) => item.planDay === planId && item.type !== "saving");
+        const total = rows.reduce((sum, item) => sum + amountBdt(item), 0);
+        const group = rows.filter((item) => item.costScope === "group").reduce((sum, item) => sum + amountBdt(item), 0);
+        const share = rows.filter((item) => item.costScope === "group").reduce((sum, item) => sum + sharedAmountBdt(item), 0);
+        return { count: rows.length, total, group, share };
+      }
+
       function renderSaudiPlan() {
         if (!els.saudiPlanCards) return;
         const done = new Set(loadTripTools().checklist || []);
         const plan = loadSaudiPlan();
-        els.saudiPlanCards.innerHTML = plan.map((item) => `
+        els.saudiPlanCards.innerHTML = plan.map((item) => {
+          const cost = planCostSummary(item.id);
+          return `
           <article class="visit-card" data-city="${escapeHtml(item.city || "both")}" data-plan-id="${escapeHtml(item.id)}">
             <label class="visit-check"><input type="checkbox" data-trip-check="${escapeHtml(item.id)}" ${done.has(item.id) ? "checked" : ""} />${escapeHtml(item.check || "Plan checked")}</label>
             <span class="visit-tag">${escapeHtml(item.tag || "Plan")}</span>
             <strong>${escapeHtml(item.title || "Untitled plan")}</strong>
             <p>${escapeHtml(item.body || "").replace(/\n/g, "<br>")}</p>
+            <div class="mini-result">Day cost: ${money(cost.total)} · ${cost.count} entries${cost.group ? ` · group avg ${money(cost.share)}` : ""}</div>
             <div class="visit-actions">
               ${item.linkUrl ? `<a class="map-link" href="${escapeHtml(item.linkUrl)}" target="${item.linkUrl.startsWith("#") ? "_self" : "_blank"}" rel="noopener">${escapeHtml(item.linkLabel || "Open link")}</a>` : ""}
+              <button class="secondary" data-add-plan-cost="${escapeHtml(item.id)}" type="button">Add cost</button>
               <button class="secondary" data-edit-plan="${escapeHtml(item.id)}" type="button">Edit</button>
               <span class="fee-note">${escapeHtml(item.fee || "No cost note")}</span>
             </div>
           </article>
-        `).join("");
+        `}).join("");
         renderPlanEditorOptions();
+        renderPlanDayOptions();
       }
 
       function renderPlanEditorOptions(selectedId = els.planEditSelect?.value) {
@@ -4626,6 +4693,37 @@
       async function copyPublicSummary() {
         const ok = await copyText(buildPublicSummary(), "Clean summary copied");
         if (els.publicShareResult) els.publicShareResult.textContent = ok ? "Copied" : "Copy blocked";
+      }
+
+      function buildWhatsAppSummary() {
+        const data = totals();
+        const settlement = settlementRows();
+        const planCost = loadSaudiPlan()
+          .map((item, index) => {
+            const cost = planCostSummary(item.id);
+            return cost.count ? `${index + 1}. ${item.tag || "Plan"}: ${money(cost.total)} (${cost.count} entries)` : "";
+          })
+          .filter(Boolean)
+          .join("\n") || "No day-wise cost yet";
+        return [
+          "Umrah Tracker Update",
+          `Saved: ${money(data.saved)}`,
+          `Remaining: ${money(data.remaining)}`,
+          `Personal spent: ${money(data.personalSpent)}`,
+          "",
+          "Group settlement:",
+          ...settlement.map((row) => `${row.user}: paid ${money(row.paid)}, share ${money(row.share)}, balance ${row.balance >= 0 ? "+" : "-"}${money(Math.abs(row.balance))}`),
+          "",
+          "Plan day costs:",
+          planCost,
+          "",
+          PUBLIC_URL
+        ].join("\n");
+      }
+
+      async function copyWhatsAppSummary() {
+        const ok = await copyText(buildWhatsAppSummary(), "WhatsApp summary copied");
+        if (els.publicShareResult) els.publicShareResult.textContent = ok ? "WhatsApp text copied" : "Copy blocked";
       }
 
       async function sharePublicSummary() {
@@ -4985,6 +5083,46 @@
         `;
       }
 
+      function settlementRows() {
+        const users = Object.keys(USERS);
+        const groupRows = state.transactions.filter((item) => item.type !== "saving" && item.costScope === "group");
+        const totals = Object.fromEntries(users.map((user) => [user, { paid: 0, share: 0, personal: 0 }]));
+        state.transactions.filter((item) => item.type !== "saving").forEach((item) => {
+          const owner = costOwnerOf(item);
+          if (!totals[owner]) totals[owner] = { paid: 0, share: 0, personal: 0 };
+          if (item.costScope === "group") totals[owner].paid += amountBdt(item);
+          else totals[owner].personal += amountBdt(item);
+        });
+        groupRows.forEach((item) => {
+          const share = sharedAmountBdt(item);
+          users.forEach((user) => {
+            totals[user].share += share;
+          });
+        });
+        return users.map((user) => ({ user, ...totals[user], balance: totals[user].paid - totals[user].share }));
+      }
+
+      function renderSettlement() {
+        if (!els.settlementSummary) return;
+        const rows = settlementRows();
+        const debtor = rows.slice().sort((a, b) => a.balance - b.balance)[0];
+        const creditor = rows.slice().sort((a, b) => b.balance - a.balance)[0];
+        const settleAmount = debtor && creditor ? Math.min(Math.abs(debtor.balance), Math.abs(creditor.balance)) : 0;
+        els.settlementSummary.innerHTML = rows.map((row) => `
+          <div class="info-pill">
+            <small>${escapeHtml(row.user)}</small>
+            <strong class="${row.balance >= 0 ? "good" : "bad"}">${row.balance >= 0 ? "Gets " : "Pays "}${money(Math.abs(row.balance))}</strong>
+            <small>Group paid ${money(row.paid)} · Share ${money(row.share)} · Personal ${money(row.personal)}</small>
+          </div>
+        `).join("") + `
+          <div class="info-pill">
+            <small>Settlement action</small>
+            <strong>${settleAmount ? `${escapeHtml(debtor.user)} → ${escapeHtml(creditor.user)} ${money(settleAmount)}` : "Settled"}</strong>
+            <small>Only group cost average counted here.</small>
+          </div>
+        `;
+      }
+
       function calculateCurrency(direction) {
         const rate = Number(els.toolSarRate.value || state.sarRate || 32);
         const amount = Number(els.toolAmount.value || 0);
@@ -5149,6 +5287,12 @@
       function costScopeLabel(item) {
         if (item.costScope !== "group") return `${costOwnerOf(item)} personal`;
         return `group avg ${money(sharedAmountBdt(item))} x ${Math.max(Number(item.groupPeople || 2), 1)}`;
+      }
+
+      function planDayTitle(id) {
+        if (!id) return "";
+        const item = loadSaudiPlan().find((entry) => entry.id === id);
+        return item ? `${item.tag || "Plan"} · ${item.title || id}` : id;
       }
 
       function setText(id, value) {
@@ -5446,7 +5590,7 @@
           .filter((item) => ledgerType === "all" || item.type === ledgerType)
           .filter((item) => {
             if (!ledgerQuery) return true;
-            return [item.note, item.category, item.envelope, item.currency, item.date].some((value) => String(value || "").toLowerCase().includes(ledgerQuery));
+            return [item.note, item.category, item.envelope, item.currency, item.date, planDayTitle(item.planDay)].some((value) => String(value || "").toLowerCase().includes(ledgerQuery));
           })
           .sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt));
         els.ledger.innerHTML = visibleRows
@@ -5458,7 +5602,7 @@
                   <strong class="${item.type === "saving" ? "good" : "bad"}">${item.type === "saving" ? "+" : "-"}${money(amountBdt(item))}</strong>
                 </div>
                 <div class="item-line">
-                  <small>${escapeHtml(item.date)} · ${escapeHtml(item.category || "Other")} · ${escapeHtml(item.envelope || "packageFund")} · ${escapeHtml(costScopeLabel(item))} · ${escapeHtml(item.note || "নোট নেই")} ${item.receipt?.data ? `· <a class="receipt-link" href="${item.receipt.data}" target="_blank" rel="noopener">Receipt</a>` : ""}</small>
+                  <small>${escapeHtml(item.date)} · ${escapeHtml(item.category || "Other")} · ${escapeHtml(item.envelope || "packageFund")} · ${escapeHtml(costScopeLabel(item))}${item.planDay ? ` · ${escapeHtml(planDayTitle(item.planDay))}` : ""} · ${escapeHtml(item.note || "নোট নেই")} ${item.receipt?.data ? `· <a class="receipt-link" href="${item.receipt.data}" target="_blank" rel="noopener">Receipt</a>` : ""}</small>
                   <div class="ledger-actions">
                     <button class="secondary" data-edit="${item.id}" type="button">এডিট</button>
                     <button class="danger" data-delete="${item.id}" type="button">ডিলিট</button>
@@ -5492,8 +5636,11 @@
             `;
           })
           .join("") || `<div class="empty">কোনো installment যোগ করা হয়নি।</div>`;
+        renderSaudiPlan();
+        prepareFavoriteButtons();
         renderProgressDashboard();
         renderExpenseInsights();
+        renderSettlement();
         runGlobalSearch();
       }
 
@@ -5521,6 +5668,7 @@
           costOwner: els.costOwner?.value || activeUser() || "sifat",
           costScope: els.costScope?.value || "personal",
           groupPeople: Math.max(Number(els.groupPeople?.value || 2), 1),
+          planDay: els.planDay?.value || "",
           date: els.date.value,
           note: els.note.value.trim(),
         };
@@ -5564,6 +5712,7 @@
           els.costOwner.value = activeUser() || els.costOwner.value || "sifat";
           els.costScope.value = "personal";
           els.groupPeople.value = "2";
+          if (els.planDay) els.planDay.value = "";
           els.note.value = preset.dataset.expensePreset;
           updateConversionHint();
           els.amount.focus();
@@ -5582,6 +5731,7 @@
           els.costOwner.value = item.costOwner || activeUser() || "sifat";
           els.costScope.value = item.costScope || "personal";
           els.groupPeople.value = item.groupPeople || 2;
+          if (els.planDay) els.planDay.value = item.planDay || "";
           els.date.value = item.date;
           els.note.value = item.note || "";
           els.amount.focus();
@@ -5699,6 +5849,7 @@
       els.costOwner?.addEventListener("change", updateAveragePreview);
       els.costScope?.addEventListener("change", updateAveragePreview);
       els.groupPeople?.addEventListener("input", updateAveragePreview);
+      els.planDay?.addEventListener("change", updateAveragePreview);
       els.ledgerSearch.addEventListener("input", () => {
         clearTimeout(searchTimer);
         searchTimer = setTimeout(render, 120);
@@ -5778,6 +5929,20 @@
       els.calcSplit?.addEventListener("click", updateSplitResult);
       els.calcTaxi?.addEventListener("click", updateTaxiResult);
       els.refreshAppBtn?.addEventListener("click", refreshAppCache);
+      window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        if (els.refreshResult) els.refreshResult.textContent = "Install ready";
+      });
+      els.installAppBtn?.addEventListener("click", async () => {
+        if (!deferredInstallPrompt) {
+          if (els.refreshResult) els.refreshResult.textContent = "Use browser menu: Add to Home screen";
+          return;
+        }
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice.catch(() => null);
+        deferredInstallPrompt = null;
+      });
       els.addShoppingExpenseBtn?.addEventListener("click", () => {
         els.type.value = "personal";
         renderCategoryOptions();
@@ -5791,6 +5956,7 @@
       els.shareTripSummary?.addEventListener("click", shareTripSummary);
       els.printTripSummary?.addEventListener("click", () => window.print());
       els.copyPublicSummaryBtn?.addEventListener("click", copyPublicSummary);
+      els.copyWhatsAppSummaryBtn?.addEventListener("click", copyWhatsAppSummary);
       els.sharePublicSummaryBtn?.addEventListener("click", sharePublicSummary);
       els.printPublicSummaryBtn?.addEventListener("click", () => window.print());
       els.copyPrintPackBtn?.addEventListener("click", () => copyText(buildPrintPackText(), "Print pack copied"));
@@ -5806,10 +5972,26 @@
       els.resetPlanCardsBtn?.addEventListener("click", resetPlanCards);
       els.saudiPlanCards?.addEventListener("click", (event) => {
         const button = event.target.closest("[data-edit-plan]");
-        if (!button) return;
-        fillPlanEditor(button.dataset.editPlan);
-        document.querySelector("#planEditor").open = true;
-        document.querySelector("#planEditor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        const addCost = event.target.closest("[data-add-plan-cost]");
+        if (addCost) {
+          els.type.value = "personal";
+          renderCategoryOptions();
+          els.category.value = "Transport";
+          els.envelope.value = "personalFund";
+          els.costOwner.value = activeUser() || "sifat";
+          els.costScope.value = "personal";
+          els.groupPeople.value = "2";
+          els.planDay.value = addCost.dataset.addPlanCost;
+          els.note.value = planDayTitle(addCost.dataset.addPlanCost);
+          els.transactionForm.scrollIntoView({ behavior: "smooth", block: "start" });
+          updateConversionHint();
+          return;
+        }
+        if (button) {
+          fillPlanEditor(button.dataset.editPlan);
+          document.querySelector("#planEditor").open = true;
+          document.querySelector("#planEditor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       });
       els.loginForm?.addEventListener("submit", (event) => {
         event.preventDefault();
@@ -5870,6 +6052,7 @@
       });
       els.toggleCompactBtn?.addEventListener("click", () => {
         document.body.classList.toggle("compact-mode");
+        localStorage.setItem("standalone-umrah-compact-choice", document.body.classList.contains("compact-mode") ? "compact" : "full");
         els.toggleCompactBtn.textContent = document.body.classList.contains("compact-mode") ? "Full mode" : "Compact mode";
       });
       els.calcSarToBdt?.addEventListener("click", () => calculateCurrency("sarToBdt"));
@@ -5918,6 +6101,10 @@
       }
 
       prepareMenuUi();
+      if (window.matchMedia("(max-width: 640px)").matches && !localStorage.getItem("standalone-umrah-compact-choice")) {
+        document.body.classList.add("compact-mode");
+        if (els.toggleCompactBtn) els.toggleCompactBtn.textContent = "Full mode";
+      }
       renderSaudiPlan();
       prepareFavoriteButtons();
       applyTheme();
