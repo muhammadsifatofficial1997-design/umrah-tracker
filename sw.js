@@ -1,4 +1,4 @@
-const CACHE_NAME = "umrah-tracker-2026-07-30-settlement-map-daycost";
+const CACHE_NAME = "umrah-tracker-2026-07-30-travel-admin-timeline";
 const APP_SHELL = [
   "./",
   "index.html",
